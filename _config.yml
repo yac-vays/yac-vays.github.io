@@ -35,6 +35,8 @@ aux_links_new_tab: true
 
 color_scheme: yac
 
+search.heading_level: 6
+
 kramdown:
   syntax_highlighter_opts:
     block:

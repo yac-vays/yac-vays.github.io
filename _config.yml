@@ -17,6 +17,8 @@ exclude:
   - Gemfile
   - Gemfile.lock
 
+nav_enabled: true
+
 favicon_ico: /assets/images/yac.svg
 
 enable_copy_code_button: true
@@ -32,7 +34,8 @@ aux_links:
     - "//github.com/yac-vays/vays"
 aux_links_new_tab: true
 
-color_scheme: yac
+#color_scheme: yac
+color_scheme: dark
 
 kramdown:
   syntax_highlighter_opts:

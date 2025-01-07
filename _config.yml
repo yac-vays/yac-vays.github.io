@@ -1,6 +1,7 @@
 title: YAC/VAYS Docs
 description: ""
-theme: just-the-docs
+#theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs
 url: https://yac-vays.github.io
 
 permalink: pretty

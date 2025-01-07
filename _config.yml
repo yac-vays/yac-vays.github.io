@@ -1,8 +1,40 @@
-title: Just the Docs Template
-description: A starter template for a Jeykll site using the Just the Docs theme!
+title: YAC/VAYS Docs
+description: ""
 theme: just-the-docs
+url: https://yac-vays.github.io
 
-url: https://just-the-docs.github.io
+permalink: pretty
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+
+favicon_ico: /assets/images/yac.svg
+
+enable_copy_code_button: true
+heading_anchors: true
+
+back_to_top: true
+back_to_top_text: Back to top
 
 aux_links:
-  Template Repository: https://github.com/just-the-docs/just-the-docs-template
+  "YAC on GitHub":
+    - "//github.com/yac-vays/yac"
+  "VAYS on GitHub":
+    - "//github.com/yac-vays/vays"
+aux_links_new_tab: true
+
+color_scheme: yac
+
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true

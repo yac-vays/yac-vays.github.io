@@ -1,5 +1,5 @@
 ---
-parent: Specification File
+parent: File
 nav_order: 5
 ---
 
@@ -45,7 +45,9 @@ Only allow changing entity data specified by this subschema if `true`.
 Only allow creating and changing entity data specified by this subschema if
 `true`.
 
-**But** this is not a boolean but a j2-string that has to render into a boolean.
+{: .warning}
+However, this value is not a `boolean` but a `string` that has to j2-render
+into a boolean, for example `yac_if: user.name == "test"`.
 
 ### Keyword `yac_optional`
 
@@ -198,16 +200,14 @@ The following official formats are **not** supported:
 | `duration`              | 2019-09 |
 | `uuid`                  | 2019-09 |
 
-But you are free to add custom formats by adding a function with the name
-of the format to `plugin/json_schema_format/*.py`.
+But you are free to add custom formats by adding a [schema_format](../../../plugins)
+Plugin.
 
-*Note* that formats are only validated on the server side, so the user
-might not get immediate feedback when using VAYS.
+{: .note}
+Formats are only validated on the backend (YAC) side, so the user might not get
+immediate feedback when using VAYS.
 
 ## Official Keywords (Supported)
-
-Use the following link for a more detailed description/reference of the keywords below:
-https://www.learnjsonschema.com/2020-12/
 
 | Keyword                | Schema Type | Keyword Type             |   Draft | Details |
 |:-----------------------|:------------|:-------------------------|--------:|:--------|
@@ -233,6 +233,9 @@ https://www.learnjsonschema.com/2020-12/
 | `exclusiveMinimum`     | `number`    | `number`                 |       3 ||
 | `multipleOf`           | `number`    | `number`                 |       4 ||
 
+For details about the keywords, visit
+[learnjsonschema.com](https://www.learnjsonschema.com).
+ 
 ## Official Not Supported Keywords
 
 The following keywords are **NOT SUPPORTED** by YAC and VAYS!

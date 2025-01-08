@@ -1,12 +1,12 @@
 ---
-parent: YAC
-nav_order: 3
+parent: Specification
+nav_order: 2
 ---
 
 # Permissions
 
 Permissions are applied to a user at at run-time based on
-[roles](./specs/roles.md) and [sets](./specs/sets.md) according to the
+[roles](../file/roles) and [sets](../file/sets) according to the
 definitions in the specs.
 
 The following *permissions* are reserved and have a statically implemented
@@ -27,6 +27,14 @@ meaning, but you are free to define and use additional ones in the specs
 | `all` | `see` + `add` + `rnm` + `cpy` + `lnk` + `edt` + `cln` + `del` + `act` | `all` itself cannot be used in the schema directly! |
 | `adm` | `all`    | Allow to freely edit the entity data without validation **this is not implemented yet and will only be on real demand** |
 
+## Inheritance
+
+Permissions, if not defined explicitly, are inherited from the parent schema to
+the children. (so if defined explicitly, no permissions will be inherited from
+the parent, including `edt` from top-level).
+
+---
+
 [^1]: All data that is not covered from the schema definition. But if subschemas
       are removed due to missing perms or if-conditions, this also applies!
 
@@ -38,9 +46,3 @@ meaning, but you are free to define and use additional ones in the specs
 [^3]: Only applies if the action execution is non-forced or arbitrary. (Actions
       that are hooked to operations and have the `force` flag will always run,
       regardless of the permissions.)
-
-## Inheritance
-
-Permissions, if not defined explicitly, are inherited from the parent schema to
-the children. (so if defined explicitly, no permissions will be inherited from
-the parent, including `edt` from top-level).

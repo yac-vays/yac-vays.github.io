@@ -1,6 +1,8 @@
 ---
 parent: YAC
+nav_order: 3
 ---
+
 # Permissions
 
 Permissions are applied to a user at at run-time based on

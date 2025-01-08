@@ -20,14 +20,6 @@ Role keys can have three different forms:
     set:{type}:{name}:{perm}: grant user the *perms* on all entities of *type* in the
                               set named *name* (for sets: see next section)
 
-## Defaults
-
-```yaml
-[]
-- *: '' # each list element is a dict where the key is in one of the forms
-          # described above and the value is a jinja2 bool
-```
-
 ## Examples
 
 ```yaml

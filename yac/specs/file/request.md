@@ -13,15 +13,6 @@ the prefix `YAC-` (or `yac-`), so for example the HTTP header field
 `YAC-My-Super-Secret` can be defined as `my_super_secret` and then accessed as
 `request.headers.my_super_secret` variable.
 
-## Defaults
-
-```yaml
-headers: {}
-  *:
-    pattern: '^$'
-    default: ''
-```
-
 ## Example
 
 ```yaml

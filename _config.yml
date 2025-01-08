@@ -13,6 +13,20 @@ defaults:
     values:
       layout: default
 
+callouts:
+  new:
+    title: New
+    color: green
+  note:
+    title: Note
+    color: blue
+  important:
+    title: Important
+    color: purple
+  warning:
+    title: Warning
+    color: red
+
 exclude:
   - README.md
   - Gemfile
@@ -36,8 +50,3 @@ aux_links_new_tab: true
 color_scheme: yac
 
 search.heading_level: 6
-
-kramdown:
-  syntax_highlighter_opts:
-    block:
-      line_numbers: true

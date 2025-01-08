@@ -1,6 +1,8 @@
 ---
-parent: Configuration
+parent: Specification File
+nav_order: 4
 ---
+
 # Section: `sets`
 
 The sets that are referenced in your role definitions need to be defined in

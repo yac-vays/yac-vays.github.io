@@ -17,9 +17,9 @@ meaning, but you are free to define and use additional ones in the specs
 |:-----:|:--------:|:------------|
 | `see` |          | Allow to read the whole YAML and the logs for the entity. |
 | `add` |          | Allow to create the entity (may be restricted in the schema). |
-| `rnm` | `see`    | Allow to rename the entity without a revalidation of the YAML, requires the `add` permission for the new entity name. |
-| `cpy` | `see`    | Allow to copy the entity without a revalidation of the YAML, requires the `add` permission for the new entity name. |
-| `lnk` | `see`    | Allow to link to the entity without a revalidation of the YAML, requires the `add` permission for the new entity name. |
+| `rnm` | `see`    | Allow to rename the entity without a revalidation of the YAML, requires the `add` permission. |
+| `cpy` | `see`    | Allow to copy the entity without a revalidation of the YAML, requires the `add` permission. |
+| `lnk` | `see`    | Allow to link to the entity without a revalidation of the YAML, requires the `add` permission. |
 | `edt` | `see`    | Allow to edit the entity data (may be restricted in the schema). |
 | `cln` | `see`    | Allow to delete any[^1] data from the YAML of the entity and to modify the non-data structure[^2] of the YAML. |
 | `del` |          | Allow to delete the entity. |

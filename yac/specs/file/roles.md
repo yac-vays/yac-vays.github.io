@@ -13,21 +13,20 @@ ones: `see`, `add`, `rnm`, `cpy`, `lnk`, `edt`, `cln`, `del`, `act`, `all`, `adm
 
 For details, see: [Permissions](../perms.md)
 
-Role keys can have three different forms:
+Role keys can have the following two forms:
 
-    all:{type}:{perm}:        grant user the *perms* on all entities of *type*
-    {type}:{name}:{perm}:     grant user the *perms* on the entity of *type* named *name*
-    set:{type}:{name}:{perm}: grant user the *perms* on all entities of *type* in the
-                              set named *name* (for sets: see next section)
+    {type}:all:{perm}:       grant user the *perms* on all entities of *type*
+    {type}:{set}:{perm}:     grant user the *perms* on all entities of *type* in the
+                             the set named *set* (for sets: see next section)
 
 ## Examples
 
 ```yaml
 roles:
-  - all:animal:add+act: "user.name in old.responsible | default([])"
-  - all:animal:del: "user.name == 'cleanup-script-user'"
-  - all:animal:all+mycustomperm: "name in my_custom_lookup_func(user.name)"
-  - all:animal:all+mycustomperm: "'admins' in user.token.ou"
-  - animal:dog:add+del: "user.name == 'dog-walker'"
-  - set:animal:zooanimals:add+rnm+cpy+lnk+mod: "my_zooanimal_test_func(user.name)"
+  - animal:all:add+act: "user.name in old.responsible | default([])"
+  - animal:all:del: "user.name == 'cleanup-script-user'"
+  - animal:all:all+mycustomperm: "name in my_custom_lookup_func(user.name)"
+  - animal:all:all+mycustomperm: "'admins' in user.token.ou"
+  - animal:dogs:add+del: "user.name == 'dog-walker'"
+  - animal:zooanimals:add+rnm+cpy+lnk+mod: "my_zooanimal_test_func(user.name)"
 ```

@@ -12,6 +12,7 @@ existing plugins for examples:
 
   - Type [action](https://github.com/yac-vays/yac/tree/main/app/plugin/action)
   - Type [format](https://github.com/yac-vays/yac/tree/main/app/plugin/format)
+  - Type [j2_ctxfilters](https://github.com/yac-vays/yac/tree/main/app/plugin/j2_ctxfilters)
   - Type [j2_filters](https://github.com/yac-vays/yac/tree/main/app/plugin/j2_filters)
   - Type [j2_functions](https://github.com/yac-vays/yac/tree/main/app/plugin/j2_functions)
   - Type [j2_tests](https://github.com/yac-vays/yac/tree/main/app/plugin/j2_tests)

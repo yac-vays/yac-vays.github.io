@@ -14,9 +14,6 @@ are too different, better run a second instance.
 ```yaml
 - name: # mandatory
   title: # mandatory
-  details: {} # repo_plugin specific configuration
-    # for git_repo:
-    file: # mandatory, path relative to the repo dir, with `name` as format-string
   name_pattern: '^[a-zA-Z0-9_-\.]+$'
   name_example: ''
   name_generator: # jinja2 string to generate the name on create
@@ -91,8 +88,6 @@ are too different, better run a second instance.
 types:
   - name: animal
     title: Animal
-    details:
-      file: animals/{name}.yml
     options:
       - name: color
         title: Color

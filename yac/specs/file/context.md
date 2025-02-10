@@ -1,13 +1,14 @@
 ---
 parent: File
-nav_order: 2
+nav_order: 6
 ---
 
 # Section `context`
 
-In this section, you can simple define some context variables that you use in
-different places for templating. Templating is not supported, so the variables
-defined here will be available 1:1 as they are defined here.
+In this section, you can simple define some context variables that you want to
+use in the schema for templating. Templating inside the `context` section is
+not supported however, so the variables will be available 1:1 as they are
+defined here.
 
 ## Example
 

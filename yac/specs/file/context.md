@@ -11,6 +11,7 @@ defined here will be available 1:1 as they are defined here.
 
 ## Example
 
+{% raw %}
 ```yaml
 context:
   restricted: false
@@ -23,3 +24,4 @@ schema:
       type: string
       pattern: "{{ context.restricted_pattern if context.restricted else omit }}"
 ```
+{% endraw %}

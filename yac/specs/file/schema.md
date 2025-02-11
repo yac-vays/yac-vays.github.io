@@ -140,11 +140,11 @@ Specific options for the `vays_options.renderer`.
 
 ### Keyword `title`
 
-Will used for VAYS forms and supports markdown formatting.
+Is used for VAYS forms and supports markdown formatting.
 
 ### Keyword `description`
 
-Will used for VAYS forms and supports markdown formatting.
+Is used for VAYS forms and supports markdown formatting.
 
 ### Keyword `default`
 

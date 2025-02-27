@@ -1,5 +1,5 @@
 ---
-parent: YAC
+parent: VAYS
 nav_order: 1
 ---
 
@@ -11,7 +11,7 @@ TODO hints for plain docker and helm
 ## Versioning / Container Tags
 
 The container images are available with the following tag schema:
-https://hub.docker.com/r/yacvays/yac
+https://hub.docker.com/r/yacvays/vays
 
   - *latest*: The latest stable release
   - *v1*, *v2*, ...: A specific major release (stable API)

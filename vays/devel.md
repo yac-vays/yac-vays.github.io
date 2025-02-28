@@ -37,7 +37,7 @@ First, go into the development branch. Then
 Try it! This will first preview what changes it will do. Without your confirmation, it does not change anything. Then, it will automatically merge, tag and push.
 
 {: .warning}
-This will make another commit, committing anything that is not yet committed in this branch! Make sure you stash your changes if necessary! It will change the `package.json` file (increasing the version there. Also, for convenience only, it will also edit `/rsc/version.tsx`. Note that this is for convenience only, making sure that the build process does not make new changes to this file in the dev environment. (The build process writes the version in `package.json` into the `/rsc/version.tsx` file such that it can be included in the codebase and displayed to the user.)
+This will make another commit, committing anything that is not yet committed in this branch! Make sure you stash your changes if necessary! It will change the `package.json` file, increasing the version there. Also, for convenience only, it will edit `/rsc/version.tsx`. This is for convenience only, making sure that the build process does not make new changes to this file in the dev environment. (The build process writes the version in `package.json` into the `/rsc/version.tsx` file such that it can be included in the codebase and displayed to the user.)
 
 
 If you want to do merging of `development` into `testing` yourself, omit the `--merge` option.

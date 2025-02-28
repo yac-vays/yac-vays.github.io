@@ -56,3 +56,5 @@ Renderer Options:
                         has not been tested yet).
 
 - `multi_checkbox`:     Make sure that the type is `array`, using `oneOf`.
+
+- `ssh_key`:            Make sure that the type is `string`.

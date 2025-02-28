@@ -20,7 +20,7 @@ To maintain both without worrying about both, check out the next paragraph.
 
 
 ## Releasing a test version
-A test version is released by 
+A test version is tagged with the format vX.YrcZ. The build pipeline then pushes the built image to dockerhub with the tag `testing`. A test version is released by 
 
 - merging from development into testing
 - tagging this commit
@@ -47,6 +47,7 @@ After release, the tool leaves you in the `testing` branch.
 
 ## Releasing a minor version
 Doing a minor release (v0.X, v1.X, with X upgrading.) is the same process above, if done manually.
+A minor version is tagged with the format vX.Y. The build pipeline then pushes the built image to dockerhub with the tag `latest`.
 
 The script you can use is 
 ```sh

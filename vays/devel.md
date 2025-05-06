@@ -5,6 +5,16 @@ nav_order: 4
 
 # Development
 
+### Upgrade Environment/Dependencies
+
+Use 
+
+```sh
+npm update --save
+npm update --save-dev
+```
+Do not combine the parameters run the command twice instead
+
 ## Branches
 
 There are three core branches, `development`, `testing` and `main` (release). 
@@ -54,15 +64,6 @@ The script you can use is
 ./scripts/incr-version.sh minor --merge
 ```
 
+The merge from testing to main must be done manually
+
 See the notes above.
-
-
-### Upgrade Environment
-
-Use 
-
-```sh
-npm update --save
-npm update --save-dev
-```
-Don't join the two. 

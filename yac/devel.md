@@ -5,18 +5,33 @@ nav_order: 5
 
 # Development
 
-{: .warning}
-TODO explain common devel tasks
+## Build & Upgrade
 
-### Upgrade Environment
+YAC is shipped as a container.
 
-- Check on https://hub.docker.com/_/python for new versions and adjust the tag
-  in the `FROM` instruction of `./Dockerfile`. (Use a most specific tag to allow
-  reproducable builds.)
+See [README.md](https://github.com/yac-vays/yac/blob/main/README.md) in the
+repository for the most important development steps.
 
-- Build container and update the requirements file with:
+The Dockerfile has three stages: `build` (install requirements + copy app),
+`test` (runs `pylint` and the unit tests in `tests/`) and `production` (the
+final image). The `production` stage depends on `test`, so a failing test
+will fail the build.
 
-      docker run --rm -v "$(pwd)/requirements.in:/r.in:ro" --entrypoint sh yac:latest -c \
-          "pip install pip-tools &>/dev/null; pip-compile -o - /r.in" > ./requirements.txt
+## Branches and Tags
 
-      docker build --progress plain -t yac .
+The git repository has two branches, `test` and `main`. Commits will not
+immediately trigger the build-pipeline. Only tags will. Push tags like
+`v1.3rc7` (in incrementing order) to the `test` branch for test releases.
+Then merge them into `main`, tagged as `v1.3` for production releases.
+
+Development can always also happen in short-lived dev-branches and be merged
+into test for test-releases.
+
+Changes to the helm-chart will always be published as a new helm-chart
+version (independent of branches or tags)!
+
+## Plugins
+
+To add or modify a plugin during development, drop the file into
+`app/plugin/{type}/{name}.py` and restart YAC. See [Plugins](plugins.md) and
+the `README.md` next to each plugin type.

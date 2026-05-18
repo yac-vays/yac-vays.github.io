@@ -74,13 +74,46 @@ A category name for the VAYS form.
 form. If it's not present, the subschema will not be represented in the form at
 all.
 
-It can only be defined on subschemas where all parents are objects (or in other
-words: not inside of arrays, ifs, oneOf/allOf/anyOf, etc.). See the examples
-to have a list of all possible subschemas with a meaningful form renderer
-in VAYS. (TODO test if this is true or ifs/oneOf/etc. would even work!)
+It can only be defined on subschemas where all parents are objects (or in
+other words: not inside of `if`/`then`/`else`, `oneOf`/`allOf`/`anyOf`).
+The single supported exception is the inside of an `array`'s `items`
+object (see [Keyword `vays_options`](#keyword-vays_options) below).
 
-{: .warning}
-TODO examples
+{: .note}
+Subschemas reached only through composition keywords (`oneOf`/`allOf`/
+`anyOf`) or conditionals (`if`/`then`/`else`) are not currently rendered;
+move shared properties out of the composition or use
+[`yac_if`](#keyword-yac_if) instead to gate them.
+
+#### Examples
+
+{% raw %}
+```yaml
+schema:
+  type: object
+  properties:
+    name:
+      title: Hostname
+      type: string
+      vays_category: General
+    description:
+      title: Description
+      type: string
+      vays_category: General
+      vays_group: Metadata
+    network:
+      title: Network
+      type: object
+      vays_category: Network
+      vays_group: IP
+      properties:
+        ipv4:
+          type: string
+          format: ipv4
+          vays_category: Network
+          vays_group: IP
+```
+{% endraw %}
 
 ### Keyword `vays_group`
 
@@ -90,16 +123,47 @@ the same restrictions apply automatically).
 
 ### Keyword `vays_options`
 
-Additional options for the VAYS forms. This can only be used on subschemas with
-`vays_category` defined **or** on object properties within an array that has
-`vays_category` defined.
+Additional options for the VAYS forms. This can only be used on subschemas
+with `vays_category` defined **or** on object properties within an array
+that has `vays_category` defined.
 
 {: .important}
-This is not stackable, so it will only work for an array of objects, **not**
-for an array of objects with an array of objects and so on.
+This is not stackable, so it will only work for an array of objects,
+**not** for an array of objects with an array of objects and so on.
 
-{: .warning}
-TODO array implementation
+#### Arrays
+
+For an `array` subschema with `vays_category` defined, VAYS renders the
+default array control (a list of items with add/remove buttons). The shape
+of each row is taken from `items` (which must be `type: object`).
+`vays_options` set directly on the array applies to the array control
+itself (e.g. `renderer: BigStringArray`). `vays_options` set on the
+properties of `items.properties.*` applies to the corresponding column /
+input element of each row.
+
+{% raw %}
+```yaml
+schema:
+  type: object
+  properties:
+    members:
+      title: Group Members
+      type: array
+      vays_category: Members
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            vays_options:
+              initial: jane.doe
+          admin:
+            type: boolean
+            vays_options:
+              initial: false
+              initial_editable: true
+```
+{% endraw %}
 
 ### Keyword `vays_options.initial`
 
@@ -116,10 +180,12 @@ the user would edit the `initial` value when typing instead of replacing it.)
 
 ### Keyword `vays_options.renderer`
 
-Use a custom form renderer for this input field.
-
-{: .warning}
-TODO link to custom renderer docs in VAYS repo
+Use a custom form renderer for this input field.  The value is the name of
+a renderer registered in VAYS (the frontend).  See the
+[VAYS renderers documentation](../../../vays/renderers.md)
+for the list of bundled renderers (e.g. `BigStringArray`,
+`PasswordRenderer`, `SSHKeyRenderer`, `InfoBoxRenderer`,
+`ListAsStringRenderer`) and instructions for adding new ones.
 
 ### Keyword `vays_options.renderer_options`
 

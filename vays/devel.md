@@ -1,69 +1,119 @@
 ---
 parent: VAYS
-nav_order: 4
+nav_order: 5
 ---
 
 # Development
 
-### Upgrade Environment/Dependencies
+VAYS is a [React](https://react.dev) + [TypeScript](https://www.typescriptlang.org)
+single-page application built with [Vite](https://vite.dev) and
+[JSON Forms](https://jsonforms.io).
 
-Use 
+## Setup
+
+Requires Node.js LTS (v22 — *Jod* — at the time of writing).
+
+```sh
+git clone https://github.com/yac-vays/vays.git
+cd vays
+npm ci
+```
+
+## Run Locally
+
+The dev server uses HTTPS, so a local certificate is needed:
+
+```sh
+mkdir -p cert
+openssl req -x509 -newkey rsa:3072 -nodes -sha256 \
+    -subj '/CN=127.0.0.1' \
+    -keyout cert/private-key.pem \
+    -out  cert/certificate.pem
+npm run dev
+```
+
+VAYS will be reachable at the URL printed by Vite. Note that most OIDC
+providers won't accept the resulting self-signed origin as a redirect
+URI; for end-to-end auth tests, use a Docker build behind a reverse
+proxy with a real certificate.
+
+## Build for Production
+
+```sh
+npm run clear   # only needed if `npm run dev` was used before
+npm run build
+```
+
+The resulting bundle in `dist/` is what the production container
+serves.
+
+## Tests
+
+```sh
+npm run test    # vitest
+npm run lint    # eslint
+npm run pretty  # prettier
+```
+
+## Container Build
+
+The same image used in production:
+
+```sh
+docker build --memory=2g -t vays .
+docker run -p 8080:8080 \
+    --mount type=bind,source="$(pwd)/config.json",target=/usr/share/nginx/html/config.json,readonly \
+    vays
+```
+
+See [Installation](install.md) for full deployment options.
+
+## Renderers
+
+If you want to add a new form renderer, see the
+[Renderers](renderers.md#adding-a-custom-renderer) page and the
+[`src/renderers/README.md`](https://github.com/yac-vays/vays/blob/main/src/renderers/README.md)
+in the source tree for conventions.
+
+## Releasing
+
+`scripts/release.sh` calculates the next version tag from the current
+branch (`testing` for `rc`, `main` for stable) and pushes it, which
+triggers the CI build & deploy pipeline:
+
+```sh
+./scripts/release.sh minor   # or: major
+```
+
+  - On the `testing` branch a release-candidate tag (`vX.YrcN`) is
+    created and the resulting image is published as `testing` and
+    `vX.YrcN` on Docker Hub.
+  - On the `main` branch a stable tag (`vX.Y`) is created and the image
+    is published as `latest`, `vX`, `vX.Y`.
+
+The script refuses to run with uncommitted changes or on any other
+branch; see [Installation](install.md#versioning--container-tags) for
+the full tag schema.
+
+## Upgrading Dependencies
 
 ```sh
 npm update --save
 npm update --save-dev
 ```
-Do not combine the parameters run the command twice instead
 
-## Branches
+Run the two commands separately — combining the flags can lead to
+inconsistent updates.
 
-There are three core branches, `development`, `testing` and `main` (release). 
+Periodically check [hub.docker.com/_/node](https://hub.docker.com/_/node)
+and the unprivileged nginx base image for new versions and update the
+tags in `Dockerfile`.
 
-## Tagging
-To release a new version, it needs to be tagged. There are currently two places, in which the version number needs to be updated.
+## URL Schema
 
-One is git itself. There, tagging is used to increase the version.
-The other one is in package.json, where npm and the rest of the source code (including the build process) gets the version from there.
+For reference (also see [Configuration](config.md#url-schema)):
 
-To maintain both without worrying about both, check out the next paragraph.
-
-
-
-## Releasing a test version
-A test version is tagged with the format vX.YrcZ. The build pipeline then pushes the built image to dockerhub with the tag `testing`. A test version is released by 
-
-- merging from development into testing
-- tagging this commit
-- push the branches and tag, using a release candidate (vX.YrcZZ)
-
-### Doing this automatically
-To do the above automatically, do the following:
-First, go into the development branch. Then
-
-```sh
-./scripts/incr-version.sh rc --merge
 ```
-
-Try it! This will first preview what changes it will do. Without your confirmation, it does not change anything. Then, it will automatically merge, tag and push.
-
-{: .warning}
-This will make another commit, committing anything that is not yet committed in this branch! Make sure you stash your changes if necessary! It will change the `package.json` file, increasing the version there. Also, for convenience only, it will edit `/rsc/version.tsx`. This is for convenience only, making sure that the build process does not make new changes to this file in the dev environment. (The build process writes the version in `package.json` into the `/rsc/version.tsx` file such that it can be included in the codebase and displayed to the user.)
-
-
-If you want to do merging of `development` into `testing` yourself, omit the `--merge` option.
-
-{: .warning}
-After release, the tool leaves you in the `testing` branch.
-
-## Releasing a minor version
-Doing a minor release (v0.X, v1.X, with X upgrading.) is the same process above, if done manually.
-A minor version is tagged with the format vX.Y. The build pipeline then pushes the built image to dockerhub with the tag `latest`.
-
-The script you can use is 
-```sh
-./scripts/incr-version.sh minor --merge
+domain/{backend-name}/{type}/?{filter-key}={filter-value}#{Page}.{NumPerPage}
+domain/{backend-name}/{type}/create/{name}?view=...
 ```
-
-The merge from testing to main must be done manually
-
-See the notes above.

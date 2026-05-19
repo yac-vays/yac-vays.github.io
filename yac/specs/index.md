@@ -24,10 +24,10 @@ on its own page):
 
 | Section                     | Required | Purpose |
 |:----------------------------|:---------|:--------|
+| [`auth`](file/auth.md)      | no       | OpenID Connect authentication and CORS origins. |
+| [`repo`](file/repo.md)      | no       | Repository plugin selection, connection config and per-type path templates. |
 | [`request`](file/request.md)| no       | Custom HTTP headers exposed to the templating engine. |
 | [`types`](file/types.md)    | yes      | Entity types managed by this YAC instance, including their actions and logs. |
-| [`repo`](file/repo.md)      | no       | Repository plugin selection, connection config and per-type path templates. |
-| [`auth`](file/auth.md)      | no       | OpenID Connect authentication and CORS origins. |
 | [`roles`](file/roles.md)    | no       | Run-time permission rules per entity. |
 | [`sets`](file/sets.md)      | no       | Named entity subsets referenced from `roles`. |
 | [`context`](file/context.md)| no       | Static variables made available to the templating engine. |

@@ -21,8 +21,15 @@ repo:
 {% endraw %}
 
 All values in `repo` are **static** — changes require a pod/container
-restart. For which templating variables are available where in this
-section, see [Templating](../j2.md).
+restart.
+
+Every string in `repo` is a [j2-string](../j2.md): `plugin`, `connection.*`
+and `details.*` are all rendered. `plugin` and `connection.*` are
+rendered **once at process startup** with the `env`-only scope (handy
+for pulling secrets out of env vars). `details.*` is rendered
+**per-call** inside the repo plugin and has access to `name` (and any
+plugin-specific variables). See [Templating](../j2.md) for the full
+variable matrix.
 
 ## `plugin`
 

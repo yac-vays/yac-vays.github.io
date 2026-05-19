@@ -37,24 +37,29 @@ are too different, better run a second instance.
       progress: false # contains progress information
       problem: false # contains status information (if there is problem or not)
       plugin: # mandatory, one of: elastic, file
-      details: {} # log_plugin specific configuration
+      details: {} # log_plugin specific configuration; every string value
+                  # below is a j2-string (see ../j2.md) — the `log` variable
+                  # is only available in the per-entry fields (time,
+                  # message, problem, progress)
         # for elastic:
-        url: # mandatory, with `name` and any var as format-string
+        url: # mandatory, j2-string
         ssl_verify: true
-        query: # mandatory, with `name` and any var as format-string
-        message: '' # jinja2 string with `log` as additional var containing
+        query: # mandatory, j2-string
+        message: '' # j2-string with `log` as additional var containing
                     # all data from the elastic server for each entry
-        time: "{{ log['@timestamp'] }}" # string with `log` var
-        progress: 0 # int with `log` var
-        problem: false # jinja2 bool with `log` var
+        time: "{{ log['@timestamp'] }}" # j2-string with `log` var
+        progress: 0 # j2-int with `log` var
+        problem: false # j2-bool with `log` var
 
         # for file:
-        path: # mandatory, with `name` and any var as format-string
-        line_format: # mandatory, format-string where you define the vars 
-        time: '' # jinja2 string with `log` containing your vars
-        message: '' # jinja2 string with `log` containing your vars
-        progress: 0 # jinja2 int with `log` containing your vars
-        problem: false # jinja2 bool with `log` containing your vars
+        path: # mandatory, j2-string
+        line_format: # mandatory, regex (rendered as a j2-string first); the
+                     # capture groups are exposed as the `log` tuple
+                     # (`log[0]`, `log[1]`, ...) in the per-entry fields
+        time: '' # j2-string with `log` tuple of regex groups
+        message: '' # j2-string with `log` tuple of regex groups
+        progress: 0 # j2-int with `log` tuple of regex groups
+        problem: false # j2-bool with `log` tuple of regex groups
   actions: []
     - name: # mandatory
       title: # mandatory
@@ -67,18 +72,19 @@ are too different, better run a second instance.
       hooks: [] # any of: arbitrary, create:before, create:after, change:before,
                 # change:after, delete:before, delete:after
       plugin: # mandatory, one of: http, shell
-      details: {} # log_plugin specific configuration
+      details: {} # action_plugin specific configuration; every string value
+                  # below is a j2-string (see ../j2.md)
         # for http
         method: GET
-        url: # mandatory
-        body: ''
-        headers: {}
+        url: # mandatory, j2-string
+        body: '' # j2-string
+        headers: {} # j2-string values
         success: [200, 201, 202, 203, 204, 205, 206, 207, 208, 226]
         error: [] # list of HTTP status codes to return the response body
                   # to the user as error message (instead of just 500)
 
         # for shell
-        command: # mandatory
+        command: # mandatory, j2-string
         success: [0] # return code
         error: [] # to return the stdout/stderr to the user as error message
 ```
@@ -109,20 +115,22 @@ types:
         progress: true
         plugin: elastic
         details:
-          url: https://user:{{ env.elastic_pass }}@elastic.example.com:9200/camera-trap
+          url: "https://user:{{ env.elastic_pass }}@elastic.example.com:9200/camera-trap"
           query: 'any where animal.name == "{{ name }}"'
-          message: '![image]({{ animal.foto_url }})'
-          progress: '{{ animal.count * 100 / animal.total }}'
+          # `log` here is the elastic hit's `_source` dict.
+          message: "![image]({{ log.animal.foto_url }})"
+          progress: "{{ log.animal.count * 100 / log.animal.total }}"
       - name: camera-status
         title: Camera Status
         problem: true
         plugin: file
         details:
           path: "/logs/camera/{{ name }}.log"
-          line_format: "[{time}] {message}"
-          time: "log.time"
-          message: "log.message"
-          problem: "log.message is regex_match('.*failed.*')"
+          # `line_format` is a regex; capture groups become the `log` tuple.
+          line_format: '^\[([^\]]+)\] (.*)$'
+          time: "{{ log[0] }}"
+          message: "{{ log[1] }}"
+          problem: "{{ log[1] is regex_match('.*failed.*') }}"
     actions:
       - name: flush
         title: Flush Fotos
@@ -136,7 +144,7 @@ types:
         plugin: http
         details:
           method: POST
-          url: "https://photos.example.com/api/{name}/?secret={{ env.photo_secret }}"
+          url: "https://photos.example.com/api/{{ name }}/?secret={{ env.photo_secret }}"
           body: '{"action": "flush", "animal": "{{ name }}"}'
           headers:
             Content-Type: application/json
@@ -148,6 +156,6 @@ types:
           - create:before
         plugin: shell
         details:
-          command: 'echo "Hello $YAC__USER__FULL_NAME"'
+          command: 'echo "Hello {{ user.full_name }}"'
 ```
 {% endraw %}

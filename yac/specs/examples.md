@@ -205,11 +205,12 @@ types:
         plugin: file
         details:
           path: "/logs/hosts/{{ name }}.log"
-          line_format: "[{time}] {progress} {message}"
-          time: "log.time"
-          message: "log.message"
-          progress: "log.progress | int"
-          problem: "log.message is regex_match('.*ERROR.*')"
+          # `line_format` is a regex; capture groups become the `log` tuple.
+          line_format: '^\[([^\]]+)\] (\d+) (.*)$'
+          time: "{{ log[0] }}"
+          progress: "{{ log[1] | int }}"
+          message: "{{ log[2] }}"
+          problem: "{{ log[2] is regex_match('.*ERROR.*') }}"
 
 repo:
   plugin: git_direct

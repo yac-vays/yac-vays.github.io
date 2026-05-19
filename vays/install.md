@@ -37,7 +37,8 @@ Notes:
     The OIDC provider will likely require HTTPS, so a development setup
     behind a reverse proxy or a self-signed cert is the easiest option.
   - The VAYS image only serves static assets; CORS is configured on the
-    YAC side via [`YAC_CORS_ORIGINS`](../yac/env.md).
+    YAC side via [`auth.cors.origins`](../yac/specs/file/auth.md) in
+    the specs file.
 
 ## Helm
 

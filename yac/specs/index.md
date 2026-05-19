@@ -5,15 +5,17 @@ nav_order: 3
 
 # Specification
 
-The **specs** file is the main configuration file for a YAC instance. It is a
-YAML file (by default `yac.yml` in the root directory of the configured
-repository — see [`YAC_SPECS`](../env.md)).
+The **specs** file is the main configuration file for a YAC instance. It is
+a YAML file mounted into the container (by default at `/yac.yml` — see
+[`YAC_SPECS`](../env.md)). The specs file is **static**: it is loaded once
+at process startup, so changes to it require a pod/container restart.
 
 It describes everything that is specific to a particular YAC deployment:
-which entity types exist, where their YAML files live in the repository,
-which roles and permissions apply, the (extended) JSON-Schema used for
-validation and form generation, and any custom context, sets, request
-headers and templating data.
+which repository (plugin, URL, branch, ...) is used, which entity types
+exist and where their YAML files live in the repository, which roles and
+permissions apply, the (extended) JSON-Schema used for validation and
+form generation, and any custom context, sets, request headers and
+templating data.
 
 ## Sections
 
@@ -24,7 +26,8 @@ on its own page):
 |:----------------------------|:---------|:--------|
 | [`request`](file/request.md)| no       | Custom HTTP headers exposed to the templating engine. |
 | [`types`](file/types.md)    | yes      | Entity types managed by this YAC instance, including their actions and logs. |
-| [`repo`](file/repo.md)      | no       | Repository-plugin-specific details (e.g. file path templates per type). |
+| [`repo`](file/repo.md)      | no       | Repository plugin selection, connection config and per-type path templates. |
+| [`auth`](file/auth.md)      | no       | OpenID Connect authentication and CORS origins. |
 | [`roles`](file/roles.md)    | no       | Run-time permission rules per entity. |
 | [`sets`](file/sets.md)      | no       | Named entity subsets referenced from `roles`. |
 | [`context`](file/context.md)| no       | Static variables made available to the templating engine. |

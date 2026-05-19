@@ -11,6 +11,7 @@ are too different, better run a second instance.
 
 ## Defaults
 
+{% raw %}
 ```yaml
 - name: # mandatory
   title: # mandatory
@@ -80,6 +81,7 @@ are too different, better run a second instance.
         success: [0] # return code
         error: [] # to return the stdout/stderr to the user as error message
 ```
+{% endraw %}
 
 ## Example
 

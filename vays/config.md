@@ -24,8 +24,8 @@ authenticate, and what to call itself.
 | `production`              | `boolean` | yes      | When `false`, VAYS shows a "non-production" banner so users know they are on a test instance. |
 | `color.primary`           | `#hex`    | no       | Primary theme colour. |
 | `color.primaryHighlighted`| `#hex`    | no       | Hover/active variant of the primary colour. |
-| `oidcConf.server`         | `string`  | yes      | The OIDC provider's discovery URL (`.../.well-known/openid-configuration`). Must match the YAC backend's [`YAC_OIDC_URL`](../yac/env.md). |
-| `oidcConf.clientID`       | `string`  | yes      | The OIDC client / audience for the SPA. Must be present in [`YAC_OIDC_CLIENT_IDS`](../yac/env.md) of every backend. |
+| `oidcConf.server`         | `string`  | yes      | The OIDC provider's discovery URL (`.../.well-known/openid-configuration`). Must match the YAC backend's [`auth.oidc.url`](../yac/specs/file/auth.md). |
+| `oidcConf.clientID`       | `string`  | yes      | The OIDC client / audience for the SPA. Must be present in [`auth.oidc.client_ids`](../yac/specs/file/auth.md) of every backend. |
 | `backends`                | `array`   | yes      | List of YAC instances this VAYS connects to (see below). |
 
 ### `backends[]`
@@ -89,8 +89,8 @@ The `{backend-name}` segment matches `backends[].name` from the config.
   - **Mixing OIDC clients.** VAYS and YAC must both accept the same
     `clientID`; otherwise YAC will reject the access token.
   - **CORS.** The YAC backend must include the VAYS origin in its
-    [`YAC_CORS_ORIGINS`](../yac/env.md), otherwise the browser will block
-    requests.
+    [`auth.cors.origins`](../yac/specs/file/auth.md), otherwise the
+    browser will block requests.
   - **Production banner.** Set `"production": true` only on instances
     where it is genuinely safe to do so — the banner is a deliberate UX
     cue, not a security feature.

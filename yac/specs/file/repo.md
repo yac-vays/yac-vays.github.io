@@ -5,19 +5,50 @@ nav_order: 3
 
 # Section `repo`
 
-The `repo` section configures the repository plugin (selected via the
-[`YAC_REPO_PLUGIN`](../../env.md) env var).  Plugin-specific options live
-under `repo.details`.
+The `repo` section configures the repository plugin and its connection
+details, plus the per-entity-type file paths.
 
-The shape of `repo.details` is plugin-specific; the rest of this page
-documents the format used by the bundled `git_direct` and `git_redis`
-plugins (which both read the same details).
+{% raw %}
+```yaml
+repo:
+  plugin: git_direct      # plugin name (defaults to "git_direct")
+  connection:             # plugin connection config
+    url: ...
+    branch: ...
+  details:                # per-entity-type paths
+    type_a: "path/{{ name }}.yml"
+```
+{% endraw %}
 
-## Per-type file paths (`git_direct` / `git_redis`)
+All values in `repo` are **static** — changes require a pod/container
+restart. For which templating variables are available where in this
+section, see [Templating](../j2.md).
 
-For these plugins, `repo.details` is a mapping from entity type name to a
-[Jinja2](../j2.md) template that resolves to the YAML file path **inside
-the repository** for an entity of that type.
+## `plugin`
+
+The repository plugin to use. Built-in plugins:
+
+  - `git_direct` (default): every worker clones the repo into
+    `/repo/{pid}` and reads/writes files directly. Recommended for most
+    deployments. Mount a tmpfs at `/repo` so the working copies live in
+    memory.
+  - `git_redis`: experimental cache layer in front of `git_direct`.
+
+## `connection` (`git_direct`)
+
+| Key                       | Type      | Default                          | Description |
+|:--------------------------|:----------|:---------------------------------|:------------|
+| `url`                     | `string`  | `""` (**required**)              | HTTPS or SSH URL to the git repo. |
+| `branch`                  | `string`  | `main`                           | The branch to work on. |
+| `ssh_key_file`            | `string`  | `/home/yac/.ssh/id_rsa`          | Path to the private key file (SSH URLs only). |
+| `ssh_known_hosts_file`    | `string`  | `/home/yac/.ssh/known_hosts`     | Path to the known hosts file (SSH URLs only). |
+| `dirty_max_age`           | `integer` | `0`                              | Acceptable age (in minutes) of the last git fetch where a dirty read will not update the data again. |
+
+## `details` (`git_direct` / `git_redis`)
+
+A mapping from entity-type name to a [Jinja2](../j2.md) template that
+resolves to the YAML file path **inside the repository** for an entity of
+that type.
 
 Each template:
 
@@ -29,14 +60,18 @@ Each template:
     write, copy, link, rename and delete.
 
 The path is interpreted relative to the repository root (no leading `/`).
-Path components that escape the repository (e.g. via `..`) are rejected at
-runtime.
+Path components that escape the repository (e.g. via `..`) are rejected
+at runtime.
 
 ## Example
 
 {% raw %}
 ```yaml
 repo:
+  plugin: git_direct
+  connection:
+    url: https://user:pass@git.example.com/my/repo.git
+    branch: main
   details:
     animal: "animals/{{ name }}.yml"
     cage:   "cages/{{ name }}/cage.yml"
@@ -46,15 +81,28 @@ repo:
 With this configuration, an entity of type `animal` named `rex` is stored
 at `animals/rex.yml`, and a `cage` named `c1` at `cages/c1/cage.yml`.
 
+## Example with secret injection
+
+Read a deploy-token (or any other secret) from the `YAC_ENV__GIT_TOKEN`
+env var instead of hard-coding it in the specs file:
+
+{% raw %}
+```yaml
+repo:
+  plugin: git_direct
+  connection:
+    url: "https://yac:{{ env.GIT_TOKEN }}@git.example.com/my/repo.git"
+    branch: main
+  details:
+    animal: "animals/{{ name }}.yml"
+```
+{% endraw %}
+
 ## Notes
 
   - Every entity type defined under [`types`](types.md) must have a
     corresponding entry in `repo.details`.
-  - Other repository-related settings (URL, branch, SSH key, refresh
-    interval, ...) are configured via [environment variables](../../env.md),
-    not in this section.
-
-{: .warning}
-TODO All repository-related settings will be moved here as soon as the
-following feature has been removed: having the specs-file inside the
-repo.
+  - To keep secrets (e.g. a git URL with credentials) out of the
+    specs file, mount the specs file from a Kubernetes `Secret` (using
+    `extraVolumes` / `extraVolumeMounts`) instead of the chart's `specs:`
+    value, or bake them into a custom container image.

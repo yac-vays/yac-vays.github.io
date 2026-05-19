@@ -11,7 +11,8 @@ example field paths are linked to their reference in [File](file/index.md).
 ## Minimal
 
 The smallest specs that does something useful — one type, one role, a
-flat schema.
+flat schema. The `repo` and `auth` blocks are static and used at process
+startup; everything else may use [Jinja2 templating](j2.md).
 
 {% raw %}
 ```yaml
@@ -20,8 +21,19 @@ types:
     title: Files
 
 repo:
+  plugin: git_direct
+  connection:
+    url: https://user:pass@git.example.com/my/repo.git
+    branch: main
   details:
     file: "files/{{ name }}.yml"
+
+auth:
+  oidc:
+    url: https://idp.example.com/.well-known/openid-configuration
+    client_ids: [yac-spa]
+  cors:
+    origins: [https://yac.example.com]
 
 roles:
   - file:all:all: "user.name == 'admin'"
@@ -58,6 +70,10 @@ types:
     title: Cages
 
 repo:
+  plugin: git_direct
+  connection:
+    url: https://user:pass@git.example.com/zoo.git
+    branch: main
   details:
     animal: "animals/{{ name }}.yml"
     cage:   "cages/{{ name }}.yml"
@@ -103,6 +119,10 @@ types:
     name_generator: "new.data.title | lower | regex_replace(' ', '-')"
 
 repo:
+  plugin: git_direct
+  connection:
+    url: https://user:pass@git.example.com/courses.git
+    branch: main
   details:
     course: "courses/{{ name }}.yml"
 
@@ -192,6 +212,10 @@ types:
           problem: "log.message is regex_match('.*ERROR.*')"
 
 repo:
+  plugin: git_direct
+  connection:
+    url: https://user:pass@git.example.com/hosts.git
+    branch: main
   details:
     host: "hosts/{{ name }}.yml"
 

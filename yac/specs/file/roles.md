@@ -28,5 +28,5 @@ roles:
   - animal:all:all+mycustomperm: "name in my_custom_lookup_func(user.name)"
   - animal:all:all+mycustomperm: "'admins' in user.token.ou"
   - animal:dogs:add+del: "user.name == 'dog-walker'"
-  - animal:zooanimals:add+rnm+cpy+lnk+mod: "my_zooanimal_test_func(user.name)"
+  - animal:zooanimals:add+rnm+cpy+lnk+edt: "my_zooanimal_test_func(user.name)"
 ```

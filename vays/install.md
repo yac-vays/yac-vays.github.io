@@ -25,7 +25,7 @@ which is loaded by the browser at start-up — see
 ```sh
 docker run --rm --name vays -p 8080:8080 \
     --mount type=bind,source="$(pwd)/config.json",target=/usr/share/nginx/html/config.json,readonly \
-    yacvays/vays:latest
+    registry.inf.ethz.ch/public-isg/yac-vays/vays:latest
 ```
 
 VAYS is then reachable at [http://localhost:8080/](http://localhost:8080/).

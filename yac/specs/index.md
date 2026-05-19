@@ -40,6 +40,64 @@ For a quick visual overview, see [Examples](examples.md). For the
 permission model used by `roles`, `sets` and `schema`, see
 [Permissions](perms.md).
 
+## Splitting the specs across files (`yac_include`)
+
+A `yac_include` key can be placed inside any object (at any nesting level)
+to merge in YAML from one or more sibling files. This is useful for
+keeping large specs readable, sharing common context/schema fragments
+between deployments, or generating fragments separately.
+
+The value is either a single path or a list of paths, **relative to the
+file containing the `yac_include` key**. All included paths must resolve
+to locations under the directory of the main specs file (set via
+[`YAC_SPECS`](../env.md)); paths pointing outside that root cause YAC to
+fail at startup.
+
+{: .note}
+Includes are merged at process startup, **before** any
+[Jinja2 rendering](j2.md) happens. The path value itself therefore
+cannot contain Jinja2 expressions — it must be a literal string.
+The *content* of an included file can use Jinja2 as usual: after the
+merge, it is rendered together with the section it ends up in.
+
+Merge rules:
+
+  - Included files are processed recursively — an included file can
+    itself use `yac_include`.
+  - When the included content is an **object**, its keys are merged into
+    the parent object. Keys that already exist in the parent are **kept**
+    (the parent wins); the include only fills in missing keys.
+  - When the included content is a **non-object** (e.g. a list or scalar),
+    it replaces the parent object only if that parent is otherwise empty
+    and exactly one path is listed. Otherwise the include is skipped with
+    a warning.
+  - When multiple paths are listed and several provide the same key, the
+    first include in the list wins for that key.
+
+Example — split the schema and a context fragment into separate files:
+
+{% raw %}
+```yaml
+# yac.yml
+version: 1
+types:
+  - name: animal
+    title: Animal
+
+context:
+  yac_include: context.fragment.yml
+
+schema:
+  yac_include:
+    - schema.common.yml
+    - schema.animal.yml
+```
+{% endraw %}
+
+The specs file is loaded once at process startup, so changes to included
+files require a pod/container restart, exactly like changes to the main
+specs file.
+
 ## Authoritative source
 
 This documentation is the authoritative reference for the specs file format.

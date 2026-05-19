@@ -25,10 +25,10 @@ A minimal example (OpenID Connect URL, accepted client IDs, the data
 repo URL, ... all live in `yac.yml`):
 
 ```sh
-docker run --rm --name yac -p 8080:80 \
+docker run --rm --name yac -p 8080:8080 \
     -v /path/to/yac.yml:/yac.yml:ro \
     --tmpfs /repo \
-    yacvays/yac:latest
+    registry.inf.ethz.ch/public-isg/yac-vays/yac:latest
 ```
 
 The API and Swagger UI documentation are then available at

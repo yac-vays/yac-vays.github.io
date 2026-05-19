@@ -21,6 +21,7 @@ are too different, better run a second instance.
   name_generated: never # or optional or enforced
   description: '' # Used in UI (with markdown formatting)
   create: true # enable create functions for entities of this type
+  change: true # enable modification of entities of this type
   delete: true # enable delete functions for entities of this type
   options: [] # definition of values displayed in the entity list (GET /entity/{type})
     - name: # mandatory

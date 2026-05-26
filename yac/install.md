@@ -73,6 +73,57 @@ helm show chart oci://registry.inf.ethz.ch/public-isg/yac-vays/yac/charts/yac
 helm install yac oci://registry.inf.ethz.ch/public-isg/yac-vays/yac/charts --version <VERSION> -f values.yaml
 ```
 
+### Redis (optional, for the `git_redis` repo plugin)
+
+The chart can optionally deploy or wire up a Redis instance used by the
+[`git_redis`](specs/file/repo.md#connection-git_redis) repo plugin.
+When enabled, the chart sets `YAC_ENV__REDIS_URL` on the YAC pod so the
+specs file can reference it as `env.redis_url`.
+
+```yaml
+redis:
+  enabled: true
+  mode: single        # or: external
+  # url: "redis://my-existing-redis:6379/0"   # required when mode=external
+```
+
+Modes:
+
+  - **`single`** (default): the chart deploys a single-pod Redis
+    `StatefulSet` + `Service` next to YAC. By default this uses an
+    `emptyDir` (cache semantics — if Redis dies, the next reader
+    rebuilds the snapshot from git). Persistence is opt-in via
+    `redis.single.persistence.enabled: true`. Zero extra dependencies.
+  - **`external`**: the chart does not deploy Redis; you supply
+    `redis.url`. Use this to point YAC at a Redis HA cluster you
+    deploy separately (e.g. via the
+    [OT-CONTAINER-KIT redis-operator](https://github.com/ot-container-kit/redis-operator),
+    the [Dragonfly operator](https://github.com/dragonflydb/dragonfly-operator),
+    or a managed cloud Redis like AWS ElastiCache, GCP Memorystore or
+    Azure Cache).
+
+{: .important}
+Enabling the `redis:` block in `values.yaml` is only half the wiring —
+your specs file must also select `git_redis` and reference the env var.
+The full Redis-side tuning (`max_age_seconds`, `grace_seconds`,
+`pull_lock_ttl`) is set directly in the specs file; see
+[Section `repo` → `connection` (`git_redis`)](specs/file/repo.md#connection-git_redis).
+
+{% raw %}
+```yaml
+# In your specs file (mounted via chart `specs:` value or extraVolumes)
+repo:
+  plugin: git_redis
+  connection:
+    url: "https://yac:{{ env.GIT_TOKEN }}@git.example.com/my/repo.git"
+    branch: main
+    redis_url: "{{ env.redis_url }}"
+    max_age_seconds: 300
+  details:
+    animal: "animals/{{ name }}.yml"
+```
+{% endraw %}
+
 ## Versioning / Container Tags
 
 The container images are available with the following tag schema:

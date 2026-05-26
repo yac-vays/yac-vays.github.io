@@ -31,7 +31,7 @@ for pulling secrets out of env vars). `details.*` is rendered
 plugin-specific variables). See [Templating](../j2.md) for the full
 variable matrix.
 
-## `plugin`
+## Key `plugin`
 
 The repository plugin to use. Built-in plugins:
 
@@ -39,9 +39,19 @@ The repository plugin to use. Built-in plugins:
     `/repo/{pid}` and reads/writes files directly. Recommended for most
     deployments. Mount a tmpfs at `/repo` so the working copies live in
     memory.
-  - `git_redis`: experimental cache layer in front of `git_direct`.
+  - `git_redis`: layered on top of `git_direct`. One pod pulls from the
+    remote per TTL window and publishes a snapshot of the working tree
+    into Redis; every other read across every pod is served from Redis
+    with no git I/O. Reduces cold-path latency for `GET /{type}` on
+    large repos (10k+ entities) and shares state across pods. Writes
+    still flow through `git_direct` (pull → modify → push) and rebuild
+    the snapshot on scope exit, so the next read sees the new commit
+    immediately. External commits (pushed to git outside YAC) are
+    picked up after `max_age_seconds`. Requires a reachable Redis
+    instance; on Redis failure, individual requests fall back to
+    `git_direct` rather than erroring.
 
-## `connection` (`git_direct`)
+## Key `connection` (plugins: `git_direct`, `git_redis`)
 
 | Key                       | Type      | Default                          | Description |
 |:--------------------------|:----------|:---------------------------------|:------------|
@@ -51,7 +61,32 @@ The repository plugin to use. Built-in plugins:
 | `ssh_known_hosts_file`    | `string`  | `/home/yac/.ssh/known_hosts`     | Path to the known hosts file (SSH URLs only). |
 | `dirty_max_age`           | `integer` | `0`                              | Acceptable age (in minutes) of the last git fetch where a dirty read will not update the data again. |
 
-## `details` (`git_direct` / `git_redis`)
+## Key `connection` (plugin: `git_redis`)
+
+`git_redis` accepts every `git_direct` key above (it delegates writes
+and the on-pod working tree to `git_direct`) plus the Redis-specific
+keys below.
+
+| Key                | Type      | Default              | Description |
+|:-------------------|:----------|:---------------------|:------------|
+| `redis_url`        | `string`  | `""` (**required**)  | URL of the Redis instance, e.g. `redis://host:6379/0`. Must be a value accepted by `redis.asyncio.from_url`. |
+| `max_age_seconds`  | `integer` | `300`                | How long a snapshot may serve reads before a refresh pull is triggered. Stale-but-ready snapshots are served while the refresh runs. |
+| `grace_seconds`    | `integer` | `60`                 | How long old snapshot keys are kept after a swap so in-flight readers can finish. |
+| `pull_lock_ttl`    | `integer` | `120`                | TTL of the cross-pod stampede mutex. Must comfortably exceed the worst-case git pull time. |
+
+
+{: .note}
+`max_age_seconds` is the **staleness budget** for external commits
+(anything pushed to git outside YAC). YAC-initiated writes always
+refresh the snapshot immediately on writer-scope exit.
+
+{: .warning}
+The Redis key namespace is global (`latest`, `synced`, `pull_lock`,
+`ready:{hash}`, `paths:{hash}`, `data:{hash}:{path}`). Use a
+dedicated Redis instance — or at minimum a dedicated logical
+database (`/0`, `/1`, ...) — per YAC deployment.
+
+## Key `details` (plugins: `git_direct`, `git_redis`)
 
 A mapping from entity-type name to a [Jinja2](../j2.md) template that
 resolves to the YAML file path **inside the repository** for an entity of
@@ -98,18 +133,35 @@ env var instead of hard-coding it in the specs file:
 repo:
   plugin: git_direct
   connection:
-    url: "https://yac:{{ env.GIT_TOKEN }}@git.example.com/my/repo.git"
+    url: "https://yac:{{ env.git_token }}@git.example.com/my/repo.git"
     branch: main
   details:
     animal: "animals/{{ name }}.yml"
 ```
 {% endraw %}
 
-## Notes
+## Example with `git_redis`
 
-  - Every entity type defined under [`types`](types.md) must have a
-    corresponding entry in `repo.details`.
-  - To keep secrets (e.g. a git URL with credentials) out of the
-    specs file, mount the specs file from a Kubernetes `Secret` (using
-    `extraVolumes` / `extraVolumeMounts`) instead of the chart's `specs:`
-    value, or bake them into a custom container image.
+When deployed via the Helm chart with `redis.enabled: true`, the chart
+sets `YAC_ENV__REDIS_URL` on the YAC pod so the specs file can
+reference it as `env.redis_url`:
+
+{% raw %}
+```yaml
+repo:
+  plugin: git_redis
+  connection:
+    url: "https://yac:{{ env.git_token }}@git.example.com/my/repo.git"
+    branch: main
+    redis_url: "{{ env.redis_url }}"
+    max_age_seconds: 300
+    grace_seconds: 60
+    pull_lock_ttl: 120
+  details:
+    animal: "animals/{{ name }}.yml"
+```
+{% endraw %}
+
+{: .important}
+Every entity type defined under [`types`](types.md) must have a
+corresponding entry in `repo.details`.

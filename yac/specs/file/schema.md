@@ -70,9 +70,9 @@ Only add this subschema for entities of the types defined in `yac_types`.
 
 A category name for the VAYS form.
 
-**Important**: This field is required to have the subschema represented in the
-form. If it's not present, the subschema will not be represented in the form at
-all.
+{: .important}
+If the subschema should be respresented in the VAYS form, this filed **must**
+be set.
 
 It can only be defined on subschemas where all parents are objects (or in
 other words: not inside of `if`/`then`/`else`, `oneOf`/`allOf`/`anyOf`).
@@ -266,8 +266,8 @@ The following official formats are **not** supported:
 | `duration`              | 2019-09 |
 | `uuid`                  | 2019-09 |
 
-But you are free to add custom formats by adding a [schema_format](../../../plugins)
-Plugin.
+But you are free to add custom formats by adding a [schema_format](../../plugins.md)
+plugin.
 
 {: .note}
 Formats are only validated on the backend (YAC) side, so the user might not get

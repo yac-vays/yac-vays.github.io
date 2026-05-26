@@ -7,8 +7,9 @@ nav_order: 3
 
 The **specs** file is the main configuration file for a YAC instance. It is
 a YAML file mounted into the container (by default at `/yac.yml` — see
-[`YAC_SPECS`](../env.md)). The specs file is **static**: it is loaded once
-at process startup, so changes to it require a pod/container restart.
+[`YAC_SPECS` environment variable](../env.md)). The specs file is **static**:
+it is loaded once at process startup, so changes to it require a pod/container
+restart.
 
 It describes everything that is specific to a particular YAC deployment:
 which repository (plugin, URL, branch, ...) is used, which entity types
@@ -34,7 +35,7 @@ on its own page):
 | [`schema`](file/schema.md)  | yes      | JSON-Schema (Draft-7 + extensions) used for validation and form generation. |
 
 The values in any of these sections can use [Jinja2 templating](j2.md) (with
-the exception of the `context` section itself).
+the exception of the `context` section).
 
 For a quick visual overview, see [Examples](examples.md). For the
 permission model used by `roles`, `sets` and `schema`, see
@@ -88,19 +89,32 @@ context:
   yac_include: context.fragment.yml
 
 schema:
-  yac_include:
-    - schema.common.yml
-    - schema.animal.yml
+  type: object
+  properties:
+    yac_include:
+      - schema.common.yml
+      - schema.animal.yml
+
+---
+# context.fragment.yml
+my_var: hello
+my_var_pattern: '^hello$'
+
+---
+# schema.common.yml
+name:
+  type: string
+age:
+  type: integer
+
+---
+# schema.animal.yml
+mammal:
+  type: boolean
+  default: false
 ```
 {% endraw %}
 
 The specs file is loaded once at process startup, so changes to included
 files require a pod/container restart, exactly like changes to the main
 specs file.
-
-## Authoritative source
-
-This documentation is the authoritative reference for the specs file format.
-Code-level docstrings and field descriptions in YAC's source (e.g.
-`app/model/`) feed the OpenAPI/Swagger UI and may be terser; in case of
-divergence, this documentation wins.

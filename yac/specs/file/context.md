@@ -10,6 +10,9 @@ use in the schema for templating. Templating inside the `context` section is
 not supported however, so the variables will be available 1:1 as they are
 defined here.
 
+This is mainly meant for repeating strings like regular expressions or variables
+used in custom [`j2_*`](../../plugins.md) plugins.
+
 ## Example
 
 {% raw %}

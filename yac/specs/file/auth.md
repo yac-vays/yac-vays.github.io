@@ -6,7 +6,6 @@ nav_order: 1
 # Section `auth`
 
 The `auth` section configures authentication (OpenID Connect) and CORS.
-All values are **static** — changes require a pod/container restart.
 For which templating variables are available where in this section,
 see [Templating](../j2.md).
 
@@ -25,7 +24,7 @@ auth:
     origins: ["https://app.example.com"]
 ```
 
-## `oidc`
+## Key `oidc`
 
 | Key                     | Type            | Default                                              | Description |
 |:------------------------|:----------------|:-----------------------------------------------------|:------------|
@@ -39,26 +38,27 @@ auth:
 
 The JWT format-strings use Python `str.format` substitution against the
 validated id-token claims (so `{sub}`, `{preferred_username}`, etc. work
-depending on what the IdP issues).
+depending on what the IdP issues). You can see the values of a token via
+YAC API call `GET /me`.
 
-## `cors`
+## Key `cors`
 
 | Key       | Type            | Default                | Description |
 |:----------|:----------------|:-----------------------|:------------|
 | `origins` | `list[string]`  | `["https://localhost"]`| Allowed CORS origins. |
 
-## Example with env injection
+## Example
 
-Pull the OIDC discovery URL out of `YAC_ENV__OIDC_URL` so the same specs
-file can be used across environments:
+To allow some configuration to be set via environment variables, you can
+define your own env variables:
 
 {% raw %}
 ```yaml
 auth:
   oidc:
-    url: "{{ env.OIDC_URL }}"
-    client_ids: ["{{ env.OIDC_CLIENT_ID }}"]
+    url: "{{ env.oidc_url }}"
+    client_ids: ["{{ env.oidc_client_id }}"]
   cors:
-    origins: ["{{ env.UI_ORIGIN }}"]
+    origins: ["{{ env.vays_origin }}"]
 ```
 {% endraw %}

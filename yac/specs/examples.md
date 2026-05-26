@@ -233,10 +233,3 @@ schema:
       format: hostname
 ```
 {% endraw %}
-
-## See Also
-
-  - [`request`](file/request.md) — custom HTTP headers
-  - [`types`](file/types.md) — full reference for actions, logs, options
-  - [`schema`](file/schema.md) — full list of supported keywords
-  - [Permissions](perms.md) — what each `perm` actually allows

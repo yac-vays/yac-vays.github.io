@@ -6,7 +6,7 @@ nav_order: 5
 # Section `roles`
 
 In this section, you can define permissions that are evaluated at runtime for
-each entity individually.
+each entity individually (if needed).
 
 Permission flags (`{perm}`) can be defined freely, but there are some predefined
 ones: `see`, `add`, `rnm`, `cpy`, `lnk`, `edt`, `cln`, `del`, `act`, `all`, `adm`
@@ -15,9 +15,23 @@ For details, see: [Permissions](../perms.md)
 
 Role keys can have the following two forms:
 
-    {type}:all:{perm}:       grant user the *perms* on all entities of *type*
-    {type}:{set}:{perm}:     grant user the *perms* on all entities of *type* in the
-                             the set named *set* (for sets: see next section)
+| Role Format           | Description |
+|:----------------------|:------------|
+| `{type}:all:{perm}`   | Grant user the `perms` on all entities of `type`. |
+| `{type}:{set}:{perm}` | Grant user the `perms` on the entities of `type` in the the set named `set` (see [Section `set`](set.md)). |
+
+{: .note}
+To improove entity listing **performance**, split roles by entity-dependent
+(using variables `old`, `new` or `name`) and *not* entity-dependent (using
+any of the other variables). This allows YAC to optimize runtime by evaluating
+all roles that are not entity-dependent once per request instead of once per
+entity.
+
+{: .warning}
+Never use entity-variables (`old`, `new` or `name`) via context in custom
+jinja2-functions, filters or tests directly. Always pass them explicitly!
+Due to the performance optimization, YAC might otherwise assume the test
+to be request-scoped and only run it once for multiple entities.
 
 ## Examples
 
@@ -31,35 +45,20 @@ roles:
   - animal:zooanimals:add+rnm+cpy+lnk+edt: "my_zooanimal_test_func(user.name)"
 ```
 
-## Performance hint: prefer split conditions
+### Performance Optimization
 
-When listing entities, YAC has to evaluate every role test against every
-entity. As an optimization, a role test that does **not** reference any of
-the entity-dependent variables `old`, `new` or `name` is evaluated only
-once per request — if the result is `false`, the role is dropped before
-the per-entity loop even starts.
-
-This means a role like
+In the following example, the LDAP lookup is done for every entity:
 
 ```yaml
 roles:
-  - animal:all:edt: "'admins' in user.token.ou and old.data.owner == user.name"
+  - animal:all:edt: "lookup_in_ldap_if_admin(user) or old.data.owner == user.name"
 ```
 
-is fully re-evaluated for every entity, because the whole expression
-mixes a user-only check with an entity-dependent one. Splitting it into
-two roles lets YAC short-circuit the admin case once per request:
+In the split-up version below, YAC can optimize by running the first one only
+once per request instead of once per entity:
 
 ```yaml
 roles:
-  - animal:all:edt: "'admins' in user.token.ou"
+  - animal:all:edt: "lookup_in_ldap_if_admin(user)"
   - animal:all:edt: "old.data.owner == user.name"
 ```
-
-The same applies to [set definitions](sets.md): a set whose expression is
-user-only is evaluated once per request rather than per entity.
-
-For repositories with thousands of entities and many roles, this can
-turn the cost of a list-entities call from "evaluate every role for
-every entity" into "evaluate every role once, then evaluate only the
-surviving entity-dependent residuals per entity".

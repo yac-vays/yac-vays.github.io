@@ -182,7 +182,7 @@ the user would edit the `initial` value when typing instead of replacing it.)
 
 Use a custom form renderer for this input field.  The value is the name of
 a renderer registered in VAYS (the frontend).  See the
-[VAYS renderers documentation](../../../vays/renderers.md)
+[VAYS renderers documentation](../../../vays/renderers/)
 for the list of bundled renderers (e.g. `BigStringArray`,
 `PasswordRenderer`, `SSHKeyRenderer`, `InfoBoxRenderer`,
 `ListAsStringRenderer`) and instructions for adding new ones.
@@ -268,6 +268,14 @@ The following official formats are **not** supported:
 
 But you are free to add custom formats by adding a [schema_format](../../plugins.md)
 plugin.
+
+YAC ships with the following bundled custom formats:
+
+| `format` value       | Validates |
+|:---------------------|:----------|
+| `ssh_key`            | OpenSSH public key (`ssh-rsa`, `ssh-ed25519`, `ecdsa-sha2-*`). |
+| `unix_password_hash` | Unix-`crypt` SHA-256 / SHA-512 or Bcrypt password hash. |
+| `age_secret`         | ASCII-armored [AGE](https://age-encryption.org) ciphertext. Pairs with the VAYS [`age_secret` renderer](../../../vays/renderers/age_secret.md). |
 
 {: .note}
 Formats are only validated on the backend (YAC) side, so the user might not get

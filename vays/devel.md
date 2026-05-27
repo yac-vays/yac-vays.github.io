@@ -71,7 +71,7 @@ See [Installation](install.md) for full deployment options.
 ## Renderers
 
 If you want to add a new form renderer, see the
-[Renderers](renderers.md#adding-a-custom-renderer) page and the
+[Renderers / Adding a Custom Renderer](renderers/custom.md) page and the
 [`src/renderers/README.md`](https://github.com/yac-vays/vays/blob/main/src/renderers/README.md)
 in the source tree for conventions.
 

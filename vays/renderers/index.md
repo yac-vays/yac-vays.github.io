@@ -7,51 +7,67 @@ has_children: true
 # Renderers
 
 VAYS turns each form input into a React component using a *renderer*
-selected from the JSON-Schema/UI-Schema. Most fields use the right
-renderer automatically; for the rest, the spec author can request a
-specific one via [`vays_options.renderer`](../../yac/specs/file/schema.md#keyword-vays_optionsrenderer).
+selected from the JSON-Schema and UI-Schema produced by the [Schema]((../../yac/specs/file/schema.md).
+Most fields get the right renderer automatically; for the rest, the spec
+author opts into a specific one via [`vays_options.renderer`](../../yac/specs/file/schema.md#keyword-vays_optionsrenderer).
 
-This section is the authoritative reference for the bundled renderers,
-their selection rules and the options they understand. Each renderer
-type has its own page:
-
-  - [Default renderers](default.md) — picked automatically from the
-    JSON-Schema (`text`, `number`, `boolean`, `date`, ...).
-  - [Special renderers](special.md) — opted into explicitly via
-    `vays_options.renderer: <name>` (info-box, password, SSH key, ...).
-  - [`age_secret` renderer](age_secret.md) — generate-once secrets that
-    are AGE-encrypted in the browser before being stored.
-  - [Adding a custom renderer](custom.md) — for VAYS contributors.
+Renderers can have their own configuration in the schema under
+[`vays_options.renderer_options`](../../yac/specs/file/schema.md#keyword-vays_optionsrenderer_options).
+In addition to this, there are two common options each renderer may implement:
+[`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial) and
+[`vays_options.initial_editable`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial).
 
 ## How Selection Works
 
 VAYS uses [JSON Forms'](https://jsonforms.io) *tester* mechanism. Each
-renderer ships with a tester returning a numeric *rank*; the
-highest-ranking match wins. In practice:
+renderer ships with a tester function that, given a UI-Schema element
+plus the resolved JSON-Schema (both derived from YACs Schema), returns
+a numeric *rank* if it can render the field. The highest-ranking match
+wins; ties are broken by registration order. There are two paths to a match:
 
-  - **Implicit selection.** Each renderer's tester inspects the
-    JSON-Schema (`type`, `format`, `enum`, ...) and the UI-Schema and
-    returns a rank if it can render the field. The default renderers
-    (text, number, boolean, date, enum, ...) all use this path.
-  - **Explicit selection.** Set `vays_options.renderer: <name>` in the
-    YAC schema to force a specific renderer. The bundled "special"
-    renderers are *only* selected explicitly; without the `renderer`
-    option they stay out of the way.
+  - **Implicit selection.** The tester inspects the JSON-Schema
+    (`type`, `format`, `enum`, ...) and returns a rank without needing
+    anything special in the spec. The default renderers (text, number,
+    boolean, date, enum, ...) all live here.
+  - **Explicit selection.** Setting `vays_options.renderer: <name>` in
+    the YAC schema forces a specific renderer (the tester additionally
+    checks for the right `renderer` key). The "special" renderers in
+    the second table below are *only* selected this way.
 
-If no custom renderer matches, VAYS falls back to JSON Forms'
+If no VAYS renderer matches, JSON Forms falls back to its bundled
 `material-renderers`.
 
-## Common Options
+## Implicit Renderers
 
-These options are honoured by most renderers (set on the JSON-Schema
-subschema as part of `vays_options`):
+Picked automatically from the JSON-Schema:
 
-| Option                    | Type      | Description |
-|:--------------------------|:----------|:------------|
-| `initial`                 | `any`     | Pre-filled value used as a placeholder. The value is *not* persisted unless the user interacts with the field. |
-| `initial_editable`        | `boolean` | If `true`, the `initial` value is loaded as actual data (the user edits it) instead of being shown as a placeholder. |
-| `renderer`                | `string`  | Name of an explicit renderer (see the per-renderer pages). |
-| `renderer_options`        | `object`  | Renderer-specific options (see the per-renderer pages). |
+| Renderer                                  | Used for                                                       | Since |
+|:------------------------------------------|:---------------------------------------------------------------|------:|
+| [`text`](text.md)                         | `type: string` (or untyped with `pattern`).                    |    v0 |
+| [`number`](number.md)                     | `type: number` / `integer`.                                    |    v0 |
+| [`boolean`](boolean.md)                   | `type: boolean`.                                               |    v0 |
+| [`date`](date.md)                         | `type: string` with `format: date`.                            |    v0 |
+| [`enum`](enum.md)                         | Properties with `enum`.                                        |    v0 |
+| [`one_of_enum`](one_of_enum.md)           | Properties using `oneOf` with `const` values.                  |    v0 |
+| [`multiple_choice`](multiple_choice.md)   | `type: array` of `enum` or `oneOf` items.                      |    v0 |
+| [`array`](array.md)                       | Arrays of primitives or "flat" objects.                        |    v0 |
+| [`nested_array`](nested_arrays.md)        | Object arrays whose items contain a nested array/object.       |    v0 |
+| `categorization`                          | One tab for each [`vays_category`](../../yac/specs/file/schema.md#keyword-vays_category). |    v0 |
+| `group`                                   | One box for each [`vays_group`](../../yac/specs/file/schema.md#keyword-vays_group) inside a `vays_category`. |    v0 |
+| `void`                                    | Don't show everything else (to allow subschemas that are not in the form). |    v0 |
 
-The `title`, `description` and `default` JSON-Schema keywords are also
-honoured everywhere, with `title` and `description` rendered as Markdown.
+## Explicit Renderers
+
+Selected via `vays_options.renderer: <name>`:
+
+| Renderer                                 | Purpose                                                            | Since |
+|:-----------------------------------------|:-------------------------------------------------------------------|------:|
+| [`info_box`](info_box.md)                | Read-only info box (renders `title` and `description` only).       |    v0 |
+| [`password`](password.md)                | Password input that hashes the value before sending.               |    v0 |
+| [`ssh_key`](ssh_key.md)                  | Multi-line SSH-key input with file-paste support.                  |    v0 |
+| [`text_area`](text_area.md)              | Multi-line text area instead of a single-line input.               |    v0 |
+| [`mac_address`](mac_address.md)          | Auto-formats and validates MAC addresses.                          |    v0 |
+| [`list_as_string`](list_as_string.md)    | Edits a list but persists as a separator-joined string.            |    v0 |
+| [`big_string_list`](big_string_list.md)  | High-performance list editor for long arrays of strings.           |    v0 |
+| [`multi_checkbox`](multi_checkbox.md)    | Render array-of-enum choices as a column of checkboxes.            |    v0 |
+| [`age_secret`](age_secret.md)            | Generate-once secret, AGE-encrypted in the browser before storage. |    v0 |

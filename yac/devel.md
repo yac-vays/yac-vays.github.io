@@ -5,33 +5,34 @@ nav_order: 5
 
 # Development
 
-## Build & Upgrade
+## Test & Build locally
 
-YAC is shipped as a container.
+To run the test suite and build locally, run the following command from within
+the git repository:
 
-See [README.md](https://github.com/yac-vays/yac/blob/main/README.md) in the
-repository for the most important development steps.
+```bash
+sudo docker build --progress plain --build-arg version=v0.0 -t yac .
+```
 
-The Dockerfile has three stages: `build` (install requirements + copy app),
-`test` (runs `pylint` and the unit tests in `tests/`) and `production` (the
-final image). The `production` stage depends on `test`, so a failing test
-will fail the build.
+## Release
 
-## Branches and Tags
+Commit and push your changes to the `test` branch if you want to make
+a new **release-candidate**. Then run `scripts/release.sh` to tag your
+commit with a new rc-version and start the
+[build-pipeline](https://github.com/yac-vays/yac/blob/main/.gitlab-ci.yml).
 
-The git repository has two branches, `test` and `main`. Commits will not
-immediately trigger the build-pipeline. Only tags will. Push tags like
-`v1.3rc7` (in incrementing order) to the `test` branch for test releases.
-Then merge them into `main`, tagged as `v1.3` for production releases.
+To **release** a release-candidate, merge your commit to the `main` branch
+and run `scripts/release.sh` from there (it will again tag your commit
+with a new minor-version and start the build-pipeline).
 
-Development can always also happen in short-lived dev-branches and be merged
-into test for test-releases.
+## Upgrade Environment
 
-Changes to the helm-chart will always be published as a new helm-chart
-version (independent of branches or tags)!
+- Check on https://hub.docker.com/_/python for new versions and adjust the tag
+  in the `FROM` instruction of `./Dockerfile`. (Use a most specific tag to allow
+  reproducable builds.)
 
-## Plugins
+- Build container (and update the requirements file) with:
 
-To add or modify a plugin during development, drop the file into
-`app/plugin/{type}/{name}.py` and restart YAC. See [Plugins](plugins.md) and
-the `README.md` next to each plugin type.
+      sudo docker build --progress plain -t yac .
+      sudo docker run --rm -v "$(pwd)/requirements.in:/r.in:ro" --entrypoint sh yac:latest -c \
+          "pip install pip-tools &>/dev/null; /home/yac/.local/bin/pip-compile -o - /r.in" > ./requirements.txt

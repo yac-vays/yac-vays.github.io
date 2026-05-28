@@ -45,7 +45,11 @@ npm run build
 ```
 
 The resulting bundle in `dist/` is what the production container
-serves.
+serves. It is a pure static bundle, so any web server can host it —
+nginx, Caddy, S3 + CloudFront, ... Enable gzip (or brotli) compression
+at the server to keep the over-the-wire size small (for nginx, that's
+`gzip on;`). The bundled container image already does this; if you
+self-host, you'll want to mirror the setting.
 
 ## Tests
 
@@ -68,32 +72,36 @@ docker run -p 8080:8080 \
 
 See [Installation](install.md) for full deployment options.
 
-## Renderers
+## Adding a Renderer
 
-If you want to add a new form renderer, see the
-[Renderers / Adding a Custom Renderer](renderers/custom.md) page and the
-[`src/renderers/README.md`](https://github.com/yac-vays/vays/blob/main/src/renderers/README.md)
-in the source tree for conventions.
+VAYS renderers are JSON-Forms renderer/tester pairs registered in
+`src/renderers/index.tsx`. To add a new one:
+
+  1. Create a `MyRenderer.tsx` exporting a renderer component plus a
+     `MyRendererTester` built with
+     `rankWith(rank, isCustomRenderer('my_name'))` (or any other
+     tester combination).
+  2. Add the renderer/tester pair to the relevant index file
+     (`control/`, `combined/`, `layout/` or `control/special/`).
+  3. Reference it from the YAC spec via
+     `vays_options.renderer: my_name`.
+
+See the [renderer source tree](https://github.com/yac-vays/vays/tree/main/src/renderers)
+and its [README](https://github.com/yac-vays/vays/blob/main/src/renderers/README.md)
+for conventions and helper utilities (`isCustomRenderer`,
+`isUntypedStringInput`, ...). The
+[Renderers documentation](renderers/) describes the bundled
+renderers and how selection works at runtime.
 
 ## Releasing
 
-`scripts/release.sh` calculates the next version tag from the current
-branch (`testing` for `rc`, `main` for stable) and pushes it, which
-triggers the CI build & deploy pipeline:
+Commit and push your changes to the `test` branch if you want to make
+a new **release-candidate**. Then run `scripts/release.sh` to tag your
+commit with a new rc-version and start the build-pipeline.
 
-```sh
-./scripts/release.sh minor   # or: major
-```
-
-  - On the `testing` branch a release-candidate tag (`vX.YrcN`) is
-    created and the resulting image is published as `testing` and
-    `vX.YrcN` on Docker Hub.
-  - On the `main` branch a stable tag (`vX.Y`) is created and the image
-    is published as `latest`, `vX`, `vX.Y`.
-
-The script refuses to run with uncommitted changes or on any other
-branch; see [Installation](install.md#versioning--container-tags) for
-the full tag schema.
+To **release** a release-candidate, merge your commit to the `main` branch
+and run `scripts/release.sh` from there (it will again tag your commit
+with a new minor-version and start the build-pipeline).
 
 ## Upgrading Dependencies
 

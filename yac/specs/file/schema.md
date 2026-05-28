@@ -167,29 +167,35 @@ schema:
 
 ### Keyword `vays_options.initial`
 
-This value will be used as an initial value in the VAYS input field but will
-not land in the data (and thus the YAML file in the end) unless the user
+This value will be used as an initial value in the VAYS input field. So it 
+somehow replaces the `default` keyword. But unlike the `default` value, it
+will not land in the data (and thus the YAML file in the end) unless the user
 interacts with it.
 
 ### Keyword `vays_options.initial_editable`
 
-The `vays_options.initial` value will be used as data in the VAYS input field
-instead of a placeholder. (So if it is `false` for a text input, as soon as
-the user starts typing, the initial value will disappear. Otherwise (`true`),
-the user would edit the `initial` value when typing instead of replacing it.)
+The `vays_options.initial_editable` boolean (default `false`) is meant to
+decide how a user can interact with the `vays_options.initial` value. If
+`false`, the `vays_options.initial` value is used as a notable (e.g. greyed
+out) placeholder that disappears as soon as the user interacts with the form.
+If `true` however, it is indistinguishable from a `default` value for the
+user.
+
+So for example: in the default text renderer with `vays_options.initial_editable`
+set to `false`, the `vays_options.initial` value is slightly greyed out and will
+disappear as soon as the user starts typing. Otherwise (`true`), the value looks
+like regular text in the text box, and by typing, the user modifies the value
+(exactly the same user-experience as for a `default` value).
 
 ### Keyword `vays_options.renderer`
 
-Use a custom form renderer for this input field.  The value is the name of
-a renderer registered in VAYS (the frontend).  See the
-[VAYS renderers documentation](../../../vays/renderers/)
-for the list of bundled renderers (e.g. `BigStringArray`,
-`PasswordRenderer`, `SSHKeyRenderer`, `InfoBoxRenderer`,
-`ListAsStringRenderer`) and instructions for adding new ones.
+Use a custom form renderer for this input field. The value is the name
+of a [VAYS renderer](../../../vays/renderers/index.md).
 
 ### Keyword `vays_options.renderer_options`
 
-Specific options for the `vays_options.renderer`.
+VAYS renderer specific configuration options, see each renderers documentation
+for details.
 
 ## Official Keywords With Modified, Limited Or Extended Behaviour
 

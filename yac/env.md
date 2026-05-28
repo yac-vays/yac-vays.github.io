@@ -6,7 +6,7 @@ nav_order: 2
 # Environment Variables
 
 Only the very base configuration of YAC is done via environment variables.
-Everything else is configured in the [specification file ("specs")](specs/index.md).
+Everything else is configured in the [specs file](specs/index.md).
 
 All variables are prefixed with `YAC_`. For nested values, the delimiter
 `__` (double underscore) is used (e.g. `YAC_ENV__MY_VAR` for `env.my_var`).

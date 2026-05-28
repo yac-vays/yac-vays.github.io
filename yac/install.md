@@ -12,20 +12,18 @@ changing it requires a pod/container restart.
 
 ## Prerequisites
 
-  - A Git repository (writeable by YAC) for storing the managed YAML files.
-    The git URL, branch, SSH key path, etc. are configured in the [specs
-    file's `repo` section](specs/file/repo.md).
-  - An OpenID Connect (OIDC) provider for authentication.
-  - A specs file describing the repository, entity types, roles and
-    schemas (see [Specification](specs/index.md)).
+  - A Git repository (with a write-access token/key for YAC) for storing the
+    managed YAML files.
+  - An OpenID Connect (OIDC) provider with at least one client configuration for
+    YAC (and VAYS) to handle authentication.
+  - A [specs file](specs/index.md) (`yac.yml`) specifying and configuring everything.
 
 ## Plain Docker
 
-A minimal example (OpenID Connect URL, accepted client IDs, the data
-repo URL, ... all live in `yac.yml`):
+A minimal example to start YAC locally:
 
 ```sh
-docker run --rm --name yac -p 8080:8080 \
+sudo docker run --rm --name yac -p 127.0.0.1:8080:8080 \
     -v /path/to/yac.yml:/yac.yml:ro \
     --tmpfs /repo \
     registry.inf.ethz.ch/public-isg/yac-vays/yac:latest
@@ -96,11 +94,7 @@ Modes:
     `redis.single.persistence.enabled: true`. Zero extra dependencies.
   - **`external`**: the chart does not deploy Redis; you supply
     `redis.url`. Use this to point YAC at a Redis HA cluster you
-    deploy separately (e.g. via the
-    [OT-CONTAINER-KIT redis-operator](https://github.com/ot-container-kit/redis-operator),
-    the [Dragonfly operator](https://github.com/dragonflydb/dragonfly-operator),
-    or a managed cloud Redis like AWS ElastiCache, GCP Memorystore or
-    Azure Cache).
+    deploy separately.
 
 {: .important}
 Enabling the `redis:` block in `values.yaml` is only half the wiring —

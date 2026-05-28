@@ -15,22 +15,23 @@ which is loaded by the browser at start-up — see
 
   - At least one running [YAC](../yac/index.md) backend reachable from the
     user's browser.
-  - An OpenID Connect (OIDC) provider that both VAYS and the YAC backends
-    trust.
-  - A `config.json` file (see [Configuration](config.md) for the schema
-    and an example).
+  - An OpenID Connect (OIDC) provider with a client configuration for this
+    VAYS and all attached YAC instances to handle authentication.
+  - A [config file](config.md) (`config.json`).
 
 ## Plain Docker
 
+A minimal example to start VAYS locally:
+
 ```sh
-docker run --rm --name vays -p 8080:8080 \
-    --mount type=bind,source="$(pwd)/config.json",target=/usr/share/nginx/html/config.json,readonly \
+sudo docker run --rm --name vays -p 127.0.0.1:8080:8080 \
+    -v /path/to/config.json:/usr/share/nginx/html/config.json:ro \
     registry.inf.ethz.ch/public-isg/yac-vays/vays:latest
 ```
 
 VAYS is then reachable at [http://localhost:8080/](http://localhost:8080/).
 
-Notes:
+Hints:
 
   - The redirect URI configured at the OIDC provider must match the URL at
     which the user opens VAYS (typically `https://<your-host>/oauth2-redirect`).

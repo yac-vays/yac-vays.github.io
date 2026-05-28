@@ -27,9 +27,9 @@ with a new minor-version and start the build-pipeline).
 
 ## Upgrade Environment
 
-- Check on https://hub.docker.com/_/python for new versions and adjust the tag
-  in the `FROM` instruction of `./Dockerfile`. (Use a most specific tag to allow
-  reproducable builds.)
+- Check on [DockerHub](https://hub.docker.com/_/python) for new versions and
+  adjust the tag in the `FROM` instruction of `./Dockerfile`. (Use a most
+  specific tag to allow reproducable builds.)
 
 - Build container (and update the requirements file) with:
 

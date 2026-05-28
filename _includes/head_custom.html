@@ -1,7 +1,7 @@
 <script>
-  /* Expand all collapsible nav items by default; clicking the chevron still toggles. */
+  /* Expand the first level of collapsible nav items by default */
   document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('#site-nav .nav-list-item > .nav-list-expander').forEach(function (btn) {
+    document.querySelectorAll('#site-nav > .nav-list > .nav-list-item > .nav-list-expander').forEach(function (btn) {
       btn.parentNode.classList.add('active');
       btn.setAttribute('aria-expanded', 'true');
     });

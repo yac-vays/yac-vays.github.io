@@ -1,9 +1,18 @@
 ---
 parent: YAC
 nav_order: 5
+has_children: true
 ---
 
 # Development
+
+YAC is a [FastAPI](https://fastapi.tiangolo.com) service written in
+Python that reads a Jinja2-templated YAML *specs* file and exposes
+the entities described there as a REST API backed by a Git
+repository.
+
+New to the codebase? Start with the [Architecture](architecture.md)
+overview.
 
 ## Test & Build locally
 

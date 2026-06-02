@@ -88,19 +88,21 @@ To **release** a release-candidate, merge your commit to the `main` branch
 and run `scripts/release.sh` from there (it will again tag your commit
 with a new minor-version and start the build-pipeline).
 
-## Upgrading Dependencies
+## Upgrade Environment
 
-```sh
-npm update --save
-npm update --save-dev
-```
+- Check on DockerHub for new versions of [Node](https://hub.docker.com/_/node) and
+  [Nginx](https://hub.docker.com/r/nginxinc/nginx-unprivileged) and
+  adjust the tags in the `FROM` instructions of `./Dockerfile`. (Use a most
+  specific tag to allow reproducable builds.)
 
-Run the two commands separately — combining the flags can lead to
-inconsistent updates.
+- Update npm dependencies (`package.json` and `package-lock.json`) with the
+  following commands (run them separately - combining them can lead to
+  inconsistent updates):
 
-Periodically check [hub.docker.com/_/node](https://hub.docker.com/_/node)
-and the unprivileged nginx base image for new versions and update the
-tags in `Dockerfile`.
+  ```bash
+  npm update --save
+  npm update --save-dev
+  ```
 
 ## URL Schema
 

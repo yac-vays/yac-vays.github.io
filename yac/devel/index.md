@@ -40,8 +40,10 @@ with a new minor-version and start the build-pipeline).
   adjust the tag in the `FROM` instruction of `./Dockerfile`. (Use a most
   specific tag to allow reproducable builds.)
 
-- Build container (and update the requirements file) with:
+- Build the container to update pip dependencies (`requirements.txt`) with:
 
-      sudo docker build --progress plain -t yac .
-      sudo docker run --rm -v "$(pwd)/requirements.in:/r.in:ro" --entrypoint sh yac:latest -c \
-          "pip install pip-tools &>/dev/null; /home/yac/.local/bin/pip-compile -o - /r.in" > ./requirements.txt
+  ```bash
+  sudo docker build --progress plain -t yac .
+  sudo docker run --rm -v "$(pwd)/requirements.in:/r.in:ro" --entrypoint sh yac:latest -c \
+      "pip install pip-tools &>/dev/null; /home/yac/.local/bin/pip-compile -o - /r.in" > ./requirements.txt
+  ```

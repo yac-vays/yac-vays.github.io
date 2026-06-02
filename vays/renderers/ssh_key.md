@@ -20,9 +20,10 @@ public keys. Compared to the plain text renderer it offers:
     outside freezes the value back into compact display.
   - **Copy button.** Copies the key to the clipboard.
 
-If the stored value contains newlines, each line is rendered as its
-own SSH-key row — useful when a field stores multiple keys joined
-by `\n`.
+The field holds **exactly one** SSH key. If a selected file contains
+multiple keys or is otherwise malformed, it is **not loaded** and an
+inline error is shown instead. The same applies to a stored value that
+is not a single, well-formed key.
 
 ## Configuration
 
@@ -34,8 +35,21 @@ Select the renderer with `vays_options.renderer: ssh_key`.
 | `format`                         | Recommended: `ssh_key` for YAC-side structural validation of the OpenSSH public-key shape (see [bundled formats](../../yac/specs/file/schema.md#keyword-format)). |
 | `pattern`                        | Non-matching values are reported inline as an error. |
 | `minLength`                      | Too-short values are reported inline as an error (useful for required keys). |
-| `vays_options.initial`           | **Repurposed** — sets the file-picker label (the field itself displays a compact summary of the stored key, not the placeholder). |
-| `vays_options.initial_editable`  | When `true` together with `initial`, the value is loaded into the form data so the user starts from an existing key. |
+| `vays_options.initial`           | Behaves as [documented](../../yac/specs/file/schema.md#keyword-vays_optionsinitial), with one caveat regarding what "interacts" means (see *Warning* below). |
+| `vays_options.initial_editable`  | When `true`, the `initial` value is pre-loaded as editable content — indistinguishable from a `default` for the user — exactly like in the text renderer. |
+
+{: .note}
+A value that is not a single, valid OpenSSH public key (e.g. it contains
+multiple keys) is never loaded into the field; the renderer shows an
+inline error so the malformed value cannot be silently kept.
+
+{: .warning}
+What counts as *interaction* is slightly more eager here than in the text
+renderer. Because the field commits its value when it leaves edit mode
+(on *Enter*, on clicking outside, or after a file load), clicking the
+**Edit** button and then clicking away — *without changing anything* —
+already commits the displayed `initial`/`default` value into the data. The
+plain text renderer only commits once the text is actually changed.
 
 ## [Specs](../../yac/specs/index.md) Example
 

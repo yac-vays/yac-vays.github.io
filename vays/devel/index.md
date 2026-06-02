@@ -1,6 +1,7 @@
 ---
 parent: VAYS
 nav_order: 5
+has_children: true
 ---
 
 # Development
@@ -8,6 +9,11 @@ nav_order: 5
 VAYS is a [React](https://react.dev) + [TypeScript](https://www.typescriptlang.org)
 single-page application built with [Vite](https://vite.dev) and
 [JSON Forms](https://jsonforms.io).
+
+New to the codebase? Start with the
+[Architecture](architecture.md) overview, then skim the
+[React](react.md) and [JSON Forms](json-forms.md) primers before
+touching renderer code.
 
 ## Setup
 
@@ -70,7 +76,7 @@ docker run -p 8080:8080 \
     vays
 ```
 
-See [Installation](install.md) for full deployment options.
+See [Installation](../install.md) for full deployment options.
 
 ## Adding a Renderer
 
@@ -90,8 +96,10 @@ See the [renderer source tree](https://github.com/yac-vays/vays/tree/main/src/re
 and its [README](https://github.com/yac-vays/vays/blob/main/src/renderers/README.md)
 for conventions and helper utilities (`isCustomRenderer`,
 `isUntypedStringInput`, ...). The
-[Renderers documentation](renderers/) describes the bundled
-renderers and how selection works at runtime.
+[Renderers documentation](../renderers/) describes the bundled
+renderers and how selection works at runtime. The
+[JSON Forms primer](json-forms.md) covers the renderer/tester model
+itself.
 
 ## Releasing
 
@@ -119,7 +127,7 @@ tags in `Dockerfile`.
 
 ## URL Schema
 
-For reference (also see [Configuration](config.md#url-schema)):
+For reference (also see [Configuration](../config.md#url-schema)):
 
 ```
 domain/{backend-name}/{type}/?{filter-key}={filter-value}#{Page}.{NumPerPage}

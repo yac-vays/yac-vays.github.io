@@ -37,6 +37,9 @@ favicon_ico: /assets/images/yac.svg
 enable_copy_code_button: true
 heading_anchors: true
 
+mermaid:
+  version: "10.9.1"
+
 back_to_top: true
 back_to_top_text: Back to top
 

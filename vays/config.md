@@ -21,7 +21,7 @@ authenticate, and what to call itself.
 |:--------------------------|:----------|:---------|:------------|
 | `title`                   | `string`  | yes      | Window title and header label of the VAYS instance. |
 | `logo`                    | `string`  | no       | URL of an image used as the sidebar logo. Falls back to a built-in logo. |
-| `production`              | `boolean` | yes      | When `false`, VAYS shows a "non-production" banner so users know they are on a test instance. |
+| `production`              | `boolean` | yes      | When `false`, VAYS shows the **Schema Warnings** notification (the bell in the header) that surfaces schema-design hints. |
 | `color.primary`           | `#hex`    | no       | Primary theme colour. |
 | `color.primaryHighlighted`| `#hex`    | no       | Hover/active variant of the primary colour. |
 | `oidcConf.server`         | `string`  | yes      | The OIDC provider's discovery URL (`.../.well-known/openid-configuration`). Must match the YAC backend's [`auth.oidc.url`](../yac/specs/file/auth.md). |
@@ -91,6 +91,8 @@ The `{backend-name}` segment matches `backends[].name` from the config.
   - **CORS.** The YAC backend must include the VAYS origin in its
     [`auth.cors.origins`](../yac/specs/file/auth.md), otherwise the
     browser will block requests.
-  - **Production banner.** Set `"production": true` only on instances
-    where it is genuinely safe to do so — the banner is a deliberate UX
-    cue, not a security feature.
+  - **Schema Warnings bell.** Set `"production": false` on test/staging
+    instances to expose the schema-design warnings that help admins refine
+    their UI-Schema. The flag only toggles that header notification — it is
+    a UX/authoring cue, not a security feature, and does not change logging
+    or hide the `/dev-info` page.

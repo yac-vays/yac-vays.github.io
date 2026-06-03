@@ -315,7 +315,18 @@ immediate feedback when using VAYS.
 
 For details about the keywords, visit
 [learnjsonschema.com](https://www.learnjsonschema.com).
- 
+
+### Keywords `enum`, `oneOf`, `anyOf`
+
+These work as usual. Since JSON Schema require these arrays to hold at least
+one item, YAC implements a safety net: In case of an empty array (after
+templating), YAC replaces the key by a `not: {}`, which is valid JSON Schema
+but unsatisfiable (so the same effect but the Schema stays valid).
+
+Then, it also adds `vays_options.renderer: unavailable`, which will make
+sure the key is still present in the VAYS form. For details, read see
+[Renderer `unavailable`](../../../vays/renderers/unavailable.md).
+
 ## Official Not Supported Keywords
 
 The following keywords are **NOT SUPPORTED** by YAC and VAYS!

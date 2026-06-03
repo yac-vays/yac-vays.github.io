@@ -71,3 +71,4 @@ Selected via `vays_options.renderer: <name>`:
 | [`big_string_list`](big_string_list.md)  | High-performance list editor for long arrays of strings.           |    v0 |
 | [`multi_checkbox`](multi_checkbox.md)    | Render array-of-enum choices as a column of checkboxes.            |    v0 |
 | [`age_secret`](age_secret.md)            | Generate-once secret, AGE-encrypted in the browser before storage. |    v0 |
+| [`unavailable`](unavailable.md)          | Mark a field as having no valid value (auto-applied by YAC to empty `enum`/`oneOf`/`anyOf`). |    v0 |

@@ -5,7 +5,7 @@ nav_order: 1
 
 # Field `limits`
 
-`limits` is a per-[type](types.md) field that caps **how many entities** of a
+`limits` is a per-[type](index.md) field that caps **how many entities** of a
 type may exist within a group, or **how much of a summed quota** a group may
 use. Limits are enforced on every `create` and `change` operation (a `delete`
 can never exceed a cap) and surface as a normal validation error.
@@ -13,16 +13,18 @@ can never exceed a cap) and surface as a normal validation error.
 A limit is the combination of three Jinja2 expressions:
 
 - **`scope`** — decides which existing entities belong to the same group as
-  the entity being created/changed (think of it as a [set](sets.md)).
-- an **aggregate** — either `count` (number of entities) or `sum` of a
-  per-entity **`value`**.
+  the entity being created/changed (think of it as a [set](../sets.md)).
+- **`value`** — one entity's contribution to the group total. It is **summed**
+  over every in-scope entity. It defaults to `1`, so an unset `value` simply
+  **counts** entities; set it to a data expression (e.g. `old.data.quota`) to
+  sum a quota instead.
 - **`max`** — the cap, which may itself depend on the user or context (e.g. a
   per-user or per-plan quota).
 
-All three are rendered with the same variables as [`roles`](roles.md) /
-[`sets`](sets.md): `old`, `new`, `name`, `user`, `context`, `env`, `request`.
+All three are rendered with the same variables as [`roles`](../roles.md) /
+[`sets`](../sets.md): `old`, `new`, `name`, `user`, `context`, `env`, `request`.
 While aggregating, `old` is the **existing entity being scanned** and `new` is
-the **incoming entity** being created or changed. The reported usage always
+the **incoming entity** being created or changed. The reported total always
 includes the incoming entity itself, so the UI can show e.g. `3/5 used`.
 
 ## Defaults
@@ -32,8 +34,7 @@ includes the incoming entity itself, so the UI can show e.g. `3/5 used`.
 limits:
   - title:           # mandatory; shown in the error message and the UI
     scope: 'true'    # j2 test: does the scanned entity (old) count? (default: all)
-    aggregate: count # or: sum
-    value: '1'       # j2 number: a scanned entity's contribution (only for sum)
+    value: '1'       # j2 number summed over the group (default 1 = count entities)
     max:             # mandatory; j2 number: the cap (may depend on user/context)
     on: [create, change]  # operations this limit is enforced on
 ```
@@ -42,7 +43,7 @@ limits:
 ## Example: a maximum number of entities per owner
 
 Allow each owner at most five `vm` entities. `scope` groups entities by their
-`owner` field; `aggregate: count` is the default.
+`owner` field; with no `value`, each entity contributes the default `1`.
 
 {% raw %}
 ```yaml
@@ -75,15 +76,18 @@ exposed in `context` — let `max` reference `user`:
     limits:
       - title: VMs per owner
         scope: "old.data.owner == new.data.owner"
-        max: "{{ context.vm_quota(user.name) }}"
+        max: "{{ my_ldap_vm_quota_lookup(user.name) }}"
 ```
 {% endraw %}
 
 ## Example: a maximum summed quota per owner
 
 Sum a numeric field (`disk_gb`) over all of an owner's entities and cap the
-total. `value` is the contribution of each scanned entity; the incoming
-entity's own value is included automatically.
+total. `value` describes the contribution of **one** entity (using `old.data`,
+the entity being scanned); YAC evaluates it for every in-scope entity **and**
+for the incoming one (with `old` bound to the new data) and adds them up. You
+do **not** write the summation yourself — just describe a single entity's
+contribution, e.g. `old.data.disk_gb | default(0)`.
 
 {% raw %}
 ```yaml
@@ -93,7 +97,6 @@ types:
     limits:
       - title: Disk quota per owner (GB)
         scope: "old.data.owner == new.data.owner"
-        aggregate: sum
         value: "old.data.disk_gb | default(0)"
         max: "{{ context.disk_quota_gb }}"
 ```
@@ -120,7 +123,7 @@ per-OU cap, for instance:
   while moving it into an already-full group does.
 - `used` in the result and the error message already counts the incoming
   entity, so `max: "5"` permits five entities (the sixth `create` fails with
-  `Limit "…" reached: 6/5 entities.`).
+  `Limit "…" reached: 6/5.`).
 - Limits run **after** permission and conflict checks, so a forbidden or
   conflicting operation reports its own, more specific error first.
 

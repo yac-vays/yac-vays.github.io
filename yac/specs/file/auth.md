@@ -15,11 +15,11 @@ auth:
     url: ...
     client_ids: [a, b]
     jwt:
-      name: "{name}"
-      full_name: "{givenName} {surname}"
-      full_name_fallback: "{name}"
-      email: "{mail}"
-      email_fallback: "{name}@localhost"
+      name: "{sub}"
+      full_name: "{name}"
+      full_name_fallback: "{given_name} {family_name}"
+      email: "{email}"
+      email_fallback: "{sub}@localhost"
   cors:
     origins: ["https://app.example.com"]
 ```
@@ -30,11 +30,11 @@ auth:
 |:------------------------|:----------------|:-----------------------------------------------------|:------------|
 | `url`                   | `string`        | `https://localhost/.well-known/openid-configuration` | URL of the OpenID Connect discovery document. |
 | `client_ids`            | `list[string]`  | `[]`                                                 | Accepted `client_id`s. The first is used as the default in the Swagger UI. |
-| `jwt.name`              | format-string   | `{name}`                                             | Extracts the user's `name` from the JWT id-token. |
-| `jwt.full_name`         | format-string   | `{givenName} {surname}`                              | Extracts the user's `full_name`. |
-| `jwt.full_name_fallback`| format-string   | `{name}`                                             | Fallback when `jwt.full_name` cannot be rendered (e.g. missing claim). |
-| `jwt.email`             | format-string   | `{mail}`                                             | Extracts the user's `email`. |
-| `jwt.email_fallback`    | format-string   | `{name}@localhost`                                   | Fallback when `jwt.email` cannot be rendered. |
+| `jwt.name`              | format-string   | `{sub}`                                              | Extracts the user's `name` from the JWT id-token. |
+| `jwt.full_name`         | format-string   | `{name}`                                             | Extracts the user's `full_name`. |
+| `jwt.full_name_fallback`| format-string   | `{given_name} {family_name}`                         | Fallback when `jwt.full_name` cannot be rendered (e.g. missing claim). |
+| `jwt.email`             | format-string   | `{email}`                                            | Extracts the user's `email`. |
+| `jwt.email_fallback`    | format-string   | `{sub}@localhost`                                    | Fallback when `jwt.email` cannot be rendered. |
 
 The JWT format-strings use Python `str.format` substitution against the
 validated id-token claims (so `{sub}`, `{preferred_username}`, etc. work

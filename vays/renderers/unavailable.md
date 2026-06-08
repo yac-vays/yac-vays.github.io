@@ -15,7 +15,7 @@ YAC selects this renderer **automatically** for a required field whose
 `enum`/`oneOf`/`anyOf` rendered to an **empty** list (e.g. a per-user `oneOf`
 built with `to_consts(...)` that filtered down to nothing). In that case YAC
 also makes the field unsatisfiable (`not: {}`), so the operation can never
-validate and **Save is blocked** — see
+validate and **Commit is blocked** — see
 [empty enumerations](../../yac/specs/file/schema.md#keywords-enum-oneof-anyof).
 
 The renderer itself is purely presentational: it shows the message box. Whether

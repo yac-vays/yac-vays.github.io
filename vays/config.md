@@ -22,6 +22,7 @@ authenticate, and what to call itself.
 | `title`                   | `string`  | yes      | Window title and header label of the VAYS instance. |
 | `logo`                    | `string`  | no       | URL of an image used as the sidebar logo. Falls back to a built-in logo. |
 | `production`              | `boolean` | yes      | When `false`, VAYS shows the **Schema Warnings** notification (the bell in the header) that surfaces schema-design hints. |
+| `defaultEditorLayout`     | `"form" \| "yaml" \| "both"` | no | The editor layout shown the **first** time a user opens an entity: the form pane only, the YAML editor only, or both side by side. As soon as the user moves the divider (or collapses a pane) their choice is remembered in the browser (local storage) and overrides this. Defaults to `form`. |
 | `color.primary`           | `#hex`    | no       | Primary theme colour. |
 | `color.primaryHighlighted`| `#hex`    | no       | Hover/active variant of the primary colour. |
 | `oidcConf.server`         | `string`  | yes      | The OIDC provider's discovery URL (`.../.well-known/openid-configuration`). Must match the YAC backend's [`auth.oidc.url`](../yac/specs/file/auth.md). |
@@ -48,6 +49,7 @@ authenticate, and what to call itself.
     "primaryHighlighted": "#007894"
   },
   "production": true,
+  "defaultEditorLayout": "form",
   "oidcConf": {
     "server": "https://access.example.com/.well-known/openid-configuration",
     "clientID": "vays-spa"
@@ -75,7 +77,7 @@ For reference, VAYS uses the following client-side routes:
 
 ```
 domain/{backend-name}/{type}/?{filter-key}={filter-value}#{Page}.{NumPerPage}
-domain/{backend-name}/{type}/create/{name}?view=...
+domain/{backend-name}/{type}/create/{name}
 ```
 
 The `{backend-name}` segment matches `backends[].name` from the config.

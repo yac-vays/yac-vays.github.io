@@ -137,7 +137,7 @@ For an `array` subschema with `vays_category` defined, VAYS renders the
 default array control (a list of items with add/remove buttons). The shape
 of each row is taken from `items` (which must be `type: object`).
 `vays_options` set directly on the array applies to the array control
-itself (e.g. `renderer: BigStringArray`). `vays_options` set on the
+itself (e.g. `renderer: big_string_list`). `vays_options` set on the
 properties of `items.properties.*` applies to the corresponding column /
 input element of each row.
 

@@ -5,7 +5,7 @@ nav_order: 3
 
 # Field `actions`
 
-`actions` is a per-[type](types.md) field defining custom operations that go
+`actions` is a per-[type](index.md) field defining custom operations that go
 beyond plain CRUD: they call out to an HTTP endpoint or run a shell command.
 It is a **list**; each action can be triggered explicitly by the user or
 **hooked** to run automatically around create/change/delete.
@@ -20,10 +20,10 @@ It is a **list**; each action can be triggered explicitly by the user or
 | `force` | `false` | Run automatically on the hooked operations (see below). |
 | `hooks` | `[arbitrary]` | When the action may run / is forced (see below). |
 | `plugin` | *mandatory* | One of `http`, `shell`. |
-| `details` | `{}` | Plugin-specific config; all string values are [j2-strings](../j2.md). |
+| `details` | `{}` | Plugin-specific config; all string values are [j2-strings](../../j2.md). |
 
 The `details` are rendered with the templating variables listed for
-`types[].actions[].details` in the [variable matrix](../j2.md#variables).
+`types[].actions[].details` in the [variable matrix](../../j2.md#variables).
 
 ## Hooks and `force`
 
@@ -60,6 +60,8 @@ user-facing errors.
 | `url` | *mandatory* | j2-string; the request URL. |
 | `body` | `''` | j2-string; the request body. |
 | `headers` | `{}` | j2-string values. |
+| `timeout` | `5` | Abort the request after this many seconds. |
+| `ssl_verify` | `true` | Verify the HTTPS certificate. |
 | `success` | the 2xx codes | Status codes considered successful. |
 | `error` | `[]` | Status codes whose response body is returned to the user as the error message (instead of a generic 500). |
 

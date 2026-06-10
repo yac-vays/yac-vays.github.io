@@ -22,7 +22,7 @@ See the [renderer source tree](https://github.com/yac-vays/vays/tree/main/src/re
 and its [README](https://github.com/yac-vays/vays/blob/main/src/renderers/README.md)
 for conventions and helper utilities (`isCustomRenderer`,
 `isUntypedStringInput`, ...). The
-[Renderers documentation](../renderers/) describes the bundled
+[Renderers documentation](../renderers/index.md) describes the bundled
 renderers and how selection works at runtime. The
 [JSON Forms primer](json-forms.md) covers the renderer/tester model
 itself.

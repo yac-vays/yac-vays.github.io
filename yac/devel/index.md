@@ -11,7 +11,7 @@ Python that reads a Jinja2-templated YAML *specs* file and exposes
 the entities described there as a REST API backed by a Git
 repository.
 
-New to the codebase? Start with the [Architecture](architecture.md)
+New to the codebase? Start with the [Architecture](arch.md)
 overview.
 
 ## Test & Build locally

@@ -149,8 +149,21 @@ inline SVG, so there is no extra file to host:
 For reference, VAYS uses the following client-side routes:
 
 ```
+/                                       Login (OIDC)
+/oauth2-redirect                        OAuth2 callback
+/{backend-name}/{type}/                 Overview (list of entities)
+/{backend-name}/{type}/create/{name}?   Create (or copy) an entity
+/{backend-name}/{type}/modify/{name}?   Edit an entity
+/{backend-name}/{type}/view/{name}?     Read-only view of an entity
+/error-page                             Error page
+/dev-info                               Developer info
+```
+
+The overview route additionally supports filtering and paging via query
+string and fragment:
+
+```
 domain/{backend-name}/{type}/?{filter-key}={filter-value}#{Page}.{NumPerPage}
-domain/{backend-name}/{type}/create/{name}
 ```
 
 The `{backend-name}` segment matches `backends[].name` from the config.

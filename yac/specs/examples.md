@@ -16,6 +16,8 @@ startup; everything else may use [Jinja2 templating](j2.md).
 
 {% raw %}
 ```yaml
+version: 1
+
 types:
   - name: file
     title: Files
@@ -61,6 +63,8 @@ subset (`sets`) and per group of users.
 
 {% raw %}
 ```yaml
+version: 1
+
 types:
   - name: animal
     title: Animals
@@ -109,6 +113,8 @@ construct, and `yac_optional` to mark fields as not required.
 
 {% raw %}
 ```yaml
+version: 1
+
 context:
   max_age: 120
 
@@ -179,6 +185,8 @@ UI.
 
 {% raw %}
 ```yaml
+version: 1
+
 types:
   - name: host
     title: Hosts

@@ -18,7 +18,7 @@ Role keys can have the following two forms:
 | Role Format           | Description |
 |:----------------------|:------------|
 | `{type}:all:{perm}`   | Grant user the `perms` on all entities of `type`. |
-| `{type}:{set}:{perm}` | Grant user the `perms` on the entities of `type` in the the set named `set` (see [Section `set`](set.md)). |
+| `{type}:{set}:{perm}` | Grant user the `perms` on the entities of `type` in the the set named `set` (see [Section `sets`](sets.md)). |
 
 {: .note}
 To improove entity listing **performance**, split roles by entity-dependent

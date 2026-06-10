@@ -6,8 +6,13 @@ nav_order: 2
 # Permissions
 
 Permissions are applied to a user at at run-time based on
-[roles](../file/roles) and [sets](../file/sets) according to the
+[roles](file/roles.md) and [sets](file/sets.md) according to the
 definitions in the specs.
+
+{: .note}
+`GET /entity` intentionally returns the type metadata of **all** types to any
+authenticated user (the UI needs it to render the navigation); the entity data
+itself remains protected by roles.
 
 The following *permissions* are reserved and have a statically implemented
 meaning, but you are free to define and use additional ones in the specs
@@ -16,7 +21,7 @@ meaning, but you are free to define and use additional ones in the specs
 | Perm  | Includes | Description |
 |:-----:|:--------:|:------------|
 | `see` |          | Allow to read the whole YAML and the logs for the entity. |
-| `add` |          | Allow to create the entity (may be restricted in the schema). |
+| `add` | `see`    | Allow to create the entity (may be restricted in the schema). |
 | `rnm` | `see`    | Allow to rename the entity without a revalidation of the YAML, requires the `add` permission. |
 | `cpy` | `see`    | Allow to copy the entity without a revalidation of the YAML, requires the `add` permission. |
 | `lnk` | `see`    | Allow to link to the entity without a revalidation of the YAML, requires the `add` permission. |

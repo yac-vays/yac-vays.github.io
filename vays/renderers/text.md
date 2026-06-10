@@ -13,7 +13,7 @@ type up front.
 
 It is implicit (no `vays_options.renderer` required) — and is the
 lowest-ranked match for strings, so any explicit
-[string-based renderer](../#explicit-renderers) wins automatically
+[string-based renderer](index.md#explicit-renderers) wins automatically
 when its tester also matches.
 
 ## Configuration

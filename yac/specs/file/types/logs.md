@@ -5,7 +5,7 @@ nav_order: 2
 
 # Field `logs`
 
-`logs` is a per-[type](types.md) field that surfaces external log or status
+`logs` is a per-[type](index.md) field that surfaces external log or status
 information for an entity (e.g. an install log or a health check) so it can be
 shown in the UI. It is a **list**; each entry reads from one pluggable backend
 and is rendered as a separate log in the UI.
@@ -19,10 +19,10 @@ plugin-specific `details`:
 | `progress` | `true` to render the log as a progress indicator. |
 | `problem` | `true` to render the log as a problem/health indicator. |
 | `plugin` | *mandatory*; one of `elastic`, `file`. |
-| `details` | Plugin-specific config; all string values are [j2-strings](../j2.md). |
+| `details` | Plugin-specific config; all string values are [j2-strings](../../j2.md). |
 
 The `details` are rendered with the templating variables listed for
-`types[].logs[].details` in the [variable matrix](../j2.md#variables). In
+`types[].logs[].details` in the [variable matrix](../../j2.md#variables). In
 addition, the **per-entry** fields (`time`, `message`, `progress`, `problem`)
 receive a `log` variable describing the current entry — its exact shape
 depends on the plugin.
@@ -36,6 +36,7 @@ dict.
 |:----------------|:------------|
 | `url` | *mandatory*, j2-string; the Elasticsearch URL (may embed credentials from `env`). |
 | `ssl_verify` | Verify the TLS certificate (default `true`). |
+| `timeout` | Abort the request after this many seconds (default `5`). |
 | `query` | *mandatory*, j2-string; the query selecting this entity's entries. |
 | `message` | j2-string with the `log` hit; the displayed message. |
 | `time` | j2-string with the `log` hit; the entry's timestamp. |
@@ -69,7 +70,9 @@ the tuple of capture groups (`log[0]`, `log[1]`, ...).
 | `details` field | Description |
 |:----------------|:------------|
 | `path` | *mandatory*, j2-string; the path of the log file. |
-| `line_format` | *mandatory*; a regex (rendered as a j2-string first). Its capture groups become the `log` tuple. |
+| `required` | `true` to treat a missing file as an error (default `false`). |
+| `encoding` | The file encoding (default `utf-8`). |
+| `line_format` | A regex (rendered as a j2-string first); its capture groups become the `log` tuple (default `^(.*)$`, i.e. the whole line as `log[0]`). |
 | `message` | j2-string with the `log` tuple; the displayed message. |
 | `time` | j2-string with the `log` tuple; the entry's timestamp. |
 | `progress` | j2-int with the `log` tuple (when `progress: true`). |

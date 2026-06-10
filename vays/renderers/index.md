@@ -7,7 +7,7 @@ has_children: true
 # Renderers
 
 VAYS turns each form input into a React component using a *renderer*
-selected from the JSON-Schema and UI-Schema produced by the [Schema]((../../yac/specs/file/schema.md).
+selected from the JSON-Schema and UI-Schema produced by the [Schema](../../yac/specs/file/schema.md).
 Most fields get the right renderer automatically; for the rest, the spec
 author opts into a specific one via [`vays_options.renderer`](../../yac/specs/file/schema.md#keyword-vays_optionsrenderer).
 

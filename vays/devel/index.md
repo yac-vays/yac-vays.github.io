@@ -11,7 +11,7 @@ single-page application built with [Vite](https://vite.dev) and
 [JSON Forms](https://jsonforms.io).
 
 New to the codebase? Start with the
-[Architecture](architecture.md) overview, then skim the
+[Architecture](arch.md) overview, then skim the
 [React](react.md) and [JSON Forms](json-forms.md) primers before
 touching renderer code.
 
@@ -106,9 +106,23 @@ with a new minor-version and start the build-pipeline).
 
 ## URL Schema
 
-For reference (also see [Configuration](../config.md#url-schema)):
+For reference (also see [Configuration](../config.md#url-schema)). The full
+route list (see `src/App.tsx`):
+
+```
+/                                       Login (OIDC)
+/oauth2-redirect                        OAuth2 callback
+/{backend-name}/{type}/                 Overview (list of entities)
+/{backend-name}/{type}/create/{name}?   Create (or copy) an entity
+/{backend-name}/{type}/modify/{name}?   Edit an entity
+/{backend-name}/{type}/view/{name}?     Read-only view of an entity
+/error-page                             Error page
+/dev-info                               Developer info
+```
+
+The overview route additionally supports filtering and paging via query
+string and fragment:
 
 ```
 domain/{backend-name}/{type}/?{filter-key}={filter-value}#{Page}.{NumPerPage}
-domain/{backend-name}/{type}/create/{name}?view=...
 ```

@@ -8,7 +8,7 @@ has_children: true
 
 The `types` section is the heart of a YAC specification: it is a **list** of
 entity types, and each type turns one kind of YAML file in your data
-repository into a full REST API (and, through [VAYS](../../../vays/index.md), a web UI)
+repository into a full REST API (and, through [VAYS](../../../../vays/index.md), a web UI)
 for listing, creating, changing and deleting those files.
 
 A *type* bundles everything YAC needs to manage that kind of file:
@@ -21,20 +21,20 @@ A *type* bundles everything YAC needs to manage that kind of file:
 - optional **limits**, **logs** and **actions**.
 
 The data **schema** itself (the fields of each entity) is *not* defined here —
-it lives in the top-level [`schema`](schema.md) section, which applies to the
+it lives in the top-level [`schema`](../schema.md) section, which applies to the
 whole instance.
 
 {: .note}
 Only manage *similar* types in one YAC instance. All types share the same
-[`schema`](schema.md), [`roles`](roles.md), [`repo`](repo.md) and
-[`auth`](auth.md). If your file kinds are structurally very different, run a
+[`schema`](../schema.md), [`roles`](../roles.md), [`repo`](../repo.md) and
+[`auth`](../auth.md). If your file kinds are structurally very different, run a
 second YAC instance instead of forcing them into one.
 
 Like everywhere in the specs, every string value is a
-[j2-string](../j2.md) and is rendered per request, so most fields can depend
+[j2-string](../../j2.md) and is rendered per request, so most fields can depend
 on the caller, the request and the existing data. Which variables are
-available in which field is listed in the [templating variable
-matrix](../j2.md#variables).
+available in which field is listed in the
+[templating variable matrix](../../j2.md#variables).
 
 ## Field overview
 
@@ -115,10 +115,10 @@ create. You can instead let YAC generate the name:
 | `enforced`       | The request **must not** contain a name; it is always generated. |
 
 When a name is generated, it is produced by the `name_generator`
-[j2-string](../j2.md) and must still match `name_pattern` (and be unique).
+[j2-string](../../j2.md) and must still match `name_pattern` (and be unique).
 The default generator is `uuid()`. Inside the generator you additionally have
 access to `old.list` (the existing names of the type) and `new.data` (the data
-being created) — see the [variable matrix](../j2.md#variables).
+being created) — see the [variable matrix](../../j2.md#variables).
 
 {% raw %}
 ```yaml
@@ -147,7 +147,7 @@ operation for everyone, regardless of permissions.
 {: .important}
 These switches are *not* a substitute for access control. Even when an
 operation is enabled, the caller still needs the matching permission from the
-[`roles`](roles.md) section (see [Permissions](../perms.md)). Use the switches
+[`roles`](../roles.md) section (see [Permissions](../../perms.md)). Use the switches
 to disable an operation entirely (e.g. a read-only, externally-maintained
 type), and use roles to decide *who* may perform the enabled ones.
 

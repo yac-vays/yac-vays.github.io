@@ -5,8 +5,9 @@ nav_order: 4
 
 # Guarantees and Limitations
 
-VAYS is driven almost entirely by the [JSON-Schema and UI-Schema delivered
-by YAC](../yac/specs/file/schema.md). That gives spec authors a lot of
+VAYS is driven almost entirely by the
+[JSON-Schema and UI-Schema delivered by YAC](../yac/specs/file/schema.md).
+That gives spec authors a lot of
 flexibility, but it also means the frontend can be asked to render shapes
 it cannot represent well. This page is a non-exhaustive list of where
 those limits sit.

@@ -42,7 +42,7 @@ The repository plugin to use. Built-in plugins:
   - `git_redis`: layered on top of `git_direct`. One pod pulls from the
     remote per TTL window and publishes a snapshot of the working tree
     into Redis; every other read across every pod is served from Redis
-    with no git I/O. Reduces cold-path latency for `GET /{type}` on
+    with no git I/O. Reduces cold-path latency for `GET /entity/{type}` on
     large repos (10k+ entities) and shares state across pods. Writes
     still flow through `git_direct` (pull → modify → push) and rebuild
     the snapshot on scope exit, so the next read sees the new commit
@@ -163,5 +163,5 @@ repo:
 {% endraw %}
 
 {: .important}
-Every entity type defined under [`types`](types.md) must have a
+Every entity type defined under [`types`](types/index.md) must have a
 corresponding entry in `repo.details`.

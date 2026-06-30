@@ -26,7 +26,7 @@ read back.
 
 | State                        | What the user sees |
 |:-----------------------------|:-------------------|
-| No value (create or change)  | An empty password input with the field's `title` and `description`. |
+| No value (create or edit)  | An empty password input with the field's `title` and `description`. |
 | Existing value, enabled      | A masked input of 10 `*` (or the password's length when stored as `plaintext`). Typing replaces the value. |
 | Existing value, disabled     | Same masking; the field is read-only. |
 

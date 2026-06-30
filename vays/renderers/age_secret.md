@@ -20,7 +20,7 @@ a new secret that overwrites the current one.
 
 | State                                  | What the user sees |
 |:---------------------------------------|:-------------------|
-| No value (create or change, enabled)   | A new secret is generated automatically. The cleartext is shown read-only with a "Copy" button and a warning that it will not be shown again. |
+| No value (create or edit, enabled)   | A new secret is generated automatically. The cleartext is shown read-only with a "Copy" button and a warning that it will not be shown again. |
 | Existing valid value, enabled          | A masked input (`*` of `length` characters) and a **"Generate new"** button. Clicking it asks for confirmation and then replaces the secret. |
 | Existing valid value, disabled         | A masked input (`*` of `length` characters). No buttons. |
 | Existing value in an unexpected format | The raw value is shown read-only, the field is marked as invalid, and a **"Generate new"** button is offered. |

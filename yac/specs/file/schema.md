@@ -23,7 +23,7 @@ differently in the description.
 
 | Keyword                         | Schema Type    | Keyword Type    | Since |
 |:--------------------------------|:---------------|:----------------|------:|
-| `yac_changable`                 | `any`          | `boolean`       |    v0 |
+| `yac_editable`                 | `any`          | `boolean`       |    v0 |
 | `yac_if`                        | `any`          | `string`        |    v0 |
 | `yac_optional`                  | *some*         | `boolean`       |    v0 |
 | `yac_perms`                     | `any`          | `array[string]` |    v0 |
@@ -36,13 +36,13 @@ differently in the description.
 | `vays_options.renderer`         | `vays_options` | `string`        |    v0 |
 | `vays_options.renderer_options` | `vays_options` | `object`        |    v0 |
 
-### Keyword `yac_changable`
+### Keyword `yac_editable`
 
-Only allow changing entity data specified by this subschema if `true`.
+Only allow editing entity data specified by this subschema if `true`.
 
 ### Keyword `yac_if`
 
-Only allow creating and changing entity data specified by this subschema if
+Only allow creating and editing entity data specified by this subschema if
 `true`.
 
 {: .warning}

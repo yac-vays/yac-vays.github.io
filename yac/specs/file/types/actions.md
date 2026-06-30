@@ -8,7 +8,7 @@ nav_order: 3
 `actions` is a per-[type](index.md) field defining custom operations that go
 beyond plain CRUD: they call out to an HTTP endpoint or run a shell command.
 It is a **list**; each action can be triggered explicitly by the user or
-**hooked** to run automatically around create/change/delete.
+**hooked** to run automatically around create/edit/delete.
 
 | Field | Default | Description |
 |:------|:--------|:------------|
@@ -32,7 +32,7 @@ The `details` are rendered with the templating variables listed for
 - `arbitrary` exposes it as a standalone button
   (`POST /entity/{type}/{name}/run/{action}`).
 - `{operation}:before` / `{operation}:after` attach it to the lifecycle of
-  `create`, `change` and `delete` (e.g. `create:after`, `delete:before`).
+  `create`, `edit` and `delete` (e.g. `create:after`, `delete:before`).
 
 Whether a hooked action actually runs depends on `force`:
 

@@ -153,8 +153,8 @@ For reference, VAYS uses the following client-side routes:
 /oauth2-redirect                        OAuth2 callback
 /{backend-name}/{type}/                 Overview (list of entities)
 /{backend-name}/{type}/create/{name}?   Create (or copy) an entity
-/{backend-name}/{type}/modify/{name}?   Edit an entity
-/{backend-name}/{type}/view/{name}?     Read-only view of an entity
+/{backend-name}/{type}/edit/{name}?   Edit an entity
+/{backend-name}/{type}/read/{name}?     Read an entity (read-only)
 /error-page                             Error page
 /dev-info                               Developer info
 ```

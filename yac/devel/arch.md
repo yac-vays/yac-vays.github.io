@@ -19,7 +19,7 @@ seams where users plug in their own code.
 ## Router
 
 The HTTP layer. One module per operation kind (`read`, `create`,
-`change`, `delete`, `arbitrary`, `validate`, `status`, `error`). A
+`edit`, `delete`, `arbitrary`, `validate`, `status`, `error`). A
 router parses URL, headers and body, packs them — together with the
 authenticated user — into an `OperationRequest`, and orchestrates
 calls into `lib/`. Routers contain no business logic of their own;

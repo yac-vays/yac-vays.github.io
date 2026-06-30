@@ -7,7 +7,7 @@ nav_order: 2
 
 YAC enforces permissions on two independent levels:
 
-1. **File-level**: May this user perform this operation (read, create, change,
+1. **File-level**: May this user perform this operation (read, create, edit,
    delete, run an action) on this entity at all? This is computed at run-time
    from the [roles](file/roles.md) and [sets](file/sets.md) sections of the
    specs.
@@ -74,7 +74,7 @@ Permission flags can be defined freely. Flags without a reserved meaning
 | Create (new)            | `add` |
 | Create (copy)           | `add` + `cpy` |
 | Create (link)           | `add` + `lnk` |
-| Change entity data      | `edt`, plus `cln` if the change is "structural"[^2] |
+| Edit entity data        | `edt`, plus `cln` if the edit is "structural"[^2] |
 | Rename (a change with a new name) | `add` + `rnm`[^1], plus `edt`/`cln` if the content changes too |
 | Delete                  | `del` |
 | Run an action           | at least **one** of the action's `perms` (default `[act]`)[^3] |
@@ -104,11 +104,11 @@ covered by that subschema.
 
 ---
 
-[^1]: A rename is submitted as a regular change operation with a new name. A
+[^1]: A rename is submitted as a regular edit operation with a new name. A
       *pure* rename (no content change) moves the stored YAML as-is — the data
       is **not** revalidated against the schema, so entities whose stored data
       no longer matches the current schema can still be renamed. If the request
-      also modifies the content, the change is validated as usual (and
+      also modifies the content, the edit is validated as usual (and
       `edt`/`cln` are required accordingly).
 
 [^2]: "Structural" means anything the schema does not describe: deleting

@@ -15,7 +15,7 @@ A *type* bundles everything YAC needs to manage that kind of file:
 
 - how entities are **named** (`name_pattern`, `name_generated`,
   `name_generator`, ...),
-- which **operations** are available (`create`, `change`, `delete`),
+- which **operations** are available (`create`, `edit`, `delete`),
 - what is shown in the **UI** (`title`, `description`, `options`,
   `favorites`),
 - optional **limits**, **logs** and **actions**.
@@ -48,7 +48,7 @@ available in which field is listed in the
 | [`name_generated`](#generated-names) | enum | `never` | Whether the server generates the name (`never` / `optional` / `enforced`). |
 | [`name_generator`](#generated-names) | j2-string | `uuid()` | Expression that produces the name when generated. |
 | [`create`](#enabling-operations) | bool | `true` | Allow creating entities of this type. |
-| [`change`](#enabling-operations) | bool | `true` | Allow modifying entities of this type. |
+| [`edit`](#enabling-operations) | bool | `true` | Allow editing entities of this type. |
 | [`delete`](#enabling-operations) | bool | `true` | Allow deleting entities of this type. |
 | [`options`](#options) | list | `[]` | Extra values shown per entity in the list view. |
 | [`favorites`](#favorites) | list | `[]` | Prominent operation/action buttons (and their order) in the UI. |
@@ -140,7 +140,7 @@ name).
 
 ## Enabling operations
 
-`create`, `change` and `delete` are coarse on/off switches for the
+`create`, `edit` and `delete` are coarse on/off switches for the
 corresponding operations of the **whole type**. Turning one off removes the
 operation for everyone, regardless of permissions.
 
@@ -154,7 +154,7 @@ type), and use roles to decide *who* may perform the enabled ones.
 ```yaml
 # A read-only type: entities are listed and viewed, never written through YAC.
 create: false
-change: false
+edit: false
 delete: false
 ```
 
@@ -187,14 +187,14 @@ options:
 UI, and in which order. Each entry is either a **standard operation** or a
 **custom action** (`action: true`):
 
-- Standard operations: `create_copy`, `create_link`, `change`, `delete`.
+- Standard operations: `create_copy`, `create_link`, `edit`, `delete`.
   (`create_new` cannot be a favorite — it is a type-level, not entity-level,
   operation.)
 - Custom actions: any `name` defined in this type's [`actions`](#actions).
 
 ```yaml
 favorites:
-  - name: change          # standard operation
+  - name: edit            # standard operation
   - name: delete          # standard operation
   - name: reinstall       # a custom action defined below
     action: true
@@ -229,7 +229,7 @@ See the dedicated page: [Field `logs`](logs.md)
 
 `actions` are custom operations beyond plain CRUD: they call out to an HTTP
 endpoint or run a shell command, either on demand or **hooked** to run
-automatically around create/change/delete.
+automatically around create/edit/delete.
 
 See the dedicated page: [Field `actions`](actions.md)
 
@@ -247,7 +247,7 @@ types:
     name_example: lion-simba
 
     create: true
-    change: true
+    edit: true
     delete: true
 
     limits:

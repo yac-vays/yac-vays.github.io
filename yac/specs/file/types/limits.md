@@ -7,7 +7,7 @@ nav_order: 1
 
 `limits` is a per-[type](index.md) field that caps **how many entities** of a
 type may exist within a group, or **how much of a summed quota** a group may
-use. Limits are enforced on every `create` and `change` operation (a `delete`
+use. Limits are enforced on every `create` and `edit` operation (a `delete`
 can never exceed a cap) and surface as a normal validation error.
 
 A limit is the combination of three Jinja2 expressions:
@@ -36,7 +36,7 @@ limits:
     scope: 'true'    # j2 test: does the scanned entity (old) count? (default: all)
     value: '1'       # j2 number summed over the group (default 1 = count entities)
     max:             # mandatory; j2 number: the cap (may depend on user/context)
-    on: [create, change]  # operations this limit is enforced on
+    on: [create, edit]  # operations this limit is enforced on
 ```
 {% endraw %}
 
@@ -117,7 +117,7 @@ per-OU cap, for instance:
 ## Semantics
 
 - The candidate set is **every existing entity of the type, minus the one
-  being replaced on a `change`, plus the incoming entity.** This makes
+  being replaced on an `edit`, plus the incoming entity.** This makes
   create, rename, owner-change and quota-increase all behave correctly: an
   edit that keeps an entity in its group does not falsely trip the limit,
   while moving it into an already-full group does.

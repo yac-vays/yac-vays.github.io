@@ -221,7 +221,7 @@ limits:
 
 `logs` surface external log or status information for an entity (e.g. an
 install log or a health check) so it can be shown in the UI, read from a
-pluggable backend (`elastic` or `file`).
+pluggable backend (`elastic`, `file` or `http`).
 
 See the dedicated page: [Field `logs`](logs.md)
 

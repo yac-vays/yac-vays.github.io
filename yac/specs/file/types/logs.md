@@ -18,7 +18,7 @@ plugin-specific `details`:
 | `name`, `title` | *mandatory*; identifier and UI label of the log. |
 | `progress` | `true` to render the log as a progress indicator. |
 | `problem` | `true` to render the log as a problem/health indicator. |
-| `plugin` | *mandatory*; one of `elastic`, `file`. |
+| `plugin` | *mandatory*; one of `elastic`, `file`, `http`. |
 | `details` | Plugin-specific config; all string values are [j2-strings](../../j2.md). |
 
 The `details` are rendered with the templating variables listed for
@@ -92,5 +92,44 @@ logs:
       time: "{{ log[0] }}"
       message: "{{ log[1] }}"
       problem: "{{ log[1] is regex_match('.*failed.*') }}"
+```
+{% endraw %}
+
+## Log plugin `http`
+
+Fetches a JSON array of records from an HTTP(S) endpoint. The `log` variable is
+each record (typically a dict). Written for the
+[bootstrap-logs](https://gitlab.inf.ethz.ch/public-isg/bootstrap-logs) service
+(`GET /logs/{host}/{service}` returning `[{"time": ..., "message": ...}, ...]`),
+but works with any endpoint whose response is — or contains — a JSON list.
+
+| `details` field | Description |
+|:----------------|:------------|
+| `url` | *mandatory*, j2-string; the request URL (may embed `name`, credentials from `env`, query params, ...). |
+| `method` | HTTP method (default `GET`). |
+| `headers` | Map of extra request headers, j2-strings (e.g. an auth token from `env`). |
+| `array` | Dotted path to the record list inside the response body; empty (default) means the body itself is the list (e.g. `hits.events`). |
+| `ssl_verify` | Verify the TLS certificate (default `true`). |
+| `timeout` | Abort the request after this many seconds (default `5`). |
+| `message` | j2-string with the `log` record; the displayed message. |
+| `time` | j2-string with the `log` record; the entry's timestamp (default `{{ log.time }}`). |
+| `progress` | j2-int with the `log` record (when `progress: true`). |
+| `problem` | j2-bool with the `log` record (when `problem: true`). |
+
+{% raw %}
+```yaml
+logs:
+  - name: install
+    title: Install
+    progress: true
+    plugin: http
+    details:
+      url: "https://logs.example.com/logs/{{ name }}/install?limit=10"
+      headers:
+        Authorization: "Bearer {{ env.logs_token }}"
+      # `log` here is each record from the returned JSON array.
+      time: "{{ log.time }}"
+      message: "{{ log.message }}"
+      progress: '{{ 100 if log.message == "Installer finished" else (25 if log.message == "Installer started" else 0) }}'
 ```
 {% endraw %}

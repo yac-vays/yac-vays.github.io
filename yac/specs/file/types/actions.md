@@ -13,7 +13,7 @@ It is a **list**; each action can be triggered explicitly by the user or
 | Field | Default | Description |
 |:------|:--------|:------------|
 | `name`, `title` | *mandatory* | Identifier and UI label. |
-| `description` | `''` | Markdown, shown in the confirmation dialog when `dangerous`. |
+| `description` | `''` | Markdown. Shown in the action's info popup and, when `dangerous`, in the confirmation dialog. |
 | `icon` | a default SVG | SVG used as the button icon. |
 | `dangerous` | `false` | Show a confirmation dialog (with `description`) before running. |
 | `perms` | `[act]` | The user needs **at least one** of these perms on the entity to run it. |

@@ -10,12 +10,13 @@ information for an entity (e.g. an install log or a health check) so it can be
 shown in the UI. It is a **list**; each entry reads from one pluggable backend
 and is rendered as a separate log in the UI.
 
-Each entry has a `name`/`title`, two display hints, a `plugin` and
-plugin-specific `details`:
+Each entry has a `name`/`title`, an optional `description`, two display
+hints, a `plugin` and plugin-specific `details`:
 
 | Field | Description |
 |:------|:------------|
 | `name`, `title` | *mandatory*; identifier and UI label of the log. |
+| `description` | *optional*; description of the log, shown in the UI below the title of the log details (Markdown is supported). |
 | `progress` | `true` to render the log as a progress indicator. |
 | `problem` | `true` to render the log as a problem/health indicator. |
 | `plugin` | *mandatory*; one of `elastic`, `file`, `http`. |
@@ -48,6 +49,10 @@ dict.
 logs:
   - name: installation
     title: Installation
+    description: |
+      The OS-installation progress of this host, as reported by the
+      installer (see the [runbook](https://example.com/runbook) if it
+      **fails**).
     progress: true
     plugin: elastic
     details:

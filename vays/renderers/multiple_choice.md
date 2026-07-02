@@ -26,7 +26,6 @@ checkboxes.
 | `items.oneOf[i].const`           | One option per entry (label = `oneOf[i].title` or the `const`). |
 | `uniqueItems`                    | When `true`, clicking an already-selected option deselects it (no duplicates). When `false`, clicking it again appends another copy. |
 | `minItems` / `maxItems`          | Wrong-size selections are reported inline as an error. |
-| `vays_options.initial_editable`  | **Silently ignored** — the renderer treats the placeholder as always editable. |
 
 ## [Specs](../../yac/specs/index.md) Example
 

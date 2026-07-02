@@ -23,7 +23,6 @@ wins automatically whenever the schema uses `oneOf` with `const` /
 | `oneOf[i].const`                 | The value stored when this entry is selected. |
 | `oneOf[i].title`                 | The label shown to the user (falls back to the `const` if missing). |
 | `oneOf[i].yac_if`                | YAC-side conditional that hides the entry when the expression is false. |
-| `vays_options.initial_editable`  | **Silently ignored** — the renderer treats the placeholder as always editable. |
 
 ## [Specs](../../yac/specs/index.md) Example
 

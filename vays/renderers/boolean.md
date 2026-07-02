@@ -14,7 +14,7 @@ renderer is implicit.
 | Keyword                          | Effect |
 |:---------------------------------|:-------|
 | `type`                           | Must be `boolean` for the tester to match. |
-| `vays_options.initial_editable`  | **Silently ignored** — the renderer treats the placeholder as always editable (clicking the box toggles it). |
+| `vays_options.initial_editable`  | If `false`, the tick is shown greyed out as a placeholder; the first click commits a real value and the checkbox turns its regular color. With `true` it looks like a regular value from the start. |
 
 ## [Specs](../../yac/specs/index.md) Example
 

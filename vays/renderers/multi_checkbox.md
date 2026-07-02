@@ -32,7 +32,7 @@ Select the renderer with `vays_options.renderer: multi_checkbox`.
 | `items.enum`                                             | One choice per element (label = the raw value). |
 | `items.oneOf[i].const`                                   | One choice per element (label = `oneOf[i].title`). |
 | `minItems` / `maxItems`                                  | Wrong-size selections are reported inline as an error. |
-| `vays_options.initial` / `vays_options.initial_editable` | **Ignored** — seed the field through JSON-Schema `default` instead. |
+| `vays_options.initial`                                   | Initial selection (array of item values) shown before the user interacts; the first toggle commits the whole shown selection. |
 
 ## [Specs](../../yac/specs/index.md) Example
 

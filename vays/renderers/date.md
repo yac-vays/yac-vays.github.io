@@ -24,7 +24,6 @@ also fall inside `disable_range`.
 | `vays_options.renderer_options.enable_range.to`        | Latest selectable date (`YYYY-MM-DD`). |
 | `vays_options.renderer_options.disable_range.from`     | Start of a disabled range (inclusive). |
 | `vays_options.renderer_options.disable_range.to`       | End of a disabled range (inclusive). |
-| `vays_options.initial_editable`                        | **Silently ignored** — the picker always treats `initial` as the starting value the user edits. |
 
 ## [Specs](../../yac/specs/index.md) Example
 

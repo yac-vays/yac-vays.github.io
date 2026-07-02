@@ -20,7 +20,6 @@ ranks higher and wins automatically when both shapes match.
 |:---------------------------------|:-------|
 | `enum`                           | One dropdown entry per element (label = the raw value). |
 | `type`                           | Optional; the tester matches on `enum` alone. |
-| `vays_options.initial_editable`  | **Silently ignored** — the renderer treats the placeholder as always editable. |
 
 ## [Specs](../../yac/specs/index.md) Example
 

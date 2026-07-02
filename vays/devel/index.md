@@ -46,7 +46,6 @@ proxy with a real certificate.
 ## Build for Production
 
 ```sh
-npm run clear   # only needed if `npm run dev` was used before
 npm run build
 ```
 

@@ -74,7 +74,9 @@ Only add this subschema for entities of the types defined in `yac_types`.
 
 ### Keyword `vays_category`
 
-A category name for the VAYS form.
+A category name for the VAYS form. Each category is shown as a tab — but only
+when more than one category is (currently) visible: with a single category,
+whatever its name, VAYS hides the tab bar and shows the content directly.
 
 {: .important}
 If the subschema should be respresented in the VAYS form, this filed **must**

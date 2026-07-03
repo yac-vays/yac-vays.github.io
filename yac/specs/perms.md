@@ -54,7 +54,7 @@ Permission flags can be defined freely. Flags without a reserved meaning
 
 | Perm  | Implies  | Description |
 |:-----:|:--------:|:------------|
-| `see` |          | Read the entity: its data, raw YAML and logs. Entities without `see` are also filtered out of the entity list. |
+| `see` |          | Read the entity: its data, raw YAML and logs. Entities without `see` are also filtered out of the entity list. Reading is all-or-nothing per entity — [`yac_perms`](#property-level-permissions-yac_perms) never restricts it. |
 | `add` | `see`    | Create a new entity of this type. |
 | `rnm` | `see`    | Rename the entity **without** a revalidation of the YAML[^1]; additionally requires `add`. |
 | `cpy` | `see`    | Copy the entity **without** a revalidation of the copied YAML; additionally requires `add`. |
@@ -89,18 +89,30 @@ covered by that subschema.
   deepest) `yac_perms` on the path to a property wins. As soon as a subschema
   defines `yac_perms` explicitly, *nothing* is inherited from its parents
   (including `edt` from the top level). The top-level default is `[add, edt]`.
-- **Write-side only**: on read operations, `yac_perms` is ignored. Anyone
-  holding `see` gets the **full** entity data, including the raw YAML.
-  `yac_perms` restricts what a user may write, it does not hide data from
-  readers.
+- **Write-side only**: `yac_perms` restricts what a user may *write* — it
+  never hides data. Read access exists only at entity level: anyone holding
+  `see` gets the **full** entity data, including the raw YAML; without `see`
+  they get nothing at all. Consequently `see` (listed in or missing from) a
+  `yac_perms` inside the schema has **no** read effect whatsoever — there is
+  no way to read-protect single properties. On read operations, `yac_perms`
+  is ignored entirely.
 - **On create**, `add` is treated as held when evaluating `yac_perms`
   (creating the entity as a whole already required `add`). So properties whose
   `yac_perms` include `add` are writable during creation even by users who
   lack `edt`.
 - **Enforcement**: subschemas the user may not write are removed from the
-  generated JSON/UI schema (VAYS does not render them) and the stored values
-  at the removed paths are not echoed back into the form. Any request that
-  sets, changes or deletes data at such a path is rejected with `403`.
+  generated JSON/UI schema (VAYS does not render them as editable). Stored
+  values at removed paths are echoed back into the schema as read-only
+  `const` properties, which also pins them: a request that changes or
+  deletes such a value fails the schema validation (`400`), and setting a
+  value where none is stored is rejected by the object's default
+  `additionalProperties: false`.
+
+{: .warning}
+Explicitly setting `additionalProperties: true` on an object opts out of the
+write enforcement for guarded properties **without a stored value** (stored
+values remain pinned by their `const`). Keep objects closed — the default —
+wherever `yac_perms` write gating must be airtight.
 
 ---
 

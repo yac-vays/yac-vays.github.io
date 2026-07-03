@@ -62,6 +62,12 @@ there).
 data specified by this subschema. This keyword is recursive and the top-level
 default is `[add, edt]` (see [Permissions](../perms.md) for details)!
 
+{: .note}
+`yac_perms` is write-side only — it never hides data. Reading is controlled
+solely by the entity-level `see` perm (you read the whole entity or nothing),
+so `see` in (or missing from) a `yac_perms` list has no read effect at all;
+single properties cannot be read-protected.
+
 ### Keyword `yac_types`
 
 Only add this subschema for entities of the types defined in `yac_types`.

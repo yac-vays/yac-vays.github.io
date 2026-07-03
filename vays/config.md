@@ -25,6 +25,7 @@ authenticate, and what to call itself.
 | `production`              | `boolean` | yes      | When `false`, VAYS shows the **Schema Warnings** notification (the bell in the header) that surfaces schema-design hints. |
 | `defaultEditorLayout`     | `"form" \| "yaml" \| "both"` | no | The editor layout shown the **first** time a user opens an entity: the form pane only, the YAML editor only, or both side by side. As soon as the user moves the divider (or collapses a pane) their choice is remembered in the browser (local storage) and overrides this. Defaults to `both`. |
 | `helpText`                | `string`  | no       | Deployment-specific help text (markdown), shown at the **top** of the help page (`/help`, reachable via the `?` button in the header). Use it for pointers that only make sense for *this* installation: who to contact, links to internal documentation, house rules. The general developer information (documentation site, GitHub, backend APIs) is always shown below it. |
+| `welcomeText`             | `string`  | no       | Deployment-specific welcome text (markdown), shown on the start page after signing in (below the "Welcome, ..." greeting). Defaults to `You are signed in to {title}.`. |
 | `color`                   | `object`  | no       | Theme colours. Every field is optional; see [Theming](#theming-color). |
 | `oidcConf.server`         | `string`  | yes      | The OIDC provider's discovery URL (`.../.well-known/openid-configuration`). Must match the YAC backend's [`auth.oidc.url`](../yac/specs/file/auth.md). |
 | `oidcConf.clientID`       | `string`  | yes      | The OIDC client / audience for the SPA. Must be present in [`auth.oidc.client_ids`](../yac/specs/file/auth.md) of every backend. |
@@ -103,6 +104,7 @@ Override any of the derived values explicitly when you need finer control:
   "production": true,
   "defaultEditorLayout": "both",
   "helpText": "Questions? Contact **support@example.com** or see the [internal wiki](https://wiki.example.com/self-service).",
+  "welcomeText": "Welcome to the **Example Corp** self-service portal. Pick a configuration from the menu on the left to get started.",
   "oidcConf": {
     "server": "https://access.example.com/.well-known/openid-configuration",
     "clientID": "vays-spa"

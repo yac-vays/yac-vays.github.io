@@ -121,7 +121,10 @@ wherever `yac_perms` write gating must be airtight.
       is **not** revalidated against the schema, so entities whose stored data
       no longer matches the current schema can still be renamed. If the request
       also modifies the content, the edit is validated as usual (and
-      `edt`/`cln` are required accordingly).
+      `edt`/`cln` are required accordingly). Because a rename creates a new
+      and deletes the old entity name, it additionally requires the
+      type-level `create` **and** `delete`
+      [switches](file/types/index.md#enabling-operations) to be enabled.
 
 [^2]: "Structural" means anything the schema does not describe: deleting
       object keys / data, comments, syntax (like whether a value is split over

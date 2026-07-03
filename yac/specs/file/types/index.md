@@ -144,6 +144,12 @@ name).
 corresponding operations of the **whole type**. Turning one off removes the
 operation for everyone, regardless of permissions.
 
+{: .note}
+A **rename** (an [edit submitted with a new name](../../perms.md)) creates a
+new entity name and deletes the old one, so besides `edit` it also requires
+both `create` **and** `delete` to be enabled. Copying and linking count as
+create operations and are switched off by `create: false` as well.
+
 {: .important}
 These switches are *not* a substitute for access control. Even when an
 operation is enabled, the caller still needs the matching permission from the

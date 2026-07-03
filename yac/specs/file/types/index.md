@@ -54,7 +54,7 @@ available in which field is listed in the
 | [`favorites`](#favorites) | list | `[]` | Prominent operation/action buttons (and their order) in the UI. |
 | [`limits`](limits.md) | list | `[]` | Caps on the number or summed quota of entities. |
 | [`logs`](logs.md) | list | `[]` | External log/status sources surfaced per entity. |
-| [`actions`](actions.md) | list | `[]` | Custom operations that call out to HTTP or shell. |
+| [`actions`](actions.md) | list | `[]` | Custom operations that call out to HTTP or run a program. |
 
 {: .note}
 The more involved fields — [`limits`](limits.md), [`logs`](logs.md) and
@@ -234,7 +234,7 @@ See the dedicated page: [Field `logs`](logs.md)
 ## actions
 
 `actions` are custom operations beyond plain CRUD: they call out to an HTTP
-endpoint or run a shell command, either on demand or **hooked** to run
+endpoint or run a program, either on demand or **hooked** to run
 automatically around create/edit/delete.
 
 See the dedicated page: [Field `actions`](actions.md)
@@ -320,8 +320,8 @@ types:
         title: Say Hello
         hooks:
           - create:before
-        plugin: shell
+        plugin: exec
         details:
-          command: 'echo "Hello {{ user.full_name }}"'
+          command: ["/usr/bin/logger", "-t", "zoo", "Hello {{ user.full_name }}"]
 ```
 {% endraw %}

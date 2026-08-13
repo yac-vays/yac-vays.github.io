@@ -20,9 +20,30 @@ auth:
       full_name_fallback: "{given_name} {family_name}"
       email: "{email}"
       email_fallback: "{sub}@localhost"
+    access_tokens:
+      audiences: []
+      algorithms: [RS256]
+      subjects: []
+      jwt:
+        name: "{sub}"
+        full_name: "{name}"
+        full_name_fallback: "{sub}"
+        email: "{email}"
+        email_fallback: "{sub}@localhost"
+      accounts: {}
   cors:
     origins: ["https://app.example.com"]
 ```
+
+YAC accepts two kinds of bearer tokens, both validated statelessly:
+
+  - **OIDC id-tokens** (the default) — issued to an interactive user,
+    e.g. by VAYS. The `aud` must match one of `client_ids`.
+  - **OIDC JWT access tokens** (RFC 9068, opt-in) — for machine clients
+    (scripts, tools, other services) using the OAuth2 `client_credentials`
+    grant. Enabled by configuring `access_tokens.audiences`; a bearer
+    token whose `aud` matches one of those audiences is validated as an
+    access token instead of an id-token.
 
 ## Key `oidc`
 
@@ -40,6 +61,55 @@ The JWT format-strings use Python `str.format` substitution against the
 validated id-token claims (so `{sub}`, `{preferred_username}`, etc. work
 depending on what the IdP issues). You can see the values of a token via
 YAC API call `GET /me`.
+
+## Key `oidc.access_tokens` (machine clients)
+
+| Key          | Type                   | Default    | Description |
+|:-------------|:-----------------------|:-----------|:------------|
+| `audiences`  | `list[string]`         | `[]`       | Accepted `aud` values for JWT access tokens. Empty (the default) disables access-token support entirely. |
+| `algorithms` | `list[string]`         | `[RS256]`  | Accepted JWS signature algorithms. |
+| `subjects`   | `list[string]`         | `[]`       | Optional allow-list of accepted `sub` values. Empty accepts any subject that passes the signature/`iss`/`exp`/`aud` checks. |
+| `jwt.*`      | format-strings         | see below  | Same five format-strings as `oidc.jwt.*`, applied to the access-token claims. The only different default is `full_name_fallback: "{sub}"`, because `client_credentials` tokens carry no user claims. |
+| `accounts`   | `map[string] -> object`| `{}`       | Static identities for machine clients, keyed by the token's `sub`. Each entry may set `name`, `full_name` and/or `email`; unset fields fall back to the `jwt.*` format-strings. |
+
+A typical machine client obtains a token with the `client_credentials`
+grant and uses it as a normal bearer token:
+
+```sh
+TOKEN=$(curl -s "https://idp.example.com/token" \
+    -d "client_id=my-robot" -d "client_secret=$SECRET" \
+    -d "grant_type=client_credentials" | jq -r .access_token)
+curl -H "Authorization: Bearer $TOKEN" "https://yac.example.com/entity/host"
+```
+
+Requirements and caveats:
+
+  - The IdP must issue **JWT** ("self-contained", RFC 9068) access tokens
+    for the client — opaque reference tokens cannot be validated
+    statelessly and are not supported.
+  - The token's `aud` must contain one of the configured `audiences`.
+    How the audience is set (per-client configuration, RFC 8707
+    `resource` parameter, ...) depends on the IdP.
+  - Since a `client_credentials` token identifies a client rather than a
+    person, attach a friendly identity either in the IdP (custom `name` /
+    `email` claims in the token — preferred, since it is centrally
+    managed) or locally via `accounts`:
+
+    ```yaml
+    access_tokens:
+      audiences: [yac-prod]
+      accounts:
+        my-robot:
+          full_name: Nightly Sync Robot
+          email: robot-owners@example.com
+    ```
+
+  - Roles in the *specs* match on the resulting user exactly as for
+    interactive users, so a machine client's `name` (by default its
+    `sub`) is what you grant permissions to.
+  - Validation is stateless: a leaked token stays valid until `exp`.
+    Keep access-token lifetimes short in the IdP; revoke by rotating the
+    client secret.
 
 ## Key `cors`
 

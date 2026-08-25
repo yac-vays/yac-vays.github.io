@@ -132,12 +132,15 @@ the same restrictions apply automatically).
 ### Keyword `vays_options`
 
 Additional options for the VAYS forms. This can only be used on subschemas
-with `vays_category` defined **or** on object properties within an array
-that has `vays_category` defined.
+with `vays_category` defined, **or** on properties nested (at any depth)
+inside an object that has `vays_category` defined, **or** on object
+properties within an array that has `vays_category` defined.
 
 {: .important}
-This is not stackable, so it will only work for an array of objects,
-**not** for an array of objects with an array of objects and so on.
+For arrays this is not stackable, so it will only work for an array of
+objects, **not** for an array of objects with an array of objects and so on.
+Objects nest to any depth; an array inside such an object supports one items
+level, exactly like a top-level array.
 
 #### Arrays
 

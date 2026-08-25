@@ -15,11 +15,16 @@ will read from the file anyway, correlation keys, and the like.
 
 ## Behaviour
 
-  - **Set once.** When the field is shown editable and YAC supplies
-    *neither a value nor a `default`* for it, the renderer generates a
-    random value once and puts it into the form data. It is saved with
-    the form like any typed-in value and never touched again on later
-    edits (the value then comes from the YAC side).
+  - **Set once.** When YAC supplies *neither a value nor a `default`*
+    for the field, a random value is generated once and put into the
+    form data. It is saved with the form like any typed-in value and
+    never touched again on later edits (the value then comes from the
+    YAC side).
+  - **Generated at load time on create.** When creating a new entity,
+    all `random_string` fields are filled while the form loads so the
+    values are in the YAML document from the start. On *edit*, a
+    field that is empty (e.g. added to the schema after the entity
+    was created) is only filled when it is actually shown.
   - **Default wins.** If the schema has a `default`, nothing is
     generated — the field stays empty and the YAC-side default
     applies, as for any other string field.

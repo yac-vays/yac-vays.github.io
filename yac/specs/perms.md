@@ -64,7 +64,7 @@ Permission flags can be defined freely. Flags without a reserved meaning
 | `del` |          | Delete the entity. Does **not** imply `see`. |
 | `act` |          | Execute actions[^3] (the default for an action's `perms` list; can be overridden per action). Does **not** imply `see`. |
 | `all` | `see` + `add` + `rnm` + `cpy` + `lnk` + `edt` + `cln` + `del` + `act` | Shorthand for granting all of the above. `all` itself never ends up in the user's permission set, so it cannot be required in `yac_perms` or action `perms`! |
-| `adm` | `all` + `adm` | Like `all`, but the flag `adm` itself *is* added to the permission set (so it can be required in `yac_perms` or action `perms`). Its intended meaning — freely edit the entity data without validation — is **not implemented yet** and will only be on real demand. |
+| `adm` | `all` + `adm` | Like `all`, but the flag `adm` itself *is* added to the permission set (so it can be required in `yac_perms` or action `perms`). It additionally unlocks the [admin override](#admin-override-force): writing an entity past a failing schema validation. |
 
 ## What each operation requires
 
@@ -78,6 +78,50 @@ Permission flags can be defined freely. Flags without a reserved meaning
 | Rename (a change with a new name) | `add` + `rnm`[^1], plus `edt`/`cln` if the content changes too |
 | Delete                  | `del` |
 | Run an action           | at least **one** of the action's `perms` (default `[act]`)[^3] |
+
+## Admin override (`force`)
+
+The write endpoints (`POST /entity/{type}`, `PUT /entity/{type}/{name}`)
+accept a `force=true` query parameter — the *admin override*. It requires the
+`adm` permission (a request with `force` but without `adm` is rejected with
+`403`, regardless of the data) and must be requested **explicitly**: holding
+`adm` alone never bypasses anything.
+
+With `force`, the entity is written even when its data fails **schema**
+validation. Everything else is still enforced exactly as without it:
+
+- the payload must be syntactically valid YAML,
+- name rules (pattern, rename gates) apply,
+- file-level permissions, conflict detection (`yaml_old`) and
+  [limits](file/types/limits.md) apply.
+
+Note that property-level [`yac_perms`](#property-level-permissions-yac_perms)
+guards are **also bypassed**: they are enforced through the generated schema,
+so a forced write can change values guarded even by *custom* perms the user
+does not hold (`adm` expands to all reserved perms, not to custom ones).
+Treat `adm` as the most powerful permission there is and grant it accordingly.
+
+When a forced write actually bypassed a failing validation, the commit message
+in the repository is suffixed with `(admin override: schema validation
+bypassed)`, so the git history records every such write. A forced write whose
+data happens to be valid is an ordinary commit.
+
+`POST /validate` is unaffected — it always reports the real validation state
+(this is what lets VAYS keep showing the errors while the override is
+unlocked). It does however return the user's expanded permissions in `perms`,
+so a UI can decide whether to offer the override at all.
+
+{: .warning}
+An override commit stores schema-invalid data in the repository. Consumers of
+the repo must tolerate such files, and regular users editing the entity later
+will see the migration-style validation errors until the data is fixed.
+
+**In VAYS**, users holding `adm` see a lock button next to the (disabled)
+Commit button whenever validation errors block a commit. Unlocking it — after
+a warning dialog — turns the Commit into a red *Commit (admin)* that sends the
+write with `force=true`; all validation errors stay visible while unlocked.
+The override is per-commit intent, not a mode: it locks again automatically
+after one successful commit and whenever the edit view is (re)opened.
 
 ## Property-level permissions (`yac_perms`)
 

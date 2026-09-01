@@ -37,8 +37,22 @@ limits:
     value: '1'       # j2 number summed over the group (default 1 = count entities)
     max:             # mandatory; j2 number: the cap (may depend on user/context)
     on: [create, edit]  # operations this limit is enforced on
+    path:            # optional; data-loc of the data property this limit relates to (UI hint only)
 ```
 {% endraw %}
+
+## Field `path`
+
+`path` is an optional **UI hint**: the location of the entity-data property
+the limit relates to, in the same loc syntax used everywhere else in YAC
+(`data_loc`, ui_schema references, …): `#` is the data root, so e.g.
+`'#/cpus'` or `'#/disks/data_gb'`. Remember to **quote it in YAML** — an
+unquoted `#` starts a comment. It is never evaluated by YAC — it is only
+copied into the `usages` of the `/validate` response so a UI can anchor the
+usage next to the matching field. VAYS shows such a limit as a `3/5` chip on
+that form field and as a colored gutter marker on that line in the YAML
+editor; limits **without** a `path` (e.g. a cap on the number of entities)
+are shown next to the entity name instead.
 
 ## Example: a maximum number of entities per owner
 
@@ -99,6 +113,7 @@ types:
         scope: "old.data.owner == new.data.owner"
         value: "old.data.disk_gb | default(0)"
         max: "{{ context.disk_quota_gb }}"
+        path: '#/disk_gb'  # lets VAYS show the usage on the disk_gb field itself
 ```
 {% endraw %}
 
@@ -130,8 +145,10 @@ per-OU cap, for instance:
 {: .note}
 Limits are also evaluated by the `POST /validate` endpoint, so VAYS can show
 the live usage of every applicable limit (`schemas`/`request`/**`usages`** in
-the response) while the user fills in the form — including a friendly
-`3/5 used` indicator and an error before the operation is even submitted.
+the response) while the user fills in the form — a `3/5` usage chip on the
+form field named by `path` (and a matching marker in the YAML editor), or next
+to the entity name for limits without a `path` — plus an error before the
+operation is even submitted.
 
 ## Performance
 

@@ -49,6 +49,12 @@ Only allow creating and editing entity data specified by this subschema if
 However, this value is not a `boolean` but a `string` that has to j2-render
 into a boolean, for example `yac_if: user.name == "test"`.
 
+{: .note}
+When the condition stops holding for stored data (e.g. a property gated on
+another property's value that just changed), that data has to be removed
+with the same edit. This is an ordinary data change: it needs `edt` only, not
+`cln` (VAYS does it automatically).
+
 ### Keyword `yac_optional`
 
 Can only be defined for schemas in object properties defined under the
@@ -67,6 +73,11 @@ default is `[add, edt]` (see [Permissions](../perms.md) for details)!
 solely by the entity-level `see` perm (you read the whole entity or nothing),
 so `see` in (or missing from) a `yac_perms` list has no read effect at all;
 single properties cannot be read-protected.
+
+Stored data at a subschema the user lacks the perms for is echoed back as a
+*required*, read-only `const`: it can neither be changed nor removed by that
+user, not even with `cln` (the key is defined by the schema, it is just not
+writable for them — see [Permissions](../perms.md)).
 
 ### Keyword `yac_types`
 

@@ -60,7 +60,7 @@ Permission flags can be defined freely. Flags without a reserved meaning
 | `cpy` | `see`    | Copy the entity **without** a revalidation of the copied YAML; additionally requires `add`. |
 | `lnk` | `see`    | Link to the entity **without** a revalidation of the linked YAML; additionally requires `add`. |
 | `edt` | `see`    | Change the entity data (property-level `yac_perms` restrictions still apply). |
-| `cln` | `see`    | "Clean": additionally required — *on top of* `edt` — for changes that touch anything the schema does not cover[^2]. `cln` alone does not allow any change. |
+| `cln` | `see`    | "Clean": additionally required — *on top of* `edt` — for changes the schema does not cover[^2]: removing keys the schema does not define, and any change to comments, key order or formatting. `cln` alone does not allow any change. |
 | `del` |          | Delete the entity. Does **not** imply `see`. |
 | `act` |          | Execute actions[^3] (the default for an action's `perms` list; can be overridden per action). Does **not** imply `see`. |
 | `all` | `see` + `add` + `rnm` + `cpy` + `lnk` + `edt` + `cln` + `del` + `act` | Shorthand for granting all of the above. `all` itself never ends up in the user's permission set, so it cannot be required in `yac_perms` or action `perms`! |
@@ -170,12 +170,30 @@ wherever `yac_perms` write gating must be airtight.
       type-level `create` **and** `delete`
       [switches](file/types/index.md#enabling-operations) to be enabled.
 
-[^2]: "Structural" means anything the schema does not describe: deleting
-      object keys / data, comments, syntax (like whether a value is split over
-      multiple lines or not), spacing and the order of object keys — but not
-      the order of list elements (that is part of the data, and the schema
-      governs whether it may change). Data whose subschema was removed due to
-      missing perms or conditions counts as not covered as well.
+[^2]: "Structural" means anything the schema does not describe. Two things
+      fall under that:
+
+      - **Keys the schema does not define.** Stored keys without a subschema
+        are echoed back into the generated schema as read-only `const`s; only
+        `cln` holders may drop them. Keys the schema *does* define are
+        governed by the schema alone: removing an optional one is an ordinary
+        data change (`edt`), a key that vanished because its
+        [`yac_if`](file/schema.md#keyword-yac_if) no longer holds *must* be
+        removed, and a key guarded by
+        [`yac_perms`](file/schema.md#keyword-yac_perms) / `yac_editable`
+        stays immutable for the user — `cln` does not override that.
+      - **Everything outside the data**: comments, the order of existing
+        object keys, quoting and scalar style (like whether an *unchanged*
+        value is split over multiple lines or not) and anchors. Blank lines
+        are ignored. Inserting or removing a key is a data change, whatever
+        position it has; a comment attached to a removed key goes with it.
+        The order of list elements is data as well (the schema governs
+        whether it may change).
+
+      Only a raw-YAML edit (`PUT /entity/{type}/{name}`, VAYS's expert mode)
+      can be structural: a data patch (`PATCH`, the VAYS form) is applied by
+      YAC onto the stored YAML, which keeps comments, order and formatting by
+      construction, so it never needs `cln`.
 
 [^3]: Only enforced when the action runs standalone (`arbitrary`) or is hooked
       without the `force` flag. Actions hooked to an operation with

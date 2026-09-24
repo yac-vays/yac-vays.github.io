@@ -67,3 +67,19 @@ VAYS uses `authorization_code` with PKCE against the configured OIDC
 provider. The redirect URI is **always** `https://<vays-host>/oauth2-redirect`
 and must be registered with the provider for the configured `clientID`.
 There is no built-in support for username/password flows.
+
+## Backend Outages
+
+When a YAC backend cannot use its git repository, VAYS shows a banner at
+the top of every page of that backend instead of error toasts:
+
+  - **Maintenance / unavailable:** YAC answers `503`; the banner shows
+    YAC's own title and message (e.g. *Data Repository in Maintenance*).
+    Reads that fail this way show no data, writes and actions are not
+    performed.
+  - **Stale data:** YAC still answers reads from the last known state and
+    flags them (`Warning: 110 ...` header); the banner tells when the data
+    was last synced and that changes cannot be saved for now.
+
+The banner disappears with the first normal response from that backend.
+Pages that do not belong to a backend (login, help) never show it.

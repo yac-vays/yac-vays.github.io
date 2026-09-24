@@ -118,6 +118,42 @@ repo:
 ```
 {% endraw %}
 
+## Health Checks and Monitoring
+
+YAC has two unauthenticated endpoints for this, with different purposes:
+
+  - `GET /health` answers `204` as soon as the process serves requests. It
+    does no repository or specs work and is what the Helm chart's
+    liveness, readiness and startup probes use. A pod is never restarted
+    because of the git server: that is nothing a restart could fix (see
+    [Remote outages](specs/file/repo.md#remote-outages)).
+  - `GET /status` is the diagnostic endpoint for monitoring. It parses the
+    specs and accesses the repository and answers:
+
+    ```json
+    {
+      "hash": "<git hash of the data>",
+      "repo": {
+        "available": true,
+        "stale": false,
+        "synced": "2026-09-24T10:00:00Z",
+        "error": null
+      }
+    }
+    ```
+
+    | Situation | Status | `hash` | `repo.available` | `repo.stale` |
+    |:----------|:-------|:-------|:-----------------|:-------------|
+    | Everything fine | `200` | set | `true` | `false` |
+    | Remote down, reads served from the last known state | `200` | set | `false` | `true` |
+    | Remote down and no data at all (never cloned) | `503` | `null` | `false` | `false` |
+
+    `repo.synced` is the time of the last successful sync with the remote,
+    `repo.error` the user-facing reason while the remote is unavailable
+    (it distinguishes maintenance from an unreachable remote; the detailed
+    git output is only in the pod log). Do **not** use `/status` as a
+    liveness probe.
+
 ## Versioning / Container Tags
 
 The container images are available with the following tag schema:

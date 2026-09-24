@@ -55,7 +55,7 @@ The repository plugin to use. Built-in plugins:
 
 | Key                       | Type      | Default                          | Description |
 |:--------------------------|:----------|:---------------------------------|:------------|
-| `url`                     | `string`  | `""` (**required**)              | HTTPS or SSH URL to the git repo. |
+| `url`                     | `string`  | `""` (**required**)              | HTTPS or SSH URL to the git repo. Prefer HTTPS: only then can YAC tell a git server in maintenance (HTTP 503) apart from other failures, see [Remote outages](#remote-outages). |
 | `branch`                  | `string`  | `main`                           | The branch to work on. |
 | `ssh_key_file`            | `string`  | `/home/yac/.ssh/id_rsa`          | Path to the private key file (SSH URLs only). |
 | `ssh_known_hosts_file`    | `string`  | `/home/yac/.ssh/known_hosts`     | Path to the known hosts file (SSH URLs only). |
@@ -85,6 +85,41 @@ The Redis key namespace is global (`latest`, `synced`, `pull_lock`,
 `ready:{hash}`, `paths:{hash}`, `data:{hash}:{path}`). Use a
 dedicated Redis instance — or at minimum a dedicated logical
 database (`/0`, `/1`, ...) — per YAC deployment.
+
+## Remote outages
+
+Both plugins are built to survive the git server being down, so that a
+remote outage never takes YAC down with it:
+
+  - **Reads keep working.** When a pull fails because the remote is
+    unreachable (DNS/connection failures, HTTP 5xx), the local checkout
+    is kept and reads are answered from it. Such responses carry the
+    headers `Warning: 110 yac "Data repository unreachable, serving last
+    known state"` and `X-YAC-Repo-Synced: <unix time of the last
+    successful sync>`, so clients (VAYS shows a banner) can tell the data
+    may be outdated. `git_redis` likewise keeps serving its published
+    snapshot.
+  - **Writes fail with `503`.** A commit cannot be pushed without the
+    remote, so create/edit/delete/actions answer `503 Service Unavailable`
+    with a `{title, message}` body. The same happens for reads while no
+    checkout exists yet (e.g. the pod started during the outage — it does
+    start, and recovers by itself once the remote is back).
+  - **Maintenance is recognised.** A git server that answers HTTP `503`
+    (what e.g. GitLab does in maintenance mode) yields the title *Data
+    Repository in Maintenance* instead of *Data Repository Unavailable*.
+    This requires an **HTTPS** remote: over SSH git does not see the
+    server's status code, so a maintenance window looks like any other
+    unreachable remote (the regular *Unavailable* flow, still without
+    losing the checkout).
+  - **Backoff.** After a failed remote operation, reads do not retry the
+    remote for 10 seconds but answer from the checkout right away; writes
+    always retry.
+  - Failures that are *not* an outage (bad credentials, a rejected push, a
+    corrupt checkout) keep their previous behaviour (`500`, and a fresh
+    clone for a broken checkout).
+
+See `GET /status` in the [installation guide](../../install.md#health-checks-and-monitoring)
+for how to observe this.
 
 ## Key `details` (plugins: `git_direct`, `git_redis`)
 

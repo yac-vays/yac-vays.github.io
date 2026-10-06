@@ -25,7 +25,7 @@ Select the renderer with `vays_options.renderer: info_box`.
 
 | Keyword                                                  | Effect |
 |:---------------------------------------------------------|:-------|
-| `type`                                                   | Must be `string` (or omitted) for the tester to match. |
+| `type`                                                   | **Ignored** — usually omitted (any type matches). |
 | `title`                                                  | Shown as the box heading (Markdown). |
 | `description`                                            | Shown as the box body (Markdown, multi-line). |
 | `vays_options.initial` / `vays_options.initial_editable` | **Ignored** — the renderer never reads or writes form data. |

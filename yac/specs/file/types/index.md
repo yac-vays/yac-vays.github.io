@@ -172,7 +172,7 @@ each entity in full. Each option reads one value from the entity's data:
 
 | Field | Description |
 |:------|:------------|
-| `name` | *mandatory*; the data key to read. |
+| `name` | *mandatory*; the top-level data key to read, or a [data-loc](limits.md#field-path) like `'#/spec/users'` for a value further down. |
 | `title` | Column title in the UI. |
 | `default` | Value to show when the entity has not set this key. |
 | `aliases` | Map of raw value → Markdown label, to prettify displayed values. |
@@ -185,7 +185,12 @@ options:
     aliases:
       deb12: Debian 12
       u2404: Ubuntu 24.04
+  - name: '#/owner/team'   # nested value, quote it (`#` starts a YAML comment)
+    title: Team
 ```
+
+A plain `name` is never split, so `owner.team` reads a top-level key literally
+named `owner.team`. Values that are lists are shown comma-separated.
 
 ## favorites
 

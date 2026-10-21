@@ -35,6 +35,7 @@ differently in the description.
 | `vays_options.initial_editable` | `vays_options` | `boolean`       |    v0 |
 | `vays_options.renderer`         | `vays_options` | `string`        |    v0 |
 | `vays_options.renderer_options` | `vays_options` | `object`        |    v0 |
+| `vays_options.row`              | `vays_options` | `string\|number` |    v0 |
 
 ### Keyword `yac_editable`
 
@@ -218,6 +219,40 @@ of a [VAYS renderer](../../../vays/renderers/index.md).
 
 VAYS renderer specific configuration options, see each renderers documentation
 for details.
+
+### Keyword `vays_options.row`
+
+Places input fields **next to each other**: consecutive fields of the same
+[`vays_category`](#keyword-vays_category) (and the same
+[`vays_group`](#keyword-vays_group), if any) with an equal `row` value (any
+string or number) share one line, each taking an equal share of the width.
+When the space runs out (narrow screens), they wrap onto the next line.
+
+Only *consecutive* fields (in the order of the schema) form a row: a field in
+between without the same `row` value ends it. A `row` value without such a
+neighbour has no effect (VAYS reports it as a schema warning).
+
+{% raw %}
+```yaml
+schema:
+  type: object
+  properties:
+    cpu_request:
+      title: Request
+      type: number
+      vays_category: Quotas
+      vays_group: CPU
+      vays_options:
+        row: cpu
+    cpu_limit:
+      title: Limit
+      type: number
+      vays_category: Quotas
+      vays_group: CPU
+      vays_options:
+        row: cpu
+```
+{% endraw %}
 
 ## Official Keywords With Modified, Limited Or Extended Behaviour
 

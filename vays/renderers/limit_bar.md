@@ -1,0 +1,124 @@
+---
+parent: Renderers
+grand_parent: VAYS
+nav_order: 21
+---
+
+# Renderers `limit_bar_float` / `limit_bar_int`
+
+A number input combined with the [limit](../../yac/specs/file/types/limits.md)
+it counts towards, e.g. "CPU cores per OU": a bar shows the limit's whole
+usage, split into the share of **this** field and everything else (the
+**others**, e.g. the other entities of the same group). The end of this
+field's share can be dragged to change the value, within what is left of
+the limit.
+
+```
+■ This: 2   ■ Others: 6   □ Free: 2
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓|████████▌         ]
+0                                8 / 10 Cores
+```
+
+The two variants only differ in the values they produce:
+`limit_bar_float` for `type: number` (default step `0.1`), `limit_bar_int`
+for `type: integer` (whole numbers, default step `1`).
+
+## Behaviour
+
+  - **Which limit.** The bar shows the limit whose
+    [`path`](../../yac/specs/file/types/limits.md#field-path) names this
+    field. If several limits do, the **tightest** one is shown (the one
+    leaving the least room for this field). Without any such limit, only
+    the number input is shown (like the [`number`](number.md) renderer).
+  - **Numbers.** Above the bar: this field's share, the others and what is
+    free (or how much the limit is exceeded). Below the bar: `0` and the
+    total against the cap (e.g. `8 / 10 Cores`), green / amber (from 80 %)
+    / red like the usage chips of the other fields.
+  - **Dragging.** Click or drag on the bar to move the end of this field's
+    share; the value snaps to the step and is committed when the mouse is
+    released. The **keyboard** works too, once the handle is focused:
+    arrow keys (± one step), Page Up / Down (± ten steps), Home / End
+    (minimum / maximum). The number input next to the bar allows exact
+    values.
+  - **Bounds.** The value can be moved from the field's `minimum` (or one
+    step above `exclusiveMinimum`, `0` without either) up to the room left
+    in the limit. It never passes the field's own `maximum` /
+    `exclusiveMaximum`, which is marked on the bar by a dashed line. A
+    value that already exceeds the limit (e.g. because the others grew in
+    the meantime) can stay, but only be reduced. Typing into the number
+    input is not restricted; YAC still validates the limit on save.
+  - **Unset values.** An unset field counts with its
+    [`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial)
+    value (`0` without one); its share is drawn fainter. Like `initial` in
+    general, nothing is written into the data until the user changes the
+    value.
+  - **Live.** The usage is refreshed with every validation. While a value
+    is being changed, the others stay where they are until YAC reported the
+    usage for the new value.
+
+{: .important}
+The split relies on the limit counting this field's value exactly like
+the field holds it, and an unset field with the field's `initial` value.
+So the limit's `value` expression should use the same default as
+`vays_options.initial`, e.g. both from one place in the
+[`context`](../../yac/specs/file/context.md).
+
+## Configuration
+
+Select the renderer with `vays_options.renderer: limit_bar_float` (or
+`limit_bar_int`).
+
+| Keyword                                  | Effect |
+|:-----------------------------------------|:-------|
+| `type`                                   | Must be `number` or `integer` for the tester to match. Use `limit_bar_int` for `integer` fields (`limit_bar_float` on one is a spec error). |
+| `minimum` / `exclusiveMinimum`           | The lowest value the bar can be dragged to. |
+| `maximum` / `exclusiveMaximum`           | The highest value the bar can be dragged to; marked on the bar. |
+| `multipleOf`                             | Default for the step (if it fits the variant). |
+| `vays_options.initial`                   | The value an unset field counts with (see above). |
+| `vays_options.initial_editable`          | As for the [`number`](number.md) renderer (number input only). |
+| `vays_options.renderer_options.step`     | Granularity of dragging and the keyboard. Default: `multipleOf`, else `0.1` (`limit_bar_float`) / `1` (`limit_bar_int`). Must be a positive number (`limit_bar_int`: integer). |
+| `vays_options.renderer_options.unit`     | Unit shown after the total, e.g. `Cores`. |
+
+The limit itself is configured in the type's
+[`limits`](../../yac/specs/file/types/limits.md); its `path` must name
+this field.
+
+## [Specs](../../yac/specs/index.md) Example
+
+Cores per owner, summed over all VMs of the same owner, with a default of
+`2` cores for VMs that don't set a value:
+
+{% raw %}
+```yaml
+types:
+  - name: vm
+    title: Virtual Machines
+    limits:
+      - title: Cores per owner
+        scope: "old.data.owner == new.data.owner"
+        value: "old.data.get('cores', context.default_cores)"
+        max: "16"
+        path: '#/cores'
+
+context:
+  default_cores: 2
+
+schema:
+  type: object
+  properties:
+
+    cores:
+      title: Cores
+      description: Counts towards the cores of the owner.
+      vays_category: Resources
+      type: number
+      exclusiveMinimum: 0
+      maximum: 8
+      vays_options:
+        renderer: limit_bar_float
+        initial: "{{ context.default_cores }}"
+        renderer_options:
+          step: 0.5
+          unit: Cores
+```
+{% endraw %}

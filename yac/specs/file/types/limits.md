@@ -54,6 +54,12 @@ that form field and as a colored gutter marker on that line in the YAML
 editor; limits **without** a `path` (e.g. a cap on the number of entities)
 are shown next to the entity name instead.
 
+For a numeric field, the renderers
+[`limit_bar_float` / `limit_bar_int`](../../../../vays/renderers/limit_bar.md)
+show such a limit as a bar instead of the chip: the usage split into this
+entity's value and everything else, with the value draggable within what is
+left.
+
 ## Example: a maximum number of entities per owner
 
 Allow each owner at most five `vm` entities. `scope` groups entities by their

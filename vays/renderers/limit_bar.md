@@ -4,7 +4,7 @@ grand_parent: VAYS
 nav_order: 21
 ---
 
-# Renderers `limit_bar_float` / `limit_bar_int`
+# Renderer `limit_bar`
 
 A number input combined with the [limit](../../yac/specs/file/types/limits.md)
 it counts towards, e.g. "CPU cores per OU": a bar shows the limit's whole
@@ -19,9 +19,9 @@ the limit.
 0                                8 / 10 Cores
 ```
 
-The two variants only differ in the values they produce:
-`limit_bar_float` for `type: number` (default step `0.1`), `limit_bar_int`
-for `type: integer` (whole numbers, default step `1`).
+It works for `type: number` and `type: integer`. The values it produces
+follow the field's `multipleOf` (see [Step](#step)), so whole numbers,
+tens or halves all use the same renderer.
 
 ## Behaviour
 
@@ -35,7 +35,7 @@ for `type: integer` (whole numbers, default step `1`).
     total against the cap (e.g. `8 / 10 Cores`), green / amber (from 80 %)
     / red like the usage chips of the other fields.
   - **Dragging.** Click or drag on the bar to move the end of this field's
-    share; the value snaps to the step and is committed when the mouse is
+    share; the value snaps to the [step](#step) and is committed when the mouse is
     released. The **keyboard** works too, once the handle is focused:
     arrow keys (± one step), Page Up / Down (± ten steps), Home / End
     (minimum / maximum). The number input next to the bar allows exact
@@ -63,20 +63,39 @@ So the limit's `value` expression should use the same default as
 `vays_options.initial`, e.g. both from one place in the
 [`context`](../../yac/specs/file/context.md).
 
+## Step
+
+Dragging and the keyboard move the value in steps of the field's
+`multipleOf`, so every value the bar produces is valid:
+
+| Schema                              | Step  |
+|:------------------------------------|:------|
+| `type: integer`                     | `1`   |
+| `type: integer`, `multipleOf: 10`   | `10`  |
+| `type: number`, `multipleOf: 0.5`   | `0.5` |
+| `type: number` (no `multipleOf`)    | `0.1` |
+
+An integer field only uses an integer `multipleOf` (anything else
+contradicts `type: integer`; the step is `1` then).
+
+{: .warning}
+Prefer a `multipleOf` that is exact in binary floating point: integers or
+fractions like `0.5`, `0.25` or `0.125`. With e.g. `0.1`, validators may
+reject values that look valid (in floating point, `0.3` is no exact
+multiple of `0.1`). VAYS reports such a `multipleOf` as a schema warning.
+
 ## Configuration
 
-Select the renderer with `vays_options.renderer: limit_bar_float` (or
-`limit_bar_int`).
+Select the renderer with `vays_options.renderer: limit_bar`.
 
 | Keyword                                  | Effect |
 |:-----------------------------------------|:-------|
-| `type`                                   | Must be `number` or `integer` for the tester to match. Use `limit_bar_int` for `integer` fields (`limit_bar_float` on one is a spec error). |
+| `type`                                   | Must be `number` or `integer` for the tester to match. |
+| `multipleOf`                             | The step, see [Step](#step). |
 | `minimum` / `exclusiveMinimum`           | The lowest value the bar can be dragged to. |
 | `maximum` / `exclusiveMaximum`           | The highest value the bar can be dragged to; marked on the bar. |
-| `multipleOf`                             | Default for the step (if it fits the variant). |
 | `vays_options.initial`                   | The value an unset field counts with (see above). |
 | `vays_options.initial_editable`          | As for the [`number`](number.md) renderer (number input only). |
-| `vays_options.renderer_options.step`     | Granularity of dragging and the keyboard. Default: `multipleOf`, else `0.1` (`limit_bar_float`) / `1` (`limit_bar_int`). Must be a positive number (`limit_bar_int`: integer). |
 | `vays_options.renderer_options.unit`     | Unit shown after the total, e.g. `Cores`. |
 
 The limit itself is configured in the type's
@@ -112,13 +131,13 @@ schema:
       description: Counts towards the cores of the owner.
       vays_category: Resources
       type: number
+      multipleOf: 0.5
       exclusiveMinimum: 0
       maximum: 8
       vays_options:
-        renderer: limit_bar_float
+        renderer: limit_bar
         initial: "{{ context.default_cores }}"
         renderer_options:
-          step: 0.5
           unit: Cores
 ```
 {% endraw %}

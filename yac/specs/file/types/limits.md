@@ -137,6 +137,9 @@ per-OU cap, for instance:
 
 ## Semantics
 
+- Sums are rounded to 9 decimal places, so adding decimal values carries no
+  floating point noise (`0.1 + 0.2` is `0.3`, and a sum exactly at the cap
+  never ends up over it).
 - The candidate set is **every existing entity of the type, minus the one
   being replaced on an `edit`, plus the incoming entity.** This makes
   create, rename, owner-change and quota-increase all behave correctly: an

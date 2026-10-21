@@ -266,6 +266,7 @@ schema:
 | `then`                 | `any`       | `schema`     |    v0 |       7 |
 | `not`                  | `any`       | `schema`     |    v0 |       4 |
 | `format`               | `string`    | `string`     |    v0 |       1 |
+| `multipleOf`           | `number`    | `number`     |    v0 |       4 |
 
 ### Keyword `title`
 
@@ -344,6 +345,17 @@ YAC ships with the following bundled custom formats:
 Formats are only validated on the backend (YAC) side, so the user might not get
 immediate feedback when using VAYS.
 
+### Keyword `multipleOf`
+
+YAC checks `multipleOf` in **decimal**, as the numbers are written: with
+`multipleOf: 0.005`, `0.035` is valid. (Plain binary floating point gets this
+wrong, `0.035 / 0.005` is `7.000000000000001` there, so many validators
+reject such values.) VAYS validates the same way, so any decimal step can be
+used, e.g. `0.005` for CPU cores.
+
+VAYS uses `multipleOf` as the step of the number inputs: their up/down arrows
+add or subtract `multipleOf` instead of `1`.
+
 ## Official Keywords (Supported)
 
 | Keyword                | Schema Type | Keyword Type             |   Draft | Details |
@@ -368,7 +380,6 @@ immediate feedback when using VAYS.
 | `minimum`              | `number`    | `number`                 |       1 ||
 | `exclusiveMaximum`     | `number`    | `number`                 |       3 ||
 | `exclusiveMinimum`     | `number`    | `number`                 |       3 ||
-| `multipleOf`           | `number`    | `number`                 |       4 ||
 
 For details about the keywords, visit
 [learnjsonschema.com](https://www.learnjsonschema.com).

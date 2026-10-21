@@ -78,11 +78,8 @@ Dragging and the keyboard move the value in steps of the field's
 An integer field only uses an integer `multipleOf` (anything else
 contradicts `type: integer`; the step is `1` then).
 
-{: .warning}
-Prefer a `multipleOf` that is exact in binary floating point: integers or
-fractions like `0.5`, `0.25` or `0.125`. With e.g. `0.1`, validators may
-reject values that look valid (in floating point, `0.3` is no exact
-multiple of `0.1`). VAYS reports such a `multipleOf` as a schema warning.
+Any decimal `multipleOf` works (e.g. `0.005`): YAC and VAYS check it in
+decimal, see [Keyword `multipleOf`](../../yac/specs/file/schema.md#keyword-multipleof).
 
 ## Configuration
 

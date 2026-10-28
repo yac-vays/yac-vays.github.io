@@ -14,9 +14,8 @@ field's share can be dragged to change the value, within what is left of
 the limit.
 
 ```
-■ This: 2   ■ Others: 6   □ Free: 2
-[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓|████████▌         ]
-0                                8 / 10 Cores
+CPU  [8 / 10 Cores]
+━━━━━━━━━━━━━━━━━━━━━━━━████████●──────────   [ 2 ]
 ```
 
 It works for `type: number` and `type: integer`. The values it produces
@@ -30,10 +29,12 @@ tens or halves all use the same renderer.
     field. If several limits do, the **tightest** one is shown (the one
     leaving the least room for this field). Without any such limit, only
     the number input is shown (like the [`number`](number.md) renderer).
-  - **Numbers.** Above the bar: this field's share, the others and what is
-    free (or how much the limit is exceeded). Below the bar: `0` and the
-    total against the cap (e.g. `8 / 10 Cores`), green / amber (from 80 %)
-    / red like the usage chips of the other fields.
+  - **Numbers.** A chip next to the label shows the total against the cap
+    (e.g. `8 / 10 Cores`), green / amber (from 80 %) / red like the usage
+    chips of the other fields; this field's share on the bar has the same
+    color, the others are grey. Hovering (or clicking) the chip shows the
+    limit's title and the details: this entity's share, the others, what is
+    free (or how much the limit is exceeded) and the field's own maximum.
   - **Dragging.** Click or drag on the bar to move the end of this field's
     share; the value snaps to the [step](#step) and is committed when the mouse is
     released. The **keyboard** works too, once the handle is focused:
@@ -43,7 +44,7 @@ tens or halves all use the same renderer.
   - **Bounds.** The value can be moved from the field's `minimum` (or one
     step above `exclusiveMinimum`, `0` without either) up to the room left
     in the limit. It never passes the field's own `maximum` /
-    `exclusiveMaximum`, which is marked on the bar by a dashed line. A
+    `exclusiveMaximum`, which is marked on the bar by a thin tick. A
     value that already exceeds the limit (e.g. because the others grew in
     the meantime) can stay, but only be reduced. Typing into the number
     input is not restricted; YAC still validates the limit on save.

@@ -341,6 +341,12 @@ YAC ships with the following bundled custom formats:
 | `unix_password_hash` | Unix-`crypt` SHA-256 / SHA-512 or Bcrypt password hash. |
 | `age_secret`         | ASCII-armored [AGE](https://age-encryption.org) ciphertext. Pairs with the VAYS [`age_secret` renderer](../../../vays/renderers/age_secret.md). |
 
+A custom format plugin may also be `async`, e.g. to look a value up in an
+external service (like checking that a username exists). YAC resolves all values
+of async formats concurrently before validating, each distinct value once per
+validation. As YAC validates on every change in VAYS, such a plugin should cache
+its results.
+
 {: .note}
 Formats are only validated on the backend (YAC) side, so the user might not get
 immediate feedback when using VAYS.

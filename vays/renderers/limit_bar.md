@@ -52,7 +52,8 @@ tens or halves all use the same renderer.
     [`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial)
     value (`0` without one); its share is drawn fainter. Like `initial` in
     general, nothing is written into the data until the user changes the
-    value.
+    value. A small × in the number input of an optional field removes
+    the value again, so it counts with `initial` once more.
   - **Live.** The usage is refreshed with every validation. While a value
     is being changed, the others stay where they are until YAC reported the
     usage for the new value.

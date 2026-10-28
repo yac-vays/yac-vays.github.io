@@ -17,7 +17,7 @@ A *type* bundles everything YAC needs to manage that kind of file:
   `name_generator`, ...),
 - which **operations** are available (`create`, `edit`, `delete`),
 - what is shown in the **UI** (`title`, `description`, `options`,
-  `favorites`),
+  `links`, `favorites`),
 - optional **limits**, **logs** and **actions**.
 
 The data **schema** itself (the fields of each entity) is *not* defined here —
@@ -51,6 +51,7 @@ available in which field is listed in the
 | [`edit`](#enabling-operations) | bool | `true` | Allow editing entities of this type. |
 | [`delete`](#enabling-operations) | bool | `true` | Allow deleting entities of this type. |
 | [`options`](#options) | list | `[]` | Extra values shown per entity in the list view. |
+| [`links`](#links) | list | `[]` | External links (e.g. to a repository or dashboard) shown per entity in the list view. |
 | [`favorites`](#favorites) | list | `[]` | Prominent operation/action buttons (and their order) in the UI. |
 | [`limits`](limits.md) | list | `[]` | Caps on the number or summed quota of entities. |
 | [`logs`](logs.md) | list | `[]` | External log/status sources surfaced per entity. |
@@ -192,6 +193,51 @@ options:
 A plain `name` is never split, so `owner.team` reads a top-level key literally
 named `owner.team`. Values that are lists are shown comma-separated.
 
+## links
+
+`links` are external resources of an entity (e.g. its code repository, a
+dashboard or a deployment tool). VAYS shows them as icon buttons in their own
+**Links** column of the list view (between *Status* and *Actions*), opening in
+a new tab. Each link:
+
+| Field | Description |
+|:------|:------------|
+| `name` | *mandatory*; identifier of the link. |
+| `title` | *mandatory*; shown as tooltip of the button. |
+| `icon` | An SVG image used as button icon (like action icons, it is shown in grey). Defaults to an "open in new" symbol. |
+| `url` | *mandatory*; [j2-string](../../j2.md) rendered **per entity**, with access to `name`, `old.name` and `old.data` (see the [variable matrix](../../j2.md#variables)). |
+
+Rendering `url` to an empty string or `omit` hides the link for that entity
+(VAYS then shows a faded placeholder, so the icons stay aligned). The same
+happens if rendering fails (e.g. because of missing data; YAC logs a warning)
+or the result is no `http(s)://` URL. So, unlike `options`, a link never
+breaks the list.
+
+`url` is the only field rendered per entity; `name`, `title` and `icon` are
+rendered once per request like the rest of the type.
+
+{% raw %}
+```yaml
+links:
+  - name: repo
+    title: GitLab Repository
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">...</svg>'
+    url: "https://gitlab.example.com/k8s/{{ old.data.spec.customer }}/{{ old.data.spec.app }}"
+  - name: dashboard
+    title: Grafana Dashboard
+    # only for entities with monitoring enabled
+    url: "{{ ('https://grafana.example.com/d/ns?var-namespace=' ~ name) if old.data.spec.monitoring|default(false) else omit }}"
+```
+{% endraw %}
+
+{: .note}
+Links are rendered for every listed entity, so keep the expressions simple
+(plain data lookups).
+
+{: .warning}
+The rendered URLs are sent to every user who can see the entity, so never put
+secrets (e.g. from `env`) into a link.
+
 ## favorites
 
 `favorites` controls which operations and actions get prominent buttons in the
@@ -274,6 +320,11 @@ types:
           grey: Grey
           brown: Brown
           red: Red
+
+    links:
+      - name: wiki
+        title: Wiki
+        url: "https://wiki.example.com/animals/{{ name }}"
 
     favorites:
       - name: flush

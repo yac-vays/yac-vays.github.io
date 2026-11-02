@@ -30,6 +30,7 @@ authenticate, and what to call itself.
 | `color`                   | `object`  | no       | Theme colours. Every field is optional; see [Theming](#theming-color). |
 | `oidcConf.server`         | `string`  | yes      | The OIDC provider's discovery URL (`.../.well-known/openid-configuration`). Must match the YAC backend's [`auth.oidc.url`](../yac/specs/file/auth.md). |
 | `oidcConf.clientID`       | `string`  | yes      | The OIDC client / audience for the SPA. Must be present in [`auth.oidc.client_ids`](../yac/specs/file/auth.md) of every backend. |
+| `oidcConf.scope`          | `string`  | no       | Space-separated scopes requested at login. They must make the provider put every claim into the id-token that the backends' [`auth.oidc.jwt`](../yac/specs/file/auth.md) format-strings and roles use (e.g. `profile` for `preferred_username`/`name`, `groups` for `user.token.groups`). Defaults to `openid email`. |
 | `backends`                | `array`   | yes      | List of YAC instances this VAYS connects to (see below). |
 
 Anything left unset falls back to the built-in defaults, which reproduce the

@@ -19,6 +19,38 @@ level.
 All the keywords listed below can be used on any schema level if not stated
 differently in the description.
 
+## Stored Data Without a Schema
+
+On edit (and read), stored data the schema does not cover is echoed back into
+the generated schema so it is kept: keys the schema does not define at all,
+and keys whose subschema was removed by
+[`yac_perms`](#keyword-yac_perms) / [`yac_editable`](#keyword-yac_editable).
+Such data is never part of the form.
+
+  - **In an object**, the key becomes a `const` of the stored value: it
+    cannot be changed, and only removed by `cln` holders if the schema does
+    not define it (see [Permissions](../perms.md)).
+  - **In the items of an array** (any subschema shared by several objects,
+    also `contains` and `patternProperties`), the objects have no identity —
+    they can be added, removed and reordered — and may hold different values.
+    The key becomes an optional `enum` of all stored values, and no value may
+    be used more often than before. So the stored values can be kept,
+    moved between the items or removed (with or without their item), but
+    neither changed to anything new nor duplicated. A new item cannot get a
+    value no other item gives up.
+
+Example: users stored with a `legacy_name` the schema does not define keep it,
+hidden in the form; a [`template_text`](../../../vays/renderers/template_text.md)
+can still show it.
+
+{% raw %}
+```yaml
+users:
+  - {name: alice, legacy_name: old-alice}  # may be removed or moved to bob,
+  - {name: bob}                            # but not copied or changed
+```
+{% endraw %}
+
 ## Extension Keywords
 
 | Keyword                         | Schema Type    | Keyword Type    | Since |

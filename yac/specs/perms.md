@@ -182,6 +182,9 @@ wherever `yac_perms` write gating must be airtight.
         removed, and a key guarded by
         [`yac_perms`](file/schema.md#keyword-yac_perms) / `yac_editable`
         stays immutable for the user — `cln` does not override that.
+        Inside arrays, such values can be moved between and removed with
+        the items, see
+        [Stored data without a schema](file/schema.md#stored-data-without-a-schema).
       - **Everything outside the data**: comments, the order of existing
         object keys, quoting and scalar style (like whether an *unchanged*
         value is split over multiple lines or not) and anchors. Blank lines

@@ -39,6 +39,13 @@ YAML for that property.
     entity name (`name`). Single braces `{key}` pass through Jinja2
     unchanged; don't start a placeholder with `#` (`{#` opens a Jinja2
     comment).
+  - **Fallbacks.** `template` may also be a list: the first template
+    whose placeholders all resolve is shown, else the last one (with its
+    unresolved placeholders). E.g. `["{legacy_name}", "{prefix}-{basename}"]`
+    shows `legacy_name` where it is set and the constructed name
+    everywhere else. A key that is only in the stored data (not in the
+    schema) is kept, but never part of the form, see
+    [Stored data without a schema](../../yac/specs/file/schema.md#stored-data-without-a-schema).
   - **Not known yet.** To mark a part that cannot be shown yet (e.g.
     a generated name before the entity is created), let Jinja2 emit a
     placeholder that resolves to nothing, like `{random}`: it is shown
@@ -53,7 +60,7 @@ Select the renderer with `vays_options.renderer: template_text`.
 | `type`                                                   | **Ignored** — usually omitted (any type matches). |
 | `title`                                                  | Shown as the label. |
 | `description`                                            | Shown behind the info button (Markdown). |
-| `vays_options.renderer_options.template`                 | **Required.** The template text (see above). |
+| `vays_options.renderer_options.template`                 | **Required.** The template text, or a list of them as fallbacks (see above). |
 | `vays_options.initial` / `vays_options.initial_editable` | **Ignored** — the renderer never reads or writes its own data. |
 
 ## [Specs](../../yac/specs/index.md) Example

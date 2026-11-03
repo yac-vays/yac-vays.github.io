@@ -73,4 +73,5 @@ Selected via `vays_options.renderer: <name>`:
 | [`age_secret`](age_secret.md)            | Generate-once secret, AGE-encrypted in the browser before storage. |    v0 |
 | [`random_string`](random_string.md)      | Generate-once random value (UUID, hex, ...), stored in plaintext.  |    v0 |
 | [`limit_bar`](limit_bar.md)              | Number with a bar of the [limit](../../yac/specs/file/types/limits.md) usage it counts towards, draggable. |    v0 |
+| [`template_text`](template_text.md)      | Read-only text built from a template and the form data (e.g. a derived name), with copy. |    v0 |
 | [`unavailable`](unavailable.md)          | Mark a field as having no valid value (auto-applied by YAC to empty `enum`/`oneOf`/`anyOf`). |    v0 |

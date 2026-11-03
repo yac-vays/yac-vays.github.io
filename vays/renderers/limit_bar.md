@@ -47,7 +47,7 @@ tens or halves all use the same renderer.
     `exclusiveMaximum`, which is marked on the bar by a thin tick. A
     value that already exceeds the limit (e.g. because the others grew in
     the meantime) can stay, but only be reduced. Typing into the number
-    input is not restricted; YAC still validates the limit on save.
+    input is not restricted; YAC still validates the limit on commit.
   - **Unset values.** An unset field counts with its
     [`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial)
     value (`0` without one); its share is drawn fainter. Like `initial` in

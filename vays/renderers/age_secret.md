@@ -12,7 +12,7 @@ recipient public key, and stores **only the ciphertext** in the form
 data (and therefore in the YAML file on disk).
 
 The user sees the cleartext exactly once, right after it is
-generated, with a prompt to copy it. After saving, the cleartext is
+generated, with a prompt to copy it. After committing, the cleartext is
 gone — the field just shows `*` characters and a button to generate
 a new secret that overwrites the current one.
 
@@ -21,14 +21,14 @@ a new secret that overwrites the current one.
 | State                                  | What the user sees |
 |:---------------------------------------|:-------------------|
 | No value (create or edit, enabled)   | A new secret is generated automatically. The cleartext is shown read-only with a "Copy" button and a warning that it will not be shown again. |
-| Existing valid value, enabled          | A masked input (`*` of `length` characters) and a **"Generate new"** button. Clicking it asks for confirmation and then replaces the secret. |
+| Existing valid value, enabled          | A masked input (`*` of `length` characters) and a **"Regenerate"** button. Clicking it asks for confirmation and then replaces the secret. |
 | Existing valid value, disabled         | A masked input (`*` of `length` characters). No buttons. |
-| Existing value in an unexpected format | The raw value is shown read-only, the field is marked as invalid, and a **"Generate new"** button is offered. |
+| Existing value in an unexpected format | The raw value is shown read-only, the field is marked as invalid, and a **"Regenerate"** button is offered. |
 | No value, disabled                     | An empty read-only input. No buttons. |
 
-The "Generate new" button opens a confirmation dialog. The new
-secret only becomes effective once the form is saved — until then,
-the form can be discarded to keep the previous value.
+The "Regenerate" button opens a confirmation dialog. The new
+secret only takes effect once you commit — until then, the changes
+can be discarded to keep the previous value.
 
 If `age_public_key` is missing or invalid, the renderer surfaces a
 spec-author error and refuses to generate a value.
@@ -57,9 +57,11 @@ Select the renderer with `vays_options.renderer: age_secret`.
     markers, base64-decodable body, canonical AGE v1 header). Set
     `format: age_secret` on the field to use the according
     [schema-format plugin](../../yac/specs/file/schema.md#keyword-format).
-  - **The cleartext only lives in the user's browser memory.** It is
-    shown until the user saves. Then, VAYS encrypts it with the
-    public key and only sends the ciphertext (an ASCII-armored AGE
+  - **The cleartext only lives in the user's browser memory.** VAYS
+    encrypts it with the public key right after generating it, and
+    shows the cleartext only until the user leaves the page. Only the
+    ciphertext is part of the form data, so a commit only sends the
+    ciphertext (an ASCII-armored AGE
     blob, `-----BEGIN AGE ENCRYPTED FILE-----` ... ) to YAC's API
     (and thus the YAML file).
   - The encryption is performed via the

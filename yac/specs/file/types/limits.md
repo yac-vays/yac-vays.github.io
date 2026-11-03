@@ -47,7 +47,8 @@ limits:
 the limit relates to, in the same loc syntax used everywhere else in YAC
 (`data_loc`, ui_schema references, …): `#` is the data root, so e.g.
 `'#/cpus'` or `'#/disks/data_gb'`. Remember to **quote it in YAML** — an
-unquoted `#` starts a comment. It is never evaluated by YAC — it is only
+unquoted `#` starts a comment. Keys are joined unescaped, see
+[Key Names](../schema.md#key-names). It is never evaluated by YAC — it is only
 copied into the `usages` of the `/validate` response so a UI can anchor the
 usage next to the matching field. VAYS shows such a limit as a `3/5` chip on
 that form field and as a colored gutter marker on that line in the YAML

@@ -19,6 +19,24 @@ level.
 All the keywords listed below can be used on any schema level if not stated
 differently in the description.
 
+## Key Names
+
+YAC addresses data and subschemas with loc strings like `#/users/0/name` (see
+[`limits[].path`](types/limits.md#field-path)), which join the keys with `/`
+without escaping them. So keys (property names in the data and in
+`properties`, and `patternProperties` patterns) must not contain:
+
+  - **`/`**: the loc of such a key is ambiguous, so YAC cannot match the data
+    to its subschema (e.g. [stored data without a
+    schema](#stored-data-without-a-schema) is not kept as expected) and
+    validation errors point to the wrong location;
+  - **`~`**: VAYS (JSON Forms) reads `~0` and `~1` in a key as the escaped
+    `~` and `/` of a JSON pointer, so the form addresses the wrong data.
+
+Also, VAYS (JSON Forms) drops a trailing `then` or `else` from the names on
+the way to a nested property, so names ending in these (e.g. `then`,
+`lengthen`) must not be used for objects whose properties are in the form.
+
 ## Stored Data Without a Schema
 
 On edit (and read), stored data the schema does not cover is echoed back into

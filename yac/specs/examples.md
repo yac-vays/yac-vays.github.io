@@ -208,8 +208,7 @@ types:
     logs:
       - name: provisioning
         title: Provisioning Log
-        progress: true
-        problem: true
+        renderer: progress
         plugin: file
         details:
           path: "/logs/hosts/{{ name }}.log"
@@ -218,6 +217,7 @@ types:
           time: "{{ log[0] }}"
           progress: "{{ log[1] | int }}"
           message: "{{ log[2] }}"
+          problem: "{{ 'error' in log[2] | lower }}"
           problem: "{{ log[2] is regex_match('.*ERROR.*') }}"
 
 repo:

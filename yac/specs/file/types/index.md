@@ -54,7 +54,7 @@ available in which field is listed in the
 | [`links`](#links) | list | `[]` | External links (e.g. to a repository or dashboard) shown per entity in the list view. |
 | [`favorites`](#favorites) | list | `[]` | Prominent operation/action buttons (and their order) in the UI. |
 | [`limits`](limits.md) | list | `[]` | Caps on the number or summed quota of entities. |
-| [`logs`](logs.md) | list | `[]` | External log/status sources surfaced per entity. |
+| [`logs`](logs.md) | list | `[]` | Log/status information (entries, documents, how-tos) shown per entity. |
 | [`actions`](actions.md) | list | `[]` | Custom operations that call out to HTTP or run a program. |
 
 {: .note}
@@ -276,9 +276,10 @@ limits:
 
 ## logs
 
-`logs` surface external log or status information for an entity (e.g. an
-install log or a health check) so it can be shown in the UI, read from a
-pluggable backend (`elastic`, `file` or `http`).
+`logs` surface log or status information for an entity (e.g. an install log,
+a health check, a reported document or a how-to) in the UI, read from a
+pluggable backend (`elastic`, `file`, `http` or `template`) and shown by one of
+the VAYS [log renderers](../../../../vays/log_renderers/index.md).
 
 See the dedicated page: [Field `logs`](logs.md)
 
@@ -334,7 +335,7 @@ types:
     logs:
       - name: camera-trap
         title: Camera Trap
-        progress: true
+        renderer: progress
         plugin: elastic
         details:
           url: "https://user:{{ env.elastic_pass }}@elastic.example.com:9200/camera-trap"
@@ -344,7 +345,7 @@ types:
           progress: "{{ log.animal.count * 100 / log.animal.total }}"
       - name: camera-status
         title: Camera Status
-        problem: true
+        renderer: problem
         plugin: file
         details:
           path: "/logs/camera/{{ name }}.log"

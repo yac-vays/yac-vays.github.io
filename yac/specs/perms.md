@@ -116,10 +116,12 @@ An override commit stores schema-invalid data in the repository. Consumers of
 the repo must tolerate such files, and regular users editing the entity later
 will see the migration-style validation errors until the data is fixed.
 
-**In VAYS**, users holding `adm` see a lock button next to the (disabled)
-Commit button whenever validation errors block a commit. Unlocking it — after
-a warning dialog — turns the Commit into a red *Commit (admin)* that sends the
-write with `force=true`; all validation errors stay visible while unlocked.
+**In VAYS**, users holding `adm` always see a lock button next to the Commit
+button when editing or creating. Unlocking it — after a warning dialog — lifts
+the YAML editor's [locks on fixed values](../../vays/guarantees.md) and sends
+the write with `force=true`; while the data fails validation, the Commit
+becomes a red *Commit (admin)*. All validation errors stay visible while
+unlocked.
 The override is per-commit intent, not a mode: it locks again automatically
 after one successful commit and whenever the edit view is (re)opened.
 

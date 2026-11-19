@@ -69,9 +69,11 @@ there is refused with Monaco's read-only message:
     `yac_editable: false`, keys the schema does not define), spec authors
     can also write a `const`. A required one can neither be changed nor
     removed; an optional one (e.g. a key the schema does not define, for
-    users with the [`cln`](../yac/specs/perms.md) permission) is marked with
-    a lighter lock but may be removed. Not locked while the admin override
-    is on.
+    users with the [`cln`](../yac/specs/perms.md) permission) can't be
+    changed either, but may be removed as a whole (select its lines and
+    delete them) — it has a lighter lock. Every line of a multi-line value
+    gets a lock. Not locked while the admin override is on (users with
+    `adm` can unlock it next to the Commit button at any time).
   - **Comments**, for users without the `cln` permission: YAC refuses any
     change of comments without it, so their text cannot be edited, removed
     or added (`#` that would start a comment). A key can still be deleted
@@ -81,7 +83,10 @@ At the edges of a locked part the cursor is free — e.g. Enter after a fixed
 value or a comment adds a new line. Blank lines and indentation are never
 locked: YAC does not need `cln` for them.
 Changes of key order or quoting, which also need `cln`, are not locked in
-advance and are reported by the validation. The form is not affected.
+advance and are reported by the validation. While the YAML can't be parsed,
+nothing is locked. On a line with another indicator (an error, the
+removed-lines bar, a limit dot), that indicator is shown instead of the lock.
+The form is not affected.
 
 ## Browser Support
 

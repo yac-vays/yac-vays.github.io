@@ -40,6 +40,9 @@ Each log has a list of entries, which VAYS polls while the entity list is shown
 | `progress` | 0 to 100 if the plugin's `details.progress` is defined, else `null`. |
 | `has_content` | Whether the log has a content document (see below). |
 
+A field that renders to `omit` (e.g. {% raw %}`{{ log.failed | default(omit) }}`{% endraw %}) counts as
+not defined: `problem` / `progress` stay `null` for that entry, texts empty.
+
 `problem` and `progress` are generic: whatever renderer shows the log may use
 them (the `problem` renderer is a health indicator from `problem`, the
 `document` renderer shows a light warning symbol on `problem`, the list of

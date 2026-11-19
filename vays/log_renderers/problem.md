@@ -12,9 +12,9 @@ opens the entries like [`messages`](messages.md).
 
 ## Behaviour
 
-  - **Symbol.** From `problem` of the newest entry: a green ring with a check
-    for `false`, a red ring with an exclamation mark for `true`, a grey ring if
-    the entry doesn't report one (`null`).
+  - **Symbol.** From `problem` of the newest entry: a green check for
+    `false`, a red error sign for `true`, a grey question mark if the entry
+    doesn't report one (`null`).
   - **Popover.** Like [`messages`](messages.md): the entries, problems marked
     with a red `!`.
 

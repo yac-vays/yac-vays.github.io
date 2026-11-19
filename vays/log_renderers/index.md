@@ -19,9 +19,14 @@ the renderer uses (e.g. a `progress` for `progress`, a content document for
 
 ## Common Behaviour
 
-  - **Symbol.** Each renderer builds its symbol from the **newest entry** of the
-    log. While the logs are loading, and for a log without entries, all
-    renderers show the same grey placeholder (a spinner / a question mark).
+  - **Symbol.** Each log is a square in the look of the action buttons, the
+    logs of an entity form one group (like the action buttons). Each renderer
+    fills its square from the **newest entry** of the log; its message is the
+    tooltip. While the logs are loading, all squares show a spinner, a log
+    without entries shows a dash.
+  - **Colours.** Green means fine, red a problem, an amber warning sign in the
+    corner a light warning (the content is still usable), grey neutral or not
+    reported.
   - **Polling.** The entries are refreshed in the background every few
     seconds while the list is shown (and right after an operation on the
     entity). Content documents are not polled: they are fetched each time they
@@ -37,11 +42,11 @@ the renderer uses (e.g. a `progress` for `progress`, a content document for
 
 | Renderer                    | Symbol                                           | Opens                                   | Since |
 |:----------------------------|:-------------------------------------------------|:----------------------------------------|------:|
-| [`messages`](messages.md)   | Neutral "info" symbol.                           | Popover with the entries.               |    v0 |
-| [`problem`](problem.md)     | Green check / red exclamation mark from `problem`. | Popover with the entries.               |    v0 |
-| [`progress`](progress.md)   | Progress ring from `progress` (exclamation mark on `problem`). | Popover with the entries and their progress. |    v0 |
-| [`document`](document.md)   | Document symbol, light warning on `problem`.     | Window with the content document (highlighting, search, copy, download). |    v0 |
-| [`markdown`](markdown.md)   | Text symbol, light warning on `problem`.         | Window with the content document rendered as Markdown. |    v0 |
+| [`messages`](messages.md)   | Neutral list symbol.                             | Popover with the entries.               |    v0 |
+| [`problem`](problem.md)     | Green check / red error / grey question mark from `problem`. | Popover with the entries.  |    v0 |
+| [`progress`](progress.md)   | Percentage and bar from `progress`; check when done, error on `problem`. | Popover with the entries and their progress. |    v0 |
+| [`document`](document.md)   | Document symbol, warning sign on `problem`.      | Window with the content document (highlighting, search, download). |    v0 |
+| [`markdown`](markdown.md)   | Text symbol, warning sign on `problem`.          | Window with the content document rendered as Markdown. |    v0 |
 
 An unknown `renderer` is shown as `messages` (and logged in the browser
 console). To add a renderer, see

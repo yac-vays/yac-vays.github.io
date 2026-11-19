@@ -16,7 +16,7 @@ any plugin that provides one works.
 
 ## Behaviour
 
-  - **Symbol.** A text symbol, with a small amber warning sign if the newest
+  - **Symbol.** A text symbol, with a small amber warning sign in the corner if the newest
     entry reports a problem (e.g. "the bucket has no quota yet"). The message
     of the newest entry is the tooltip.
   - **Window.** The text is fetched when the window opens (never polled) and

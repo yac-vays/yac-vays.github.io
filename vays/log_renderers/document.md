@@ -16,17 +16,17 @@ the log needs a plugin that provides one (`http` with `details.content`, or
 ## Behaviour
 
   - **Symbol.** A document symbol. If the newest entry reports a problem
-    (`problem: true`), a small amber warning sign is added — deliberately
-    lighter than the [`problem`](problem.md) renderer's red, as the document is
-    still there (e.g. "older than 14 days"). The message of the newest entry is
-    the tooltip.
+    (`problem: true`), a small amber warning sign is added in the corner —
+    deliberately lighter than the [`problem`](problem.md) renderer's red, as
+    the document is still there (e.g. "older than 14 days"). The message of
+    the newest entry is the tooltip.
   - **Window.** The document is fetched when the window opens (never polled)
     and shown read-only in the same editor as the YAML expert mode:
     highlighting, folding, line numbers.
-      - **Search**: the *Search* button or `Ctrl`/`Cmd`+`F` (highlights all
-        matches, next/previous, case / whole word / regex).
-      - **Copy**: copies the whole document.
-      - **Download**: saves it as a file (see `filename`).
+      - **Search**: `Ctrl`/`Cmd`+`F` (highlights all matches, next/previous,
+        case / whole word / regex).
+      - **Download**: the button next to *Close* saves it as a file (see
+        `filename`).
     The header shows the entity, the time of the document (or of the newest
     entry) and the newest entry's message, with a warning sign on `problem`.
     If the document cannot be loaded, the window shows why, with *Retry*.

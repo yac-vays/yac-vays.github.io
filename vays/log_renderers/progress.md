@@ -6,17 +6,17 @@ nav_order: 3
 
 # Log Renderer `progress`
 
-A **progress indicator**, e.g. for an OS installation: the symbol is a ring
-filled to the progress of the newest entry. A click opens the entries with
+A **progress indicator**, e.g. for an OS installation: the symbol shows the
+progress of the newest entry as percentage and bar. A click opens the entries with
 their progress.
 
 ## Behaviour
 
-  - **Symbol.** A ring filled to `progress` (0 to 100) of the newest entry,
-    with the percentage in the middle (`NA %` if it reports none). If the
-    newest entry reports a problem (`problem: true`), a red exclamation mark
-    replaces the percentage; with `problem: false` a faint green check is shown
-    behind it.
+  - **Symbol.** The `progress` (0 to 100) of the newest entry as percentage
+    (coloured from red to green) with a bar along the bottom edge; at 100 a
+    green check. If the newest entry reports a problem (`problem: true`), a
+    red error sign replaces the percentage and the bar turns red (showing
+    where it stopped). Without a `progress`, a grey question mark.
   - **Popover.** Like [`messages`](messages.md), with the percentage of each
     entry as the first column (a dash for entries without one).
 
@@ -24,8 +24,8 @@ their progress.
 
 | Entry field | Use |
 |:------------|:----|
-| `progress` | The ring (newest entry) and the first column — define `details.progress` of the plugin. |
-| `problem` | Optional: the exclamation mark / check in the ring, markers in the list. |
+| `progress` | The percentage and bar (newest entry) and the first column — define `details.progress` of the plugin. |
+| `problem` | Optional: the error sign, markers in the list. |
 | `message`, `time` | The list. |
 
 ## Options

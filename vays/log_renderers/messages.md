@@ -12,7 +12,8 @@ there are entries; a click opens a popover with them, newest first.
 
 ## Behaviour
 
-  - **Symbol.** A neutral "info" symbol, independent of the entries' content.
+  - **Symbol.** A neutral (grey) list symbol, independent of the entries'
+    content; the newest message is the tooltip.
   - **Popover.** Title and description of the log, then each entry with its
     message and time ("5 min ago", the exact time on hover). Entries with
     `problem: true` are marked with a red `!`; if an entry reports a

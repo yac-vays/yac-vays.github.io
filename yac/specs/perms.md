@@ -196,7 +196,9 @@ wherever `yac_perms` write gating must be airtight.
       Only a raw-YAML edit (`PUT /entity/{type}/{name}`, VAYS's expert mode)
       can be structural: a data patch (`PATCH`, the VAYS form) is applied by
       YAC onto the stored YAML, which keeps comments, order and formatting by
-      construction, so it never needs `cln`.
+      construction, so it never needs `cln`. VAYS's YAML editor locks the
+      fixed values and (without `cln`) the comments, see
+      [Locked Regions](../../vays/guarantees.md#locked-regions-in-the-yaml-editor).
 
 [^3]: Only enforced when the action runs standalone (`arbitrary`) or is hooked
       without the `force` flag. Actions hooked to an operation with

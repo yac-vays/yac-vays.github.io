@@ -56,6 +56,33 @@ covers all keywords listed under
 user submits an invalid format, the error appears after submit instead
 of inline.
 
+## Locked Regions in the YAML Editor
+
+The YAML editor (expert mode) locks what the user cannot change anyway, so
+they learn it right away instead of from the next validation. Locked parts
+have a lock in the gutter, greyed text and an explanation on hover; typing
+there is refused with Monaco's read-only message:
+
+  - **Fixed values**: every value whose schema is a `const` — the only
+    allowed value. YAC pins stored values the user may not write that way
+    (missing [`yac_perms`](../yac/specs/file/schema.md#keyword-yac_perms),
+    `yac_editable: false`, keys the schema does not define), spec authors
+    can also write a `const`. A required one can neither be changed nor
+    removed; an optional one (e.g. a key the schema does not define, for
+    users with the [`cln`](../yac/specs/perms.md) permission) is marked with
+    a lighter lock but may be removed. Not locked while the admin override
+    is on.
+  - **Comments**, for users without the `cln` permission: YAC refuses any
+    change of comments without it, so their text cannot be edited, removed
+    or added (`#` that would start a comment). A key can still be deleted
+    together with its inline comment (whole lines), as YAC allows that.
+
+At the edges of a locked part the cursor is free — e.g. Enter after a fixed
+value or a comment adds a new line. Blank lines and indentation are never
+locked: YAC does not need `cln` for them.
+Changes of key order or quoting, which also need `cln`, are not locked in
+advance and are reported by the validation. The form is not affected.
+
 ## Browser Support
 
 VAYS is built against modern evergreen browsers (Chrome, Firefox,

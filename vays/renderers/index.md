@@ -15,7 +15,7 @@ Renderers can have their own configuration in the schema under
 [`vays_options.renderer_options`](../../yac/specs/file/schema.md#keyword-vays_optionsrenderer_options).
 In addition to this, there are two common options each renderer may implement:
 [`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial) and
-[`vays_options.initial_editable`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial).
+[`vays_options.initial_editable`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial_editable).
 
 ## How Selection Works
 
@@ -32,7 +32,9 @@ wins; ties are broken by registration order. There are two paths to a match:
   - **Explicit selection.** Setting `vays_options.renderer: <name>` in
     the YAC schema forces a specific renderer (the tester additionally
     checks for the right `renderer` key). The "special" renderers in
-    the second table below are *only* selected this way.
+    the second table below are *only* selected this way. Most of them
+    still require a matching `type` (see each renderer's page), and a
+    higher-ranking implicit renderer keeps precedence.
 
 If no VAYS renderer matches, JSON Forms falls back to its bundled
 `material-renderers`.
@@ -47,14 +49,15 @@ Picked automatically from the JSON-Schema:
 | [`number`](number.md)                     | `type: number` / `integer`.                                    |    v0 |
 | [`boolean`](boolean.md)                   | `type: boolean`.                                               |    v0 |
 | [`date`](date.md)                         | `type: string` with `format: date`.                            |    v0 |
-| [`enum`](enum.md)                         | Properties with `enum`.                                        |    v0 |
+| [`enum`](enum.md)                         | Properties with `enum` (or a bare `const`).                    |    v0 |
 | [`one_of_enum`](one_of_enum.md)           | Properties using `oneOf` with `const` values.                  |    v0 |
 | [`multiple_choice`](multiple_choice.md)   | `type: array` of `enum` or `oneOf` items.                      |    v0 |
 | [`array`](array.md)                       | Arrays of primitives or "flat" objects.                        |    v0 |
-| [`nested_array`](nested_arrays.md)        | Object arrays whose items contain a nested array/object.       |    v0 |
+| [`nested_array`](nested_arrays.md)        | Arrays whose items contain a nested array/object (or `anyOf`, `allOf`, non-`const` `oneOf`). |    v0 |
 | `categorization`                          | One tab for each [`vays_category`](../../yac/specs/file/schema.md#keyword-vays_category). |    v0 |
 | `group`                                   | One box for each [`vays_group`](../../yac/specs/file/schema.md#keyword-vays_group) inside a `vays_category`. |    v0 |
-| `void`                                    | Don't show everything else (to allow subschemas that are not in the form). |    v0 |
+| `row`                                     | Fields sharing a [`vays_options.row`](../../yac/specs/file/schema.md#keyword-vays_optionsrow) value next to each other. |    v0 |
+| `void`                                    | Shows nothing for a form element that points to no subschema. |    v0 |
 
 ## Explicit Renderers
 
@@ -69,7 +72,7 @@ Selected via `vays_options.renderer: <name>`:
 | [`mac_address`](mac_address.md)          | Auto-formats and validates MAC addresses.                          |    v0 |
 | [`list_as_string`](list_as_string.md)    | Edits a list but persists as a separator-joined string.            |    v0 |
 | [`big_string_list`](big_string_list.md)  | High-performance list editor for long arrays of strings.           |    v0 |
-| [`multi_checkbox`](multi_checkbox.md)    | Render array-of-enum choices as a column of checkboxes.            |    v0 |
+| [`multi_checkbox`](multi_checkbox.md)    | Render array-of-enum choices as a row of checkboxes.               |    v0 |
 | [`age_secret`](age_secret.md)            | Generate-once secret, AGE-encrypted in the browser before storage. |    v0 |
 | [`random_string`](random_string.md)      | Generate-once random value (UUID, hex, ...), stored in plaintext.  |    v0 |
 | [`limit_bar`](limit_bar.md)              | Number with a bar of the [limit](../../yac/specs/file/types/limits.md) usage it counts towards, draggable. |    v0 |

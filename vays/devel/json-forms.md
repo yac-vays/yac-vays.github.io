@@ -43,20 +43,25 @@ Forms. The **renderer** is a React component that takes the JSON
 Forms props and returns JSX. The **tester** is a function that
 inspects the current UI-Schema subtree plus the resolved JSON-Schema
 and returns a numeric rank if it can render the field. Highest rank
-wins; ties break by registration order.
+wins; ties break by registration order. As the Material renderers of JSON
+Forms are registered alongside as a fallback, all VAYS testers rank **above
+20**.
 
 ### Basic Tester
 
 ```jsx
 export const TextControlTester: RankedTester = rankWith(
-  2,
-  isStringControl,
+  21,
+  or(isStringControl, isUntypedStringInput),
 );
 ```
 
 ### Basic Renderer
 
-A trimmed-down version of `TextControl` from the codebase:
+A simplified version of `TextControl` from the codebase (the real one uses
+`trackedDebounce` and registers the handler with `registerDebouncedCommit`,
+so that a commit flushes a still-pending edit, and adds label and error
+display):
 
 ```jsx
 export const TextControl = (props: ControlProps) => {
@@ -72,7 +77,7 @@ export const TextControl = (props: ControlProps) => {
     [props.path],
   );
 
-  return <TextInput {...props} onChange={onChange} onClear={onClear} />;
+  return <TextInput data={props.data} enabled={props.enabled} onChange={onChange} />;
 };
 ```
 
@@ -98,12 +103,13 @@ The default export is wrapped with `withJsonFormsControlProps(...)`,
 which is what injects props like `description`. Importing only the
 named binding bypasses the wrapper and the control will misbehave.
 
-### `useState` inside a renderer
+### `handleChange` during render or mount
 
-Avoid `useState` and the corresponding setters inside custom control
-components. Calling a setter queues a rerender, which can fight with
-JSON Forms' own rerender management; the typical result is an infinite
-loop that JSON Forms bails out of by throwing.
+Never call `handleChange` (or a state setter) while a custom control
+renders, or synchronously from an effect that runs on mount. This queues a
+rerender, which can fight with JSON Forms' own rerender management; the
+typical result is an infinite loop that JSON Forms bails out of by
+throwing. Plain `useState` for local UI state is fine.
 
 ### Performance trap: debounce text input
 

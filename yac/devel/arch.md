@@ -59,22 +59,26 @@ The hot path is always the same:
      resolves the remaining entity-dependent halves to a permission
      set.
   3. **Validate** — `lib/validator.py` runs the validator plugins in
-     two passes (`test_always` for list endpoints, `test_nolist` for
-     single-entity endpoints). For writes, `lib/schema.py` walks the
+     two passes (`test_always` on every operation, `test_nolist`
+     additionally on everything but listing). For writes, `lib/schema.py` walks the
      JSON Schema, runs the JSON Schema / UI Schema plugins, and
      validates the new data.
   4. **Side-effects** — write operations open a `repo.handler.writer`
      scope, commit the diff, and dispatch any configured actions
-     through `lib/action.py`. Logs (`lib/log.py`) are fetched on
-     demand.
+     through `lib/action.py`. Limits (`lib/limits.py`) are measured for
+     validation and enforced again inside the writer scope. Logs
+     (`lib/log.py`) are fetched on demand.
 
 `lib/auth.py` (OIDC), `lib/yaml.py` (parse/update) and `lib/locs.py`
-(JSON Schema traversal) are utilities reused across the pipeline.
+(JSON Schema traversal) are utilities reused across the pipeline, as are
+`lib/links.py` (entity links), `lib/staleness.py` (repo outage state),
+`lib/git.py`, `lib/uischema.py`, `lib/docs.py` (API docs page) and
+`lib/hacks.py`.
 
 ## Plugin
 
 Every extension point is a plugin folder under `app/plugin/{kind}`.
-The loader (`lib/plugin.py`) walks each folder at startup and exposes
+The loader (`lib/plugin.py`) loads each folder lazily on first use (cached) and exposes
 three lookups:
 
   - `get_module(kind, name)` — pick one by name. Used where the specs
@@ -94,13 +98,13 @@ folder, add an interface, and call the loader from the consumer.
 ## Specs are the API
 
 The specs file is read once at process startup, but every block that
-can reference per-request state (`types`, `roles`, `json_schema`,
+can reference per-request state (`types`, `roles`, `schema`,
 `sets`, `request`) is re-rendered per request with the caller's
 identity and data. That is what makes YAC declarative: roles,
 schemas, and even the entity name pattern can be conditional on the
 user, request headers, or the existing entity data. The cost is
-amortised by request-scoped caches keyed on a stable signature of
-the rendered inputs.
+amortised by process-wide caches (LRU with TTL) keyed on a stable
+signature of the rendered inputs.
 
 `auth` and `repo.plugin` / `repo.connection` are the exceptions —
 they are read once at import and frozen for the lifetime of the

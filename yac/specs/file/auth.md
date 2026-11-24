@@ -53,9 +53,9 @@ YAC accepts two kinds of bearer tokens, both validated statelessly:
 | `client_ids`            | `list[string]`  | `[]`                                                 | Accepted `client_id`s. The first is used as the default in the Swagger UI. |
 | `jwt.name`              | format-string   | `{sub}`                                              | Extracts the user's `name` from the JWT id-token. |
 | `jwt.full_name`         | format-string   | `{name}`                                             | Extracts the user's `full_name`. |
-| `jwt.full_name_fallback`| format-string   | `{given_name} {family_name}`                         | Fallback when `jwt.full_name` cannot be rendered (e.g. missing claim). |
+| `jwt.full_name_fallback`| format-string   | `{given_name} {family_name}`                         | Fallback when `jwt.full_name` cannot be rendered (e.g. missing claim) or is empty. |
 | `jwt.email`             | format-string   | `{email}`                                            | Extracts the user's `email`. |
-| `jwt.email_fallback`    | format-string   | `{sub}@localhost`                                    | Fallback when `jwt.email` cannot be rendered. |
+| `jwt.email_fallback`    | format-string   | `{sub}@localhost`                                    | Fallback when `jwt.email` cannot be rendered or is empty. |
 
 The JWT format-strings use Python `str.format` substitution against the
 validated id-token claims (so `{sub}`, `{preferred_username}`, etc. work

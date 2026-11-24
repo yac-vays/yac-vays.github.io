@@ -13,7 +13,7 @@ can never exceed a cap) and surface as a normal validation error.
 A limit is the combination of three Jinja2 expressions:
 
 - **`scope`** — decides which existing entities belong to the same group as
-  the entity being created/changed (think of it as a [set](../sets.md)).
+  the entity being created/edited (think of it as a [set](../sets.md)).
 - **`value`** — one entity's contribution to the group total. It is **summed**
   over every in-scope entity. It defaults to `1`, so an unset `value` simply
   **counts** entities; set it to a data expression (e.g. `old.data.quota`) to
@@ -21,10 +21,12 @@ A limit is the combination of three Jinja2 expressions:
 - **`max`** — the cap, which may itself depend on the user or context (e.g. a
   per-user or per-plan quota).
 
-All three are rendered with the same variables as [`roles`](../roles.md) /
-[`sets`](../sets.md): `old`, `new`, `name`, `user`, `context`, `env`, `request`.
+All three are bare expressions (YAML **strings without** {% raw %}`{{ }}`{% endraw %}, so
+quote numbers: `max: "5"`), rendered with the variables `old`, `new`, `name`,
+`user`, `context`, `env`, `request`, `operation` and `type` (see the
+[variable matrix](../../j2.md#variables)).
 While aggregating, `old` is the **existing entity being scanned** and `new` is
-the **incoming entity** being created or changed. The reported total always
+the **incoming entity** being created or edited. The reported total always
 includes the incoming entity itself, so the UI can show e.g. `3/5 used`.
 
 ## Defaults
@@ -97,7 +99,7 @@ exposed in `context` — let `max` reference `user`:
     limits:
       - title: VMs per owner
         scope: "old.data.owner == new.data.owner"
-        max: "{{ my_ldap_vm_quota_lookup(user.name) }}"
+        max: "my_ldap_vm_quota_lookup(user.name)"
 ```
 {% endraw %}
 
@@ -119,7 +121,7 @@ types:
       - title: Disk quota per owner (GB)
         scope: "old.data.owner == new.data.owner"
         value: "old.data.disk_gb | default(0)"
-        max: "{{ context.disk_quota_gb }}"
+        max: "context.disk_quota_gb"
         path: '#/disk_gb'  # lets VAYS show the usage on the disk_gb field itself
 ```
 {% endraw %}
@@ -151,6 +153,9 @@ per-OU cap, for instance:
   `Limit "…" reached: 6/5.`).
 - Limits run **after** permission and conflict checks, so a forbidden or
   conflicting operation reports its own, more specific error first.
+- A `value` that renders to something that is not a number counts as `0`.
+- A link pointing at the entity being edited is scored with the incoming
+  data (as it will hold that data once the edit is committed).
 
 {: .note}
 Limits are also evaluated by the `POST /validate` endpoint, so VAYS can show
@@ -165,7 +170,7 @@ operation is even submitted.
 Counting and summing scans the entities of the type. To keep this cheap:
 
 {: .note}
-Prefer a `scope` (and, for `sum`, a `value`) that references **`old.name`**,
+Prefer a `scope` (and, when summing, a `value`) that references **`old.name`**,
 `user` or `context` rather than `old.data`. When no expression of a limit
 touches `old.data`, YAC counts straight from the name list **without loading
 or parsing any entity YAML**. Limits that do reference `old.data` load each
@@ -173,9 +178,8 @@ entity's data with the same bounded concurrency and content-keyed cache used
 by the entity-list endpoint.
 
 {: .warning}
-The count/sum is measured when the request is validated and enforced just
-before the write is committed — the same small window that already exists for
-name-uniqueness checks. Two writes racing at exactly the cap could both pass.
-For most workloads this is acceptable; if you need a hard guarantee, keep the
-cap enforcement paired with a unique `name_pattern`/`name_generator` so the
-commit itself conflicts.
+The count/sum is measured when the request is validated and measured again
+and enforced under the repo writer lock right before the write, so two writes
+racing at exactly the cap cannot both pass within one YAC process. With
+several YAC pods, a concurrent write of another pod is rejected when its push
+conflicts.

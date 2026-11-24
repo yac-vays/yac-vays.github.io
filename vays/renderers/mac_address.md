@@ -14,26 +14,30 @@ surfaces an inline error while the value isn't yet a valid MAC.
 
   - **Canonicalisation.** Hyphens (`-`) are rewritten to colons (`:`),
     letters are upper-cased, and any character that isn't a hex digit
-    or `:` is stripped. The user can paste `aa-bb-cc-dd-ee-ff` or
-    `aa.bb.cc.dd.ee.ff` and end up with `AA:BB:CC:DD:EE:FF` in the
-    form.
+    or `:` is stripped. The user can paste `aa-bb-cc-dd-ee-ff` and end
+    up with `AA:BB:CC:DD:EE:FF` in the form. Other separators are not
+    converted: `aa.bb.cc.dd.ee.ff` becomes `AABBCCDDEEFF`, which is
+    invalid.
   - **Live validation.** The displayed text is matched against
     `^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$`. Until it matches, an
-    "Invalid MAC address format" hint appears under the field and the
-    form data is set to `undefined` (so YAC sees the field as missing
-    rather than as the partial value).
+    "Invalid MAC address format" error is shown (error indicator in the
+    label, red ring around the field) and the form data is left
+    untouched. Only when the field is left with an invalid value, or
+    is emptied, the form data is set to `undefined` (so YAC sees the
+    field as missing rather than as the partial value).
 
 ## Configuration
 
 Select the renderer with `vays_options.renderer: mac_address`. The
 renderer enforces the canonical MAC-address shape itself
 (`^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$`) and clears the form value
-whenever it doesn't match.
+when the field is left with a value that doesn't match.
 
 | Keyword     | Effect |
 |:------------|:-------|
-| `type`      | Must be `string` (or omitted) for the tester to match. |
+| `type`      | Must be `string` (or omitted, if a `pattern` is set) for the tester to match. |
 | `pattern`   | Recommended: mirror the renderer's MAC regex so an empty value saved before the user types a valid address is also rejected by YAC. |
+| `vays_options.initial` / `vays_options.initial_editable` | Behave as in the [text renderer](text.md). |
 
 ## [Specs](../../yac/specs/index.md) Example
 

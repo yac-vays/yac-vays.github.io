@@ -7,7 +7,7 @@ nav_order: 6
 
 The sets that are referenced in your role definitions need to be defined in
 this section. (That's also the only purpose of this section.) They are
-evaluated at runtime for each (if needed).
+evaluated at runtime for each entity (if needed).
 
 A set **must not** be named `all`, as this set already exists implicitly
 (see [Section `roles`](roles.md)).
@@ -22,7 +22,7 @@ sets:
 ```
 
 {: .note}
-To improove entity listing performance, split sets by entity-dependent
+To improve entity listing performance, split sets by entity-dependent
 (using variables `old`, `new` or `name`) and *not* entity-dependent (using
 any of the other variables). This allows YAC to optimize runtime by evaluating
 all sets that are not entity-dependent once per request instead of once per

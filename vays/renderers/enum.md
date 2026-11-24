@@ -22,14 +22,15 @@ removes the value again. With
 it is named after the initial entry, e.g. `Default: eu-west-1`, and stays
 selected while the field is unset: so following the default and
 explicitly picking the same value are distinguishable. Without `initial`
-it reads `Not set`. A required field has no such entry; its `initial`
-entry is preselected instead.
+it reads `Not set`. A required field has a disabled first entry `Choose one`
+instead; its `initial` entry is preselected (greyed out until the user picks,
+unless `vays_options.initial_editable` is `true`).
 
 ## Configuration
 
 | Keyword                          | Effect |
 |:---------------------------------|:-------|
-| `enum`                           | One dropdown entry per element (label = the raw value). |
+| `enum`                           | One dropdown entry per element (label = the raw value). A bare `const` matches as well. |
 | `type`                           | Optional; the tester matches on `enum` alone. |
 
 ## [Specs](../../yac/specs/index.md) Example

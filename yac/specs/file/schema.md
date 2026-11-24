@@ -12,7 +12,7 @@ forms.
 
 The top-level schema has to be of type `object`, everything else is not
 supported by YAC. And every object defaults to `additionalProperties: false`
-(instead of `true`). Addititonally, it is recommended that you use
+(instead of `true`). Additionally, it is recommended that you use
 `yac_optional` on object properties instead of the `required` array on object
 level.
 
@@ -74,7 +74,7 @@ users:
 | Keyword                         | Schema Type    | Keyword Type    | Since |
 |:--------------------------------|:---------------|:----------------|------:|
 | `yac_editable`                 | `any`          | `boolean`       |    v0 |
-| `yac_if`                        | `any`          | `string`        |    v0 |
+| `yac_if`                        | `any`          | `string\|boolean` |    v0 |
 | `yac_optional`                  | *some*         | `boolean`       |    v0 |
 | `yac_perms`                     | `any`          | `array[string]` |    v0 |
 | `yac_types`                     | `any`          | `array[string]` |    v0 |
@@ -90,6 +90,9 @@ users:
 ### Keyword `yac_editable`
 
 Only allow editing entity data specified by this subschema if `true`.
+This only applies to the Edit operation: on Create, the value can be set
+freely. If `false`, an Edit keeps the stored value as a fixed value (see
+[Stored Data Without a Schema](#stored-data-without-a-schema)).
 
 ### Keyword `yac_if`
 
@@ -97,8 +100,8 @@ Only allow creating and editing entity data specified by this subschema if
 `true`.
 
 {: .warning}
-However, this value is not a `boolean` but a `string` that has to j2-render
-into a boolean, for example `yac_if: user.name == "test"`.
+However, this value is usually not a `boolean` but a `string` that has to
+j2-render into a boolean, for example `yac_if: user.name == "test"`.
 
 {: .note}
 When the condition stops holding for stored data (e.g. a property gated on
@@ -109,9 +112,9 @@ with the same edit. This is an ordinary data change: it needs `edt` only, not
 ### Keyword `yac_optional`
 
 Can only be defined for schemas in object properties defined under the
-properties schema-keyword! If not defined or `true`, this property will be
-added to the required list of the object. Otherwise, it will be removed (if
-there).
+properties schema-keyword! If not defined or `false`, this property will be
+added to the required list of the object. Otherwise (`true`), it will be
+removed (if there).
 
 ### Keyword `yac_perms`
 
@@ -141,13 +144,16 @@ when more than one category is (currently) visible: with a single category,
 whatever its name, VAYS hides the tab bar and shows the content directly.
 
 {: .important}
-If the subschema should be respresented in the VAYS form, this filed **must**
+If the subschema should be represented in the VAYS form, this field **must**
 be set.
 
 It can only be defined on subschemas where all parents are objects (or in
 other words: not inside of `if`/`then`/`else`, `oneOf`/`allOf`/`anyOf`).
 The single supported exception is the inside of an `array`'s `items`
 object (see [Keyword `vays_options`](#keyword-vays_options) below).
+Do not set it on both an object and the properties inside of it (the
+property would get two form elements), and note that it is ignored
+below an object property that is itself named `items`.
 
 {: .note}
 Subschemas reached only through composition keywords (`oneOf`/`allOf`/
@@ -174,8 +180,6 @@ schema:
     network:
       title: Network
       type: object
-      vays_category: Network
-      vays_group: IP
       properties:
         ipv4:
           type: string
@@ -195,8 +199,10 @@ the same restrictions apply automatically).
 
 Additional options for the VAYS forms. This can only be used on subschemas
 with `vays_category` defined, **or** on properties nested (at any depth)
-inside an object that has `vays_category` defined, **or** on object
-properties within an array that has `vays_category` defined.
+inside an object that has `vays_category` defined, **or** on the items (or
+their object properties) of an array that has `vays_category` defined. In
+the latter two cases, only `renderer`, `renderer_options`, `initial` and
+`initial_editable` are used (so no `row`).
 
 {: .important}
 For arrays this is not stackable, so it will only work for an array of
@@ -208,11 +214,12 @@ level, exactly like a top-level array.
 
 For an `array` subschema with `vays_category` defined, VAYS renders the
 default array control (a list of items with add/remove buttons). The shape
-of each row is taken from `items` (which must be `type: object`).
+of each row is taken from `items`.
 `vays_options` set directly on the array applies to the array control
 itself (e.g. `renderer: big_string_list`). `vays_options` set on the
-properties of `items.properties.*` applies to the corresponding column /
-input element of each row.
+properties of `items.properties.*` (or on `items` itself, if the items are
+not objects) applies to the corresponding column / input element of each
+row.
 
 {% raw %}
 ```yaml
@@ -324,12 +331,18 @@ Is used for VAYS forms and supports markdown formatting.
 
 ### Keyword `description`
 
-Is used for VAYS forms and supports markdown formatting.
+Is used for VAYS forms and supports markdown formatting. Only the top-level
+`description` is rendered as a [j2-string](../j2.md); the `description` of
+any subschema is used as it is.
 
 ### Keyword `default`
 
 The value of `default` will always be present in the data (and thus the YAML
 file in the end) unless the user changes (or purposely deletes) it.
+
+For all operations but Read, YAC adds a `default` to required properties
+that have none, if they are a `boolean` (`false`), have a `const` (its
+value), are an `object` with `properties` (`{}`) or an `array` (`[]`).
 
 ### Keywords `if`, `else`, `then`
 
@@ -425,10 +438,12 @@ add or subtract `multipleOf` instead of `1`.
 | `properties`           | `object`    | `object[string,schema]`  |       1 ||
 | `additionalProperties` | `object`    | `boolean`                |       1 ||
 | `required`             | `object`    | `array[string]`          |       3 ||
+| `patternProperties`    | `object`    | `object[string,schema]`  |       3 | Not shown in the VAYS form |
 | `items`                | `array`     | `schema`                 |       1 ||
 | `maxItems`             | `array`     | `integer`                |       1 ||
 | `minItems`             | `array`     | `integer`                |       1 ||
 | `uniqueItems`          | `array`     | `boolean`                |       2 ||
+| `contains`             | `array`     | `schema`                 |       6 | Not shown in the VAYS form |
 | `minLength`            | `string`    | `integer`                |       1 ||
 | `maxLength`            | `string`    | `integer`                |       1 ||
 | `pattern`              | `string`    | `string`                 |       1 ||
@@ -445,15 +460,18 @@ For details about the keywords, visit
 These work as usual. Since JSON Schema require these arrays to hold at least
 one item, YAC implements a safety net: In case of an empty array (after
 templating), YAC replaces the key by a `not: {}`, which is valid JSON Schema
-but unsatisfiable (so the same effect but the Schema stays valid).
+but unsatisfiable (so the same effect but the Schema stays valid). If one
+of the three is empty, all of them and the `default` are removed from the
+subschema.
 
 Then, it also adds `vays_options.renderer: unavailable`, which will make
-sure the key is still present in the VAYS form. For details, read see
+sure the key is still present in the VAYS form. For details, see
 [Renderer `unavailable`](../../../vays/renderers/unavailable.md).
 
 ## Official Not Supported Keywords
 
-The following keywords are **NOT SUPPORTED** by YAC and VAYS!
+The following keywords are **NOT SUPPORTED** by YAC and VAYS! (A top-level
+`$schema` is tolerated and removed.)
 
 | Keyword                 | Schema Type | Keyword Type                   |   Draft |
 |:------------------------|:------------|:-------------------------------|--------:|
@@ -467,13 +485,11 @@ The following keywords are **NOT SUPPORTED** by YAC and VAYS!
 | `$anchor`               | `any`       | `string`                       | 2019-09 |
 | `$vocabulary`           | `any`       | `object[string,boolean]`       | 2019-09 |
 | `unevaluatedProperties` | `object`    | `boolean`                      | 2019-09 |
-| `patternProperties`     | `object`    | `object[string,schema]`        |       3 |
 | `propertyNames`         | `object`    | `schema`                       |       6 |
 | `dependentRequired`     | `object`    | `object[string,array[string]]` | 2019-09 |
 | `dependentSchemas`      | `object`    | `object[string,schema]`        | 2019-09 |
 | `minProperties`         | `object`    | `integer`                      |       4 |
 | `maxProperties`         | `object`    | `integer`                      |       4 |
-| `contains`              | `array`     | `schema`                       |       6 |
 | `prefixItems`           | `array`     | `array[schema]`                | 2020-12 |
 | `unevaluatedItems`      | `array`     | `boolean`                      | 2019-09 |
 | `maxContains`           | `array`     | `integer`                      | 2019-09 |

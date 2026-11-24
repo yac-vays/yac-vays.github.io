@@ -36,12 +36,12 @@ Select the renderer with `vays_options.renderer: password`.
 
 | Keyword                                                       | Effect |
 |:--------------------------------------------------------------|:-------|
-| `type`                                                        | Must be `string` (or omitted) for the tester to match. |
+| `type`                                                        | Must be `string` (or omitted, if a `pattern` is set) for the tester to match. |
 | `format`                                                      | Recommended: `unix_password_hash` for YAC-side structural validation of the stored hash. |
 | `pattern`                                                     | Validated against the **stored hash**, not the cleartext (in `crypt-sha-512` mode). Use it for hash-shape checks, not for password-strength policy. |
 | `minLength` / `maxLength`                                     | Validated against the **stored hash**, not the cleartext (in `crypt-sha-512` mode). |
 | `vays_options.renderer_options.save_password_as`              | Either `crypt-sha-512` (Unix-`crypt`-style SHA-512 hash, like `/etc/shadow`, default) or `plaintext` (write the cleartext verbatim — only use when the storing system genuinely cannot consume a hash). |
-| `vays_options.initial` / `vays_options.initial_editable`      | **Ignored** — the renderer drives both internally to keep an existing value masked and never editable as a placeholder. Use JSON-Schema `default` if you need to seed the field. |
+| `vays_options.initial` / `vays_options.initial_editable`      | Avoid. While no value is stored, `initial` is shown as the (unmasked) placeholder text of the empty field; `initial_editable` has no effect. Once a value is stored, the placeholder is the mask. A JSON-Schema `default` is not shown in the field either. |
 
 ## Security notes
 

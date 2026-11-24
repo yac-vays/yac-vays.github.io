@@ -14,6 +14,7 @@ renderer is implicit.
 | Keyword                          | Effect |
 |:---------------------------------|:-------|
 | `type`                           | Must be `boolean` for the tester to match. |
+| `vays_options.initial`           | Tick state shown while the field is unset, see [`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial). |
 | `vays_options.initial_editable`  | If `false`, the tick is shown greyed out as a placeholder; the first click commits a real value and the checkbox turns its regular color. With `true` it looks like a regular value from the start. |
 
 ## [Specs](../../yac/specs/index.md) Example

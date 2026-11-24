@@ -18,10 +18,10 @@ Role keys can have the following two forms:
 | Role Format           | Description |
 |:----------------------|:------------|
 | `{type}:all:{perm}`   | Grant user the `perms` on all entities of `type`. |
-| `{type}:{set}:{perm}` | Grant user the `perms` on the entities of `type` in the the set named `set` (see [Section `sets`](sets.md)). |
+| `{type}:{set}:{perm}` | Grant user the `perms` on the entities of `type` in the set named `set` (see [Section `sets`](sets.md)). |
 
 {: .note}
-To improove entity listing **performance**, split roles by entity-dependent
+To improve entity listing **performance**, split roles by entity-dependent
 (using variables `old`, `new` or `name`) and *not* entity-dependent (using
 any of the other variables). This allows YAC to optimize runtime by evaluating
 all roles that are not entity-dependent once per request instead of once per
@@ -43,7 +43,7 @@ to be request-scoped and only run it once for multiple entities.
 
 ```yaml
 roles:
-  - animal:all:add+act: "user.name in old.responsible | default([])"
+  - animal:all:add+act: "user.name in old.data.responsible | default([])"
   - animal:all:del: "user.name == 'cleanup-script-user'"
   - animal:all:all+mycustomperm: "name in my_custom_lookup_func(user.name)"
   - animal:all:all+mycustomperm: "'admins' in user.token.ou"

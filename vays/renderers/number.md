@@ -17,6 +17,7 @@ numeric input with up/down steppers. The renderer is implicit.
 | `minimum` / `maximum`                    | Out-of-range values are reported inline as an error. |
 | `exclusiveMinimum` / `exclusiveMaximum`  | Out-of-range values are reported inline as an error. |
 | `multipleOf`                             | The step of the up/down arrows (instead of `1`). Non-multiple values are reported inline as an error (checked in decimal, see [Keyword `multipleOf`](../../yac/specs/file/schema.md#keyword-multipleof)). |
+| `vays_options.initial` / `vays_options.initial_editable` | Supported, see [`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial) and [`vays_options.initial_editable`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial_editable). |
 
 ## [Specs](../../yac/specs/index.md) Example
 

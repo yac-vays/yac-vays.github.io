@@ -57,7 +57,7 @@ Select the renderer with `vays_options.renderer: template_text`.
 
 | Keyword                                                  | Effect |
 |:---------------------------------------------------------|:-------|
-| `type`                                                   | **Ignored** — usually omitted (any type matches). |
+| `type`                                                   | Omit it or use `string` / `object`. The tester itself ignores the type, but for `boolean`, `number`/`integer`, `array`, enumerations and `format: date` the type-specific renderer takes precedence. |
 | `title`                                                  | Shown as the label. |
 | `description`                                            | Shown behind the info button (Markdown). |
 | `vays_options.renderer_options.template`                 | **Required.** The template text, or a list of them as fallbacks (see above). |
@@ -84,6 +84,7 @@ schema:
 
     users:
       title: Users
+      vays_category: General
       type: array
       items:
         type: object

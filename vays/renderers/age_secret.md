@@ -39,7 +39,7 @@ Select the renderer with `vays_options.renderer: age_secret`.
 
 | Keyword                                                  | Effect |
 |:---------------------------------------------------------|:-------|
-| `type`                                                   | Must be `string` for the tester to match. |
+| `type`                                                   | Must be `string` (or omitted, if a `pattern` is set) for the tester to match. |
 | `format`                                                 | Recommended: `age_secret` for YAC-side structural validation (see [bundled formats](../../yac/specs/file/schema.md#keyword-format)). |
 | `vays_options.renderer_options.age_public_key`           | **Required.** The AGE recipient public key (`age1...`) the secret will be encrypted for. |
 | `vays_options.renderer_options.length`                   | Length of the generated cleartext, and number of `*` characters shown when masking an existing value. Default `32`. |

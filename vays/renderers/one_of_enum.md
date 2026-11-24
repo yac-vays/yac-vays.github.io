@@ -23,8 +23,9 @@ removes the value again. With
 it is named after the initial entry, e.g. `Default: Private — only the owners`, and stays
 selected while the field is unset: so following the default and
 explicitly picking the same value are distinguishable. Without `initial`
-it reads `Not set`. A required field has no such entry; its `initial`
-entry is preselected instead.
+it reads `Not set`. A required field has a disabled first entry `Choose one`
+instead; its `initial` entry is preselected (greyed out until the user picks,
+unless `vays_options.initial_editable` is `true`).
 
 ## Configuration
 
@@ -33,6 +34,7 @@ entry is preselected instead.
 | `oneOf`                          | Each entry becomes a dropdown option. Each entry must declare a `const`. |
 | `oneOf[i].const`                 | The value stored when this entry is selected. |
 | `oneOf[i].title`                 | The label shown to the user (falls back to the `const` if missing). |
+| `oneOf[i].description`           | Shown (as Markdown) behind an info button in the dropdown box while this entry is selected. |
 | `oneOf[i].yac_if`                | YAC-side conditional that hides the entry when the expression is false. |
 
 ## [Specs](../../yac/specs/index.md) Example

@@ -37,7 +37,7 @@ The `details` are rendered with the templating variables listed for
 Whether a hooked action actually runs depends on `force`:
 
 - With `force: false`, hooked actions are *offered* and run only if the client
-  requests them.
+  requests them (query parameter `run` of the hooked operation's request).
 - With `force: true`, hooked actions run **automatically and silently** on the
   hooked operation — and their `perms` are bypassed for all hooks **except**
   `arbitrary`.
@@ -119,7 +119,7 @@ actions:
       command: ["/usr/bin/greet", "--entity", "{{ name }}"]
       env:
         GREET_USER: "{{ user.full_name }}"
-      stdin: "{{ new.data | tojson }}"
+      stdin: "{{ user.email }}"
       success: [0]   # return codes considered successful
       error: []      # return codes whose stdout/stderr is shown to the user
       timeout: 30
@@ -135,19 +135,19 @@ to a script via `env`/`stdin` instead.
 ### Programs available in the image
 
 `command[0]` must be a program that exists **inside the YAC container**. The
-official image (`python:3.14-alpine` plus a few `apk` packages — see the
+official image (`python:3.15-alpine` plus a few `apk` packages — see the
 [`Dockerfile`](https://github.com/yac-vays/yac/blob/main/Dockerfile)) ships the
-programs below. Prefer an **absolute path** (the `exec` plugin runs with a
-minimal `PATH` of `/usr/local/bin:/usr/bin:/bin`).
+programs below. Prefer an **absolute path** (the `exec` plugin passes on the
+`PATH` of the YAC process itself).
 
 | Program | Path | Notes |
 |:--------|:-----|:------|
-| Python  | `/usr/local/bin/python3` (also `python`, `python3.14`) | Python 3.14. YAC's own dependencies are importable (`httpx`, `jinja2`, `jsonschema`, `ruamel.yaml`, `ldap3`, `redis`, …), so a small `python3 -c '…'` is usually the most convenient action. |
-| `pip` / `pip3` | `/usr/local/bin/pip3` | Present, but the image is read-only for the runtime user — do **not** install packages at action time. |
+| Python  | `/usr/local/bin/python3` (also `python`, `python3.15`) | Python 3.15. YAC's own dependencies are importable (`httpx`, `jinja2`, `jsonschema`, `ruamel.yaml`, `ldap3`, `redis`, …), so a small `python3 -c '…'` is usually the most convenient action. |
+| `pip` / `pip3` | `/usr/local/bin/pip3` | Present, but the installation (`/usr/local`) is read-only for the runtime user — do **not** install packages at action time. |
 | POSIX shell | `/bin/sh` (also `/bin/ash`) | [BusyBox](https://busybox.net/) `ash`. BusyBox also provides `awk`, `sed`, `grep`, `wget`, `nc`, `base64`, `sha256sum`/`md5sum` and the usual coreutils (`cat`, `cut`, `tr`, `sort`, `head`/`tail`, `find`, `xargs`, `date`, `env`, …). There is **no** `bash`. |
 | `git`   | `/usr/bin/git` | Full git client. |
 | `curl`  | `/usr/bin/curl` (and `wcurl`) | Full curl (HTTP/2, TLS). For plain HTTP calls prefer the [`http` plugin](#action-plugin-http) instead. |
-| OpenSSH client | `/usr/bin/ssh` (also `scp`, `sftp`, `ssh-keygen`) | The runtime user's home (`/home/yac/.ssh`) is writable for keys/`known_hosts`. |
+| OpenSSH client | `/usr/bin/ssh` (also `scp`, `sftp`, `ssh-keygen`) | The runtime user's home (`/home/yac/.ssh`) is writable for keys/`known_hosts` (not with the Helm chart: its root filesystem is read-only, only `/repo` and `/tmp` are writable). |
 
 {: .note}
 If you need a program that is not (yet) included, you may either extend the

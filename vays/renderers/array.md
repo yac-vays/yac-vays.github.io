@@ -34,7 +34,7 @@ collapsible card layout instead.
 | Keyword                                                       | Effect |
 |:--------------------------------------------------------------|:-------|
 | `type`                                                        | Must be `array` for the tester to match. |
-| `items`                                                       | Item schema; primitives or "flat" objects only (for nested objects, see [`nested_array`](nested_arrays.md)). |
+| `items`                                                       | Item schema; primitives or "flat" objects only (for nested objects, and items with `anyOf`, `allOf` or a non-`const` `oneOf`, see [`nested_array`](nested_arrays.md)). |
 | `minItems` / `maxItems`                                       | Wrong-size lists are reported inline as an error; the renderer does **not** disable the *Add* / *Delete* buttons to enforce them. |
 | `uniqueItems`                                                 | Duplicate items are reported inline as an error. |
 | `vays_options.initial` / `vays_options.initial_editable`      | **Ignored** at the array level — pre-fill items through JSON-Schema `default`, or set them on the relevant item *property* (where its renderer supports them). |

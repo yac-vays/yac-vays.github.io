@@ -129,8 +129,9 @@ that type.
 
 Each template:
 
-  - **must** contain the variable `name` (used to find/list/create the
-    entity's YAML file);
+  - **must** contain the variable `name` exactly once (used to
+    find/list/create the entity's YAML file); the variable `env` is not
+    available here;
   - **must not** contain a literal `*` (it is reserved as a glob marker
     when listing entities);
   - is rendered with the entity's name to obtain the file path on read,

@@ -6,13 +6,14 @@ nav_order: 4
 # Examples
 
 Examples that exercise the spec sections in increasing complexity. The
-example field paths are linked to their reference in [File](file/index.md).
+sections used are documented in [File](file/index.md).
 
 ## Minimal
 
 The smallest specs that does something useful — one type, one role, a
-flat schema. The `repo` and `auth` blocks are static and used at process
-startup; everything else may use [Jinja2 templating](j2.md).
+flat schema. The `repo` and `auth` blocks are rendered once at process
+startup (with `env` only); everything else except `context` may use the full
+[Jinja2 templating](j2.md).
 
 {% raw %}
 ```yaml
@@ -108,8 +109,8 @@ schema:
 
 ## Templating, Conditionals and Optional Properties
 
-Use [Jinja2 templating](j2.md), conditional defaults via the `if`
-construct, and `yac_optional` to mark fields as not required.
+Use [Jinja2 templating](j2.md), conditional properties via `yac_if`,
+and `yac_optional` to mark fields as not required.
 
 {% raw %}
 ```yaml
@@ -122,7 +123,7 @@ types:
   - name: course
     title: Courses
     name_generated: enforced
-    name_generator: "new.data.title | lower | regex_replace(' ', '-')"
+    name_generator: "new.data.title | lower | regex_replace('[ ,]+', '-')"
 
 repo:
   plugin: git_direct
@@ -173,7 +174,7 @@ schema:
       vays_category: General
       type: string
       format: date
-      yac_if: "new.data.publish == true"
+      yac_if: "new.data.publish | default(false)"
       default: "{{ now() | to_datestr('%Y-%m-%d') }}"
 ```
 {% endraw %}
@@ -217,7 +218,6 @@ types:
           time: "{{ log[0] }}"
           progress: "{{ log[1] | int }}"
           message: "{{ log[2] }}"
-          problem: "{{ 'error' in log[2] | lower }}"
           problem: "{{ log[2] is regex_match('.*ERROR.*') }}"
 
 repo:

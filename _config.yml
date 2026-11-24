@@ -52,4 +52,5 @@ aux_links_new_tab: true
 
 color_scheme: yac
 
-search.heading_level: 6
+search:
+  heading_level: 6

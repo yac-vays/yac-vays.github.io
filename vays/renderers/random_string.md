@@ -44,7 +44,7 @@ Select the renderer with `vays_options.renderer: random_string`.
 
 | Keyword                                                  | Effect |
 |:---------------------------------------------------------|:-------|
-| `type`                                                   | Must be `string` (or omitted) for the tester to match. |
+| `type`                                                   | Must be `string` (or omitted, if a `pattern` is set) for the tester to match. |
 | `pattern`                                                | Recommended: mirror the configured format (e.g. `^[0-9a-f]{16}$` for `hex` of length 16) so hand-edited values are validated by YAC. |
 | `default`                                                | If set, **suppresses generation** — the YAC-side default applies instead. |
 | `vays_options.renderer_options.format`                   | One of `uuid`, `alphanumeric` (default), `hex`, `base64url`, `ascii_printable`, `custom`. See below. |
@@ -69,7 +69,9 @@ characters are equally likely.
 
 An unknown `format`, or `custom` without a `charset`, is a spec error:
 the field is disabled, marked invalid and reported in the
-troubleshooting dropdown; nothing is generated.
+troubleshooting dropdown; nothing is generated. A `charset` with more
+than 256 distinct characters is not detected this way: generating a
+value then fails.
 
 ## [Specs](../../yac/specs/index.md) Example
 

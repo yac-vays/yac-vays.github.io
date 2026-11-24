@@ -9,7 +9,7 @@ nav_order: 16
 A list editor optimised for long arrays of strings (hundreds of
 entries). The user adds items through a single input field, edits
 existing entries by clicking them, and removes them with a per-item
-delete button — without the form re-validating on every keystroke
+delete button (a further button clears the whole list) — without the form re-validating on every keystroke
 across the whole list.
 
 Compared to JSON Forms' default array control, the renderer:
@@ -29,7 +29,7 @@ Select the renderer with `vays_options.renderer: big_string_list`.
 | Keyword                                                  | Effect |
 |:---------------------------------------------------------|:-------|
 | `type`                                                   | Must be `array` for the tester to match. |
-| `items.type`                                             | Items are treated as strings (other primitive types are untested). |
+| `items.type`                                             | Must be set to exactly one primitive type for the tester to match. Items are treated as strings (other primitive types are untested). |
 | `items.pattern`                                          | Non-matching items are reported inline as an error. |
 | `minItems` / `maxItems`                                  | Wrong-size lists are reported inline as an error. |
 | `uniqueItems`                                            | Duplicate values are reported inline as an error. |

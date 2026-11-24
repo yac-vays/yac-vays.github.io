@@ -27,8 +27,8 @@ the renderer uses (e.g. a `progress` for `progress`, a content document for
   - **Colours.** Green means fine, red a problem, an amber warning sign in the
     corner a light warning (the content is still usable), grey neutral or not
     reported.
-  - **Polling.** The entries are refreshed in the background every few
-    seconds while the list is shown (and right after an operation on the
+  - **Polling.** The entries are refreshed in the background about every
+    10 seconds while the list is shown and the browser tab is visible (and right after an operation on the
     entity). Content documents are not polled: they are fetched each time they
     are opened.
   - **Entry fields.** `problem` and `progress` of the entries are generic: the

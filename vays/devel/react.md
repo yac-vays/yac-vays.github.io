@@ -59,8 +59,9 @@ You'll see both styles in older React code. Class components are
 legacy; functional components plus hooks are the current standard and
 generally perform better. The one caveat: a functional component has
 no instance methods, which can matter for singleton-like UI. VAYS uses
-a class component for exactly one thing — the modal — because we want
-to call `Modal.show(...)` from anywhere.
+class components in only a few places — most notably the modal, because
+we want to call `showModalMessage(...)` from anywhere (the others are the
+error boundary of the form and the table of the array renderer).
 
 ### Performance
 

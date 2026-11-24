@@ -59,8 +59,8 @@ The shape of a fix:
 
 ## Alternatives Worth Exploring
 
-  - Step 2 might disappear entirely if we rewrite the
-    `control`/`complexwrapper` HOCs that get applied at
+  - Step 2 might disappear entirely if we wrap the controls in own
+    HOCs (instead of `withJsonFormsControlProps`) at
     `export default` time. That avoids the UI-Schema hack at the
     cost of a deeper change.
   - An array-control renderer that accepts string items only.

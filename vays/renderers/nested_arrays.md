@@ -7,7 +7,8 @@ nav_order: 9
 # Renderer `nested_array`
 
 Picked automatically for arrays whose items are objects containing
-their own nested array or object properties. Each item is rendered as
+their own nested array or object properties (also for arrays of arrays
+and for items using `anyOf`, `allOf` or a non-`const` `oneOf`). Each item is rendered as
 a collapsible card (accordion) so the form stays scannable when there
 are many items or deep nesting. The renderer is implicit.
 
@@ -17,8 +18,9 @@ instead, which keeps every item expanded.
 
 ## Behaviour
 
-  - Each item is wrapped in an accordion, collapsed by default. The
-    user clicks the row header to expand it.
+  - Each item is wrapped in an accordion, collapsed by default (an
+    item just added is expanded). The user clicks the row header to
+    expand it.
   - Card titles default to `1`, `2`, `3`, ... — override this with
     the `item_label_prop` option (see below).
   - The card body honours `uischema.options.details.elements` from
@@ -35,7 +37,7 @@ Set options on the *array* property (not on the items).
 | Keyword                                                  | Effect |
 |:---------------------------------------------------------|:-------|
 | `type`                                                   | Must be `array` for the tester to match. |
-| `items`                                                  | Must describe an object with a nested array or object property. |
+| `items`                                                  | Must describe an object with a nested array or object property (or one of the other shapes named above). |
 | `minItems` / `maxItems`                                  | Wrong-size lists are reported inline as an error; the renderer does **not** disable the *Add* / *Delete* buttons, and never auto-adds items to meet `minItems`. |
 | `vays_options.renderer_options.item_label_prop`          | Name of a property on the item whose value is used as the card title. Falls back to the `1`-based index when the field is missing or empty. |
 | `vays_options.initial` / `vays_options.initial_editable` | **Ignored** at the array level — this renderer manages a collection, not a single value. To pre-fill items, use JSON-Schema `default`; to pre-fill individual item fields, set them on the relevant item property (where its renderer supports them). |

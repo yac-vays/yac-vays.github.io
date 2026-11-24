@@ -7,7 +7,7 @@ nav_order: 4
 
 To install a plugin, it is enough to copy/mount a file into the correct
 location in `/code/app/plugin/{type}` of the YAC container. Each plugin type
-is a bit different in it's handling, see the according `README.md` for details
+is a bit different in its handling, see the according `README.md` for details
 and the existing plugins source code as examples:
 
   - Type [action](https://github.com/yac-vays/yac/tree/main/app/plugin/action)

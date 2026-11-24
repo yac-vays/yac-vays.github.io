@@ -22,10 +22,10 @@ Select the renderer with `vays_options.renderer: list_as_string`.
 
 | Keyword                                                  | Effect |
 |:---------------------------------------------------------|:-------|
-| `type`                                                   | Must be `string` (or omitted) for the tester to match. |
+| `type`                                                   | Must be `string` (or omitted, if a `pattern` is set) for the tester to match. |
 | `pattern`                                                | Validated against the **joined** string, not individual items. Violations are reported inline. |
 | `minLength` / `maxLength`                                | Validated against the **joined** string. Violations are reported inline. |
-| `vays_options.renderer_options.separator`                | Separator used to split the incoming string and join the outgoing one. Pick something the items themselves never contain. Default `,`. |
+| `vays_options.renderer_options.separator`                | Separator used to split the incoming string and join the outgoing one. Pick something the items themselves never contain. Default `,`. Removing all items stores an empty string (`""`), the key is not removed. |
 | `vays_options.initial` / `vays_options.initial_editable` | **Ignored** — seed the field through JSON-Schema `default` instead. |
 
 ## [Specs](../../yac/specs/index.md) Example
@@ -38,7 +38,7 @@ schema:
 
     aliases:
       title: Aliases
-      description: One alias per line. Stored as a comma-separated list.
+      description: Press Enter to add an alias. Stored as a comma-separated list.
       vays_category: General
       type: string
       pattern: '^[a-zA-Z0-9 .,-]+$'

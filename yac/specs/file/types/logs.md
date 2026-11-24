@@ -34,6 +34,7 @@ Each log has a list of entries, which VAYS polls while the entity list is shown
 
 | Field | Description |
 |:------|:------------|
+| `name` | The name of the log. |
 | `time` | Timestamp (should be parsable as a date, may be empty). |
 | `message` | The message. |
 | `problem` | `true` / `false` if the plugin's `details.problem` is defined, else `null`. |
@@ -59,7 +60,7 @@ entries: whoever can see the entity). Plugins that can provide content: `http`
 
 ## Log plugin `elastic`
 
-Queries an Elasticsearch endpoint. The `log` variable is each hit's `_source`
+Queries an Elasticsearch endpoint with an [EQL](https://www.elastic.co/docs/reference/query-languages/eql) query (`<url>/_eql/search`). The `log` variable is each hit's `_source`
 dict.
 
 | `details` field | Description |
@@ -67,9 +68,9 @@ dict.
 | `url` | *mandatory*, j2-string; the Elasticsearch URL (may embed credentials from `env`). |
 | `ssl_verify` | Verify the TLS certificate (default `true`). |
 | `timeout` | Abort the request after this many seconds (default `5`). |
-| `query` | *mandatory*, j2-string; the query selecting this entity's entries. |
-| `message` | j2-string with the `log` hit; the displayed message. |
-| `time` | j2-string with the `log` hit; the entry's timestamp. |
+| `query` | *mandatory*, j2-string; the EQL query selecting this entity's entries. |
+| `message` | j2-string with the `log` hit; the displayed message (default `''`). |
+| `time` | j2-string with the `log` hit; the entry's timestamp (default {% raw %}`{{ log['@timestamp'] }}`{% endraw %}). |
 | `progress` | *optional*, j2-int with the `log` hit; the entry's progress (0 to 100). |
 | `problem` | *optional*, j2-bool with the `log` hit; whether the entry indicates a problem. |
 
@@ -87,7 +88,7 @@ logs:
     details:
       url: "https://user:{{ env.elastic_pass }}@elastic.example.com:9200/install"
       ssl_verify: true
-      query: 'host.name == "{{ name }}"'
+      query: 'any where host.name == "{{ name }}"'
       # `log` here is the elastic hit's `_source` dict.
       message: "{{ log.event.message }}"
       time: "{{ log['@timestamp'] }}"
@@ -99,7 +100,9 @@ logs:
 ## Log plugin `file`
 
 Reads lines from a file and parses each with a regex. The `log` variable is
-the tuple of capture groups (`log[0]`, `log[1]`, ...).
+the tuple of capture groups (`log[0]`, `log[1]`, ...). Only the last 1 kB of
+the file is read and at most the last 10 lines are returned; lines not
+matching `line_format` are skipped.
 
 | `details` field | Description |
 |:----------------|:------------|
@@ -107,8 +110,8 @@ the tuple of capture groups (`log[0]`, `log[1]`, ...).
 | `required` | `true` to treat a missing file as an error (default `false`). |
 | `encoding` | The file encoding (default `utf-8`). |
 | `line_format` | A regex (rendered as a j2-string first); its capture groups become the `log` tuple (default `^(.*)$`, i.e. the whole line as `log[0]`). |
-| `message` | j2-string with the `log` tuple; the displayed message. |
-| `time` | j2-string with the `log` tuple; the entry's timestamp. |
+| `message` | j2-string with the `log` tuple; the displayed message (default {% raw %}`{{ log[0] }}`{% endraw %}). |
+| `time` | j2-string with the `log` tuple; the entry's timestamp (default `''`). |
 | `progress` | *optional*, j2-int with the `log` tuple; the entry's progress (0 to 100). |
 | `problem` | *optional*, j2-bool with the `log` tuple; whether the entry indicates a problem. |
 

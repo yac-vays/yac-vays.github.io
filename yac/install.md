@@ -36,7 +36,8 @@ nothing from third parties and works without internet access.
 
 Hints:
 
-  - Mount a tmpfs at `/repo` so the working copies (one per worker) are kept
+  - A writable mount at `/repo` is required (the path does not exist in the
+    image). Use a tmpfs so the working copies (one per worker) are kept
     in memory (recommended for the `git_direct` repo plugin).
   - For SSH access to the repo, mount your private key and `known_hosts`
     and configure their paths in the specs file's `repo.connection`
@@ -52,7 +53,9 @@ A Helm chart is provided in the `helm/` directory of the repository and
 on registry.inf.ethz.ch.
 
 See [values.yaml](https://github.com/yac-vays/yac/blob/main/helm/values.yaml)
-for possible variables, default values and details.
+for possible variables, default values and details. The chart itself sets
+`YAC_FORMAT_PLUGIN=json_lines` and derives `YAC_ROOT_PATH` from the ingress
+path.
 
 The chart accepts an optional `specs:` value: when set to a YAML string,
 it is written to a ConfigMap and mounted into the pod at `/yac.yml` (the
@@ -70,13 +73,13 @@ is only created when at least one of `env` / `customEnv` is non-empty.
 
 ```sh
 helm show chart oci://registry.inf.ethz.ch/public-isg/yac-vays/yac/charts/yac
-helm install yac oci://registry.inf.ethz.ch/public-isg/yac-vays/yac/charts --version <VERSION> -f values.yaml
+helm install yac oci://registry.inf.ethz.ch/public-isg/yac-vays/yac/charts/yac --version <VERSION> -f values.yaml
 ```
 
 ### Redis (optional, for the `git_redis` repo plugin)
 
 The chart can optionally deploy or wire up a Redis instance used by the
-[`git_redis`](specs/file/repo.md#connection-git_redis) repo plugin.
+[`git_redis`](specs/file/repo.md#key-connection-plugin-git_redis) repo plugin.
 When enabled, the chart sets `YAC_ENV__REDIS_URL` on the YAC pod so the
 specs file can reference it as `env.redis_url`.
 
@@ -94,6 +97,8 @@ Modes:
     `emptyDir` (cache semantics — if Redis dies, the next reader
     rebuilds the snapshot from git). Persistence is opt-in via
     `redis.single.persistence.enabled: true`. Zero extra dependencies.
+    Setting `redis.password` is recommended (the cache holds the full repo
+    content).
   - **`external`**: the chart does not deploy Redis; you supply
     `redis.url`. Use this to point YAC at a Redis HA cluster you
     deploy separately.
@@ -103,7 +108,7 @@ Enabling the `redis:` block in `values.yaml` is only half the wiring —
 your specs file must also select `git_redis` and reference the env var.
 The full Redis-side tuning (`max_age_seconds`, `grace_seconds`,
 `pull_lock_ttl`) is set directly in the specs file; see
-[Section `repo` → `connection` (`git_redis`)](specs/file/repo.md#connection-git_redis).
+[Section `repo` → `connection` (`git_redis`)](specs/file/repo.md#key-connection-plugin-git_redis).
 
 {% raw %}
 ```yaml
@@ -111,7 +116,7 @@ The full Redis-side tuning (`max_age_seconds`, `grace_seconds`,
 repo:
   plugin: git_redis
   connection:
-    url: "https://yac:{{ env.GIT_TOKEN }}@git.example.com/my/repo.git"
+    url: "https://yac:{{ env.git_token }}@git.example.com/my/repo.git"
     branch: main
     redis_url: "{{ env.redis_url }}"
     max_age_seconds: 300

@@ -14,7 +14,7 @@ implicit.
 If `uniqueItems: true`, the dropdown behaves as a set (each value can
 be picked at most once); without it, the user can repeat selections.
 The [`multi_checkbox`](multi_checkbox.md) renderer is an explicit
-alternative when you'd rather see all choices as a column of
+alternative when you'd rather see all choices as
 checkboxes.
 
 ## Configuration
@@ -22,10 +22,11 @@ checkboxes.
 | Keyword                          | Effect |
 |:---------------------------------|:-------|
 | `type`                           | Must be `array` for the tester to match. |
-| `items.enum`                     | One option per entry (label = the raw value). |
+| `items.enum`                     | One option per entry (label = the raw value). Only string values match (`items.type: string`, or no `items.type` and all values are strings). |
 | `items.oneOf[i].const`           | One option per entry (label = `oneOf[i].title` or the `const`). |
 | `uniqueItems`                    | When `true`, clicking an already-selected option deselects it (no duplicates). When `false`, clicking it again appends another copy. |
 | `minItems` / `maxItems`          | Wrong-size selections are reported inline as an error. |
+| `vays_options.initial` / `vays_options.initial_editable` | Supported, see [`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial) and [`vays_options.initial_editable`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial_editable). |
 
 ## [Specs](../../yac/specs/index.md) Example
 

@@ -31,7 +31,8 @@ To add one:
         percentage), `SymbolBar` (a bar along the bottom edge),
         `SymbolWarning` (the amber corner sign) and the colours `GREEN`,
         `RED`, `AMBER`, `GREY`,
-      - `LogPanel` for a list of entries in a popover,
+      - `LogPanel` (one directory up, in `Logs/`) for a list of entries in a
+        popover,
       - `LogWindow` (in the look of the VAYS dialogs: header with title,
         subtitle, your round `WindowButton`s and close; closes on `Esc` and on
         the backdrop) for a window,

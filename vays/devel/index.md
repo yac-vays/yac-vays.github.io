@@ -27,7 +27,8 @@ npm ci
 
 ## Run Locally
 
-The dev server uses HTTPS, so a local certificate is needed:
+The dev server uses HTTPS. Without a local certificate in `cert/`, Vite
+generates a self-signed one itself, so creating your own is optional:
 
 ```sh
 mkdir -p cert
@@ -38,10 +39,11 @@ openssl req -x509 -newkey rsa:3072 -nodes -sha256 \
 npm run dev
 ```
 
-VAYS will be reachable at the URL printed by Vite. Note that most OIDC
-providers won't accept the resulting self-signed origin as a redirect
-URI; for end-to-end auth tests, use a Docker build behind a reverse
-proxy with a real certificate.
+VAYS will be reachable at the URL printed by Vite
+(`https://127.0.0.1:5173`; use `npm run dev-network` to listen on all
+interfaces) and uses `public/config.json` as its config. To log in, the
+redirect URI `https://127.0.0.1:5173/oauth2-redirect` must be registered
+at the OIDC provider for the configured `clientID`.
 
 ## Build for Production
 
@@ -59,21 +61,25 @@ self-host, you'll want to mirror the setting.
 ## Tests
 
 ```sh
-npm run test    # vitest
+npm run test    # vitest (watch mode; `npx vitest run` for a single run)
 npm run lint    # eslint
-npm run pretty  # prettier
+npm run pretty  # prettier (formats the `*.tsx` files)
 ```
 
 ## Container Build
 
-The same image used in production:
+The same image used in production (the build also runs eslint and vitest
+and fails if they do):
 
 ```sh
 docker build --memory=2g -t vays .
 docker run -p 8080:8080 \
-    --mount type=bind,source="$(pwd)/config.json",target=/usr/share/nginx/html/config.json,readonly \
+    --mount type=bind,source="$(pwd)/public/config.json",target=/usr/share/nginx/html/config.json,readonly \
     vays
 ```
+
+Without the mount, the image serves the `public/config.json` of the
+repository.
 
 See [Installation](../install.md) for full deployment options.
 
@@ -90,9 +96,9 @@ with a new minor-version and start the build-pipeline).
 ## Upgrade Environment
 
 - Check on DockerHub for new versions of [Node](https://hub.docker.com/_/node) and
-  [Nginx](https://hub.docker.com/r/nginxinc/nginx-unprivileged) and
+  [Nginx](https://hub.docker.com/r/nginx/nginx-unprivileged) and
   adjust the tags in the `FROM` instructions of `./Dockerfile`. (Use a most
-  specific tag to allow reproducable builds.)
+  specific tag to allow reproducible builds.)
 
 - Update npm dependencies (`package.json` and `package-lock.json`) with the
   following commands (run them separately - combining them can lead to
@@ -113,15 +119,12 @@ route list (see `src/App.tsx`):
 /oauth2-redirect                        OAuth2 callback
 /{backend-name}/{type}/                 Overview (list of entities)
 /{backend-name}/{type}/create/{name}?   Create (or copy) an entity
-/{backend-name}/{type}/edit/{name}?   Edit an entity
+/{backend-name}/{type}/edit/{name}?     Edit an entity
 /{backend-name}/{type}/read/{name}?     Read an entity (read-only)
 /error-page                             Error page
-/dev-info                               Developer info
+/help                                   Help page (developer info)
 ```
 
-The overview route additionally supports filtering and paging via query
-string and fragment:
-
-```
-domain/{backend-name}/{type}/?{filter-key}={filter-value}#{Page}.{NumPerPage}
-```
+The overview route additionally accepts `?name={name}` to highlight the row of
+that entity. Filters and the page size are not part of the URL; they are kept
+in the browser (session and local storage).

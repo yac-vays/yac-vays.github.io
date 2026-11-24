@@ -11,8 +11,8 @@ value is available**, instead of a normal (or broken/empty) input. Selected
 explicitly with `vays_options.renderer: unavailable`.
 
 {: .note}
-YAC selects this renderer **automatically** for a required field whose
-`enum`/`oneOf`/`anyOf` rendered to an **empty** list (e.g. a per-user `oneOf`
+YAC selects this renderer **automatically** for any field (required or not)
+whose `enum`/`oneOf`/`anyOf` rendered to an **empty** list (e.g. a per-user `oneOf`
 built with `to_consts(...)` that filtered down to nothing). In that case YAC
 also makes the field unsatisfiable (`not: {}`), so the operation can never
 validate and **Commit is blocked** — see
@@ -25,7 +25,8 @@ the field is actually invalid depends on the schema — the empty-enum path adds
 
 ## What the user sees
 
-The field's `title` as a label, then a box containing the message from
+The field's `title` as a label (always marked as required), then a box with
+the fixed heading "No option available" and the message from
 `vays_options.renderer_options.unavailable_msg` (rendered as markdown). The
 message is kept separate from the field's `description` on purpose, since the
 `description` is also shown in the normal, populated case.
@@ -72,5 +73,5 @@ Any sibling expression that indexes the same list (e.g. a
 {% raw %}`default: "{{ … | first }}"`){% endraw %} throws on an empty list
 while the schema is being rendered, which fails the whole schema before the
 empty-enum handling can run. Guard such expressions with
-[`omit`](../../yac/specs/file/schema.md#keyword-omit),
+[`omit`](../../yac/specs/j2.md#keyword-omit),
 e.g. `... | first | default(omit)`.

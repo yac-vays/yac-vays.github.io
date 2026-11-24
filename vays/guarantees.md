@@ -32,7 +32,8 @@ The frontend honours the YAC subset of JSON-Schema documented under
 limitations from VAYS' point of view:
 
   - **`oneOf` / `allOf` / `anyOf`** at object-property level are not
-    rendered as form controls. Use [`yac_if`](../yac/specs/file/schema.md#keyword-yac_if)
+    rendered as form controls (except a `oneOf` of `const` values, see the
+    [`one_of_enum`](renderers/one_of_enum.md) renderer). Use [`yac_if`](../yac/specs/file/schema.md#keyword-yac_if)
     or [`yac_types`](../yac/specs/file/schema.md#keyword-yac_types) to
     gate properties conditionally.
   - **`if` / `then` / `else`** is supported only for *changing value
@@ -52,9 +53,8 @@ limitations from VAYS' point of view:
 VAYS validates form data with `ajv` against the schema YAC sent. That
 covers all keywords listed under
 [Specs > `schema`](../yac/specs/file/schema.md). Format keywords (e.g.
-`hostname`, `email`) are validated **only on the YAC backend**; if the
-user submits an invalid format, the error appears after submit instead
-of inline.
+`hostname`, `email`) are validated **only on the YAC backend**; such an error is shown at the
+field once the backend has validated the data, not instantly while typing.
 
 ## Locked Regions in the YAML Editor
 

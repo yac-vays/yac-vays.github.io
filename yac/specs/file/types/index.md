@@ -9,7 +9,7 @@ has_children: true
 The `types` section is the heart of a YAC specification: it is a **list** of
 entity types, and each type turns one kind of YAML file in your data
 repository into a full REST API (and, through [VAYS](../../../../vays/index.md), a web UI)
-for listing, creating, changing and deleting those files.
+for listing, creating, editing and deleting those files.
 
 A *type* bundles everything YAC needs to manage that kind of file:
 
@@ -30,8 +30,11 @@ Only manage *similar* types in one YAC instance. All types share the same
 [`auth`](../auth.md). If your file kinds are structurally very different, run a
 second YAC instance instead of forcing them into one.
 
-Like everywhere in the specs, every string value is a
-[j2-string](../../j2.md) and is rendered per request, so most fields can depend
+Like everywhere in the specs, string values are
+[j2-strings](../../j2.md) rendered per request (`name_generator` and the
+`limits` expressions are bare expressions without {% raw %}`{{ }}`{% endraw %}; link URLs and
+the `details` of logs and actions are rendered later, with their own
+variables), so most fields can depend
 on the caller, the request and the existing data. Which variables are
 available in which field is listed in the
 [templating variable matrix](../../j2.md#variables).
@@ -40,13 +43,13 @@ available in which field is listed in the
 
 | Field | Type | Default | Description |
 |:------|:-----|:--------|:------------|
-| [`name`](#name-and-title) | string | *mandatory* | Identifier of the type, used in URLs (`/entity/{name}`). |
+| [`name`](#name-and-title) | string | *mandatory* | Identifier of the type, used in URLs (`/entity/{type}`). |
 | [`title`](#name-and-title) | string | *mandatory* | Human-readable name shown in the UI. |
 | [`description`](#description) | string | `''` | Markdown description shown in the UI. |
 | [`name_pattern`](#entity-names) | regex | `^[a-zA-Z0-9_\-\.]{1,200}$` | Allowed entity names. |
 | [`name_example`](#entity-names) | string | `''` | Example name shown as a placeholder in the UI. |
 | [`name_generated`](#generated-names) | enum | `never` | Whether the server generates the name (`never` / `optional` / `enforced`). |
-| [`name_generator`](#generated-names) | j2-string | `uuid()` | Expression that produces the name when generated. |
+| [`name_generator`](#generated-names) | j2 expression | `uuid()` | Expression that produces the name when generated. |
 | [`create`](#enabling-operations) | bool | `true` | Allow creating entities of this type. |
 | [`edit`](#enabling-operations) | bool | `true` | Allow editing entities of this type. |
 | [`delete`](#enabling-operations) | bool | `true` | Allow deleting entities of this type. |
@@ -62,7 +65,8 @@ The more involved fields — [`limits`](limits.md), [`logs`](logs.md) and
 [`actions`](actions.md) — each have their own page (see the child pages of
 this section).
 
-A minimal type only needs `name` and `title`:
+A minimal type only needs `name` and `title` (plus its path template in
+[`repo.details`](../repo.md)):
 
 ```yaml
 types:
@@ -75,8 +79,8 @@ types:
 ## Name and title
 
 `name` is the stable identifier of the type. It must match
-`^[a-zA-Z0-9_\-\.]{1,200}$` and appears in every endpoint of the type
-(`/entity/{name}`, `/entity/{name}/{entity}`, ...). `title` is the
+`^[a-zA-Z0-9_\-\.]{1,200}$` (else it is not reachable in the API) and appears
+in every endpoint of the type (`/entity/{type}`, `/entity/{type}/{name}`, ...). `title` is the
 human-readable label shown in the UI.
 
 ## Description
@@ -95,7 +99,9 @@ description: |
 `name_pattern` is a regular expression every entity name of this type must
 match **as a whole** (also if the pattern is not anchored with `^...$`). Keep
 it as strict as your storage allows — names usually become file names in the
-repository.
+repository. Independent of `name_pattern`, every name must also match the
+global pattern `^[a-zA-Z0-9_\-\.]{1,200}$`; a `name_pattern` that would accept
+`/`, `../` or a newline is rejected as a specs error.
 
 `name_example` is shown as a placeholder/example in the UI to hint at the
 expected format. It has no effect on validation.
@@ -117,7 +123,8 @@ create. You can instead let YAC generate the name:
 | `enforced`       | The request **must not** contain a name; it is always generated. |
 
 When a name is generated, it is produced by the `name_generator`
-[j2-string](../../j2.md) and must still match `name_pattern` (and be unique).
+(a bare [Jinja2](../../j2.md) expression, **without** {% raw %}`{{ }}`{% endraw %})
+and must still match `name_pattern` (and be unique).
 The default generator is `uuid()`. Inside the generator you additionally have
 access to `old.list` (the existing names of the type) and `new.data` (the data
 being created) — see the [variable matrix](../../j2.md#variables).
@@ -127,7 +134,9 @@ being created) — see the [variable matrix](../../j2.md#variables).
 # Derive a slug from a data field:
 name_generated: enforced
 name_generator: "new.data.title | lower | regex_replace(' ', '-')"
+```
 
+```yaml
 # Or count up to the next free number, capped at 50 entities:
 name_generated: enforced
 name_generator: "'host-' ~ re_next_int('^host-(\\d+)$', limit=50)"
@@ -160,7 +169,7 @@ to disable an operation entirely (e.g. a read-only, externally-maintained
 type), and use roles to decide *who* may perform the enabled ones.
 
 ```yaml
-# A read-only type: entities are listed and viewed, never written through YAC.
+# A read-only type: entities are listed and read, never written through YAC.
 create: false
 edit: false
 delete: false
@@ -175,7 +184,7 @@ each entity in full. Each option reads one value from the entity's data:
 | Field | Description |
 |:------|:------------|
 | `name` | *mandatory*; the top-level data key to read, or a [data-loc](limits.md#field-path) like `'#/spec/users'` for a value further down. |
-| `title` | Column title in the UI. |
+| `title` | *mandatory*; column title in the UI. |
 | `default` | Value to show when the entity has not set this key. |
 | `aliases` | Map of raw value → Markdown label, to prettify displayed values. |
 

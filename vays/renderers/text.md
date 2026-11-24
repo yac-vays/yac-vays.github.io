@@ -24,6 +24,7 @@ when its tester also matches.
 | `pattern`                                     | Non-matching values are reported inline as an error. |
 | `minLength` / `maxLength`                     | Too-short / too-long values are reported inline as an error. |
 | `vays_options.renderer_options.send_trivial`  | When `true`, the field stores `""` instead of clearing the value when the input is empty. Use it only when the schema or downstream system genuinely distinguishes `""` from "missing". Default `false`. |
+| `vays_options.initial` / `vays_options.initial_editable` | Supported, see [`vays_options.initial`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial) and [`vays_options.initial_editable`](../../yac/specs/file/schema.md#keyword-vays_optionsinitial_editable). |
 
 ## [Specs](../../yac/specs/index.md) Example
 

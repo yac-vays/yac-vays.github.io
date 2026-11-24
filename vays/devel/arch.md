@@ -47,7 +47,10 @@ Subfolders of `src/` and how they reach each other. Solid edges are
 subfolder relationships; dashed edges are import relationships.
 `renderers` and `session` are sibling folders under `src/` but
 logically belong to `view` and `controller` respectively (labelled
-*is part of*).
+*is part of*). `utils` holds helpers shared by all layers;
+`view/thirdparty` contains the layout, header, sidebar and the input
+form components (`ifc`). Not shown: `view/hooks`, `view/styles` and
+`model/caching`.
 
 ```mermaid
 graph TD
@@ -57,9 +60,11 @@ graph TD
     src --> model
     src --> controller
     src --> session
+    src --> utils
 
     view --> pages
     view --> components
+    view --> thirdparty
     controller --> global
     controller --> local
     controller --> state

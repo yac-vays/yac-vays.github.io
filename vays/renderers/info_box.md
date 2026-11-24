@@ -10,8 +10,8 @@ Renders a **read-only block of text** instead of an input field. Use
 it to inject documentation, warnings, instructions or links directly
 into the form — somewhere users will actually see them.
 
-The renderer displays only the field's `title` and `description`,
-both rendered as Markdown. The underlying value is never read or
+The renderer displays only the field's `title` (plain text) and
+`description` (rendered as Markdown). The underlying value is never read or
 written; the field exists purely as a vehicle for the description
 text.
 
@@ -25,8 +25,8 @@ Select the renderer with `vays_options.renderer: info_box`.
 
 | Keyword                                                  | Effect |
 |:---------------------------------------------------------|:-------|
-| `type`                                                   | **Ignored** — usually omitted (any type matches). |
-| `title`                                                  | Shown as the box heading (Markdown). |
+| `type`                                                   | Omit it or use `string` / `object`. The tester itself ignores the type, but for `boolean`, `number`/`integer`, `array`, enumerations and `format: date` the type-specific renderer takes precedence. |
+| `title`                                                  | Shown as the box heading (plain text). |
 | `description`                                            | Shown as the box body (Markdown, multi-line). |
 | `vays_options.initial` / `vays_options.initial_editable` | **Ignored** — the renderer never reads or writes form data. |
 

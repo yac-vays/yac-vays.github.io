@@ -25,7 +25,8 @@ any plugin that provides one works.
     allowed but sanitized (no scripts, event handlers or styles), like in all
     Markdown VAYS shows. The text of a log is treated more strictly than the
     Markdown of the specs: inline SVG is removed, and `id` / `name`
-    attributes get a `user-content-` prefix. The header shows the entity and the newest entry's
+    attributes get a `user-content-` prefix. The header shows the entity, the time of the text (or of the newest
+    entry) and the newest entry's
     message (with a warning sign on `problem`). If the text cannot be loaded,
     the window shows why, with *Retry*.
 
@@ -36,6 +37,7 @@ any plugin that provides one works.
 | `has_content` | The window shows the log's content document. |
 | `problem` | Optional: the warning sign. |
 | `message` | Optional: tooltip and subtitle. |
+| `time` | Optional: the time shown if the text has none. |
 
 ## Options
 

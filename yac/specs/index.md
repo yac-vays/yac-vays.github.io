@@ -25,7 +25,7 @@ on its own page):
 
 | Section                     | Required | Purpose |
 |:----------------------------|:---------|:--------|
-| `version`                   | yes      | Major version of YAC the specs file targets (e.g. `1`). YAC refuses to start when it is missing or does not match the running major version. |
+| `version`                   | yes      | Major version of YAC the specs file targets (e.g. `1`). When it is missing or does not match the running major version, YAC still starts but answers every request with a specification error. |
 | [`auth`](file/auth.md)      | no       | OpenID Connect authentication and CORS origins. |
 | [`repo`](file/repo.md)      | no       | Repository plugin selection, connection config and per-type path templates. |
 | [`request`](file/request.md)| no       | Custom HTTP headers exposed to the templating engine. |
@@ -51,9 +51,9 @@ between deployments, or generating fragments separately.
 
 The value is either a single path or a list of paths, **relative to the
 file containing the `yac_include` key**. All included paths must resolve
-to locations under the directory of the main specs file (set via
-[`YAC_SPECS`](../env.md)); paths pointing outside that root cause YAC to
-fail at startup.
+to locations under the directory of that file (for the main specs file, set
+via [`YAC_SPECS`](../env.md), its directory); paths pointing outside of it
+cause YAC to fail at startup.
 
 {: .note}
 Includes are merged at process startup, **before** any
@@ -69,10 +69,9 @@ Merge rules:
   - When the included content is an **object**, its keys are merged into
     the parent object. Keys that already exist in the parent are **kept**
     (the parent wins); the include only fills in missing keys.
-  - When the included content is a **non-object** (e.g. a list or scalar),
-    it replaces the parent object only if that parent is otherwise empty
-    and exactly one path is listed. Otherwise the include is skipped with
-    a warning.
+  - Included content that is a **non-object** (e.g. a list or scalar) is
+    not supported: it is silently treated as an empty object, so nothing
+    is merged.
   - When multiple paths are listed and several provide the same key, the
     first include in the list wins for that key.
 

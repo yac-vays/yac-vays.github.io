@@ -5,9 +5,9 @@ nav_order: 7
 
 # Section `context`
 
-In this section, you can simple define some context variables that you want to
-use in the schema for templating. Templating inside the `context` section is
-not supported however, so the variables will be available 1:1 as they are
+In this section, you can simply define some context variables that you want to
+use in the schema (and in [limits](types/limits.md)) for templating.
+Templating inside the `context` section is not supported however, so the variables will be available 1:1 as they are
 defined here.
 
 This is mainly meant for repeating strings like regular expressions or variables

@@ -44,7 +44,7 @@ the log needs a plugin that provides one (`http` with `details.content`, or
 
 | `options` key | Effect |
 |:--------------|:-------|
-| `language` | Syntax highlighting: `yaml`, or `plaintext` (default). |
+| `language` | Syntax highlighting: `yaml`, or `plaintext` (default). `json`, `markdown`, `xml`, `ini` and `shell` are not highlighted, but set the extension of the download (any other value: `.txt`). |
 | `filename` | File name of the download; `{name}` is replaced with the entity name (default `<entity>-<log>.<ext>`, the extension from `language`). |
 
 ## [Specs](../../yac/specs/index.md) Example

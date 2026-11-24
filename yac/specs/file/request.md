@@ -13,6 +13,11 @@ the prefix `YAC-` (or `yac-`), so for example the HTTP header field
 `YAC-My-Super-Secret` can be defined as `my_super_secret` and then accessed as
 `request.headers.my_super_secret` variable.
 
+The whole header value must match the `pattern` (default: `^$`, so without a
+`pattern` only an empty value matches). A header that is missing or does not
+match is silently replaced by the `default` (default: an empty string); the
+request is not rejected.
+
 ## Example
 
 ```yaml

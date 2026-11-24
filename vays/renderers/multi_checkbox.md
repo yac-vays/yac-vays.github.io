@@ -6,7 +6,7 @@ nav_order: 17
 
 # Renderer `multi_checkbox`
 
-Renders a fixed-choice multi-select as a **column of checkboxes**,
+Renders a fixed-choice multi-select as a **row of checkboxes** (wrapping onto further lines),
 one per option. Use it instead of the default multi-select dropdown
 when the choices are few enough to fit on screen and you want every
 option to be visible without opening a popup.
@@ -29,10 +29,11 @@ Select the renderer with `vays_options.renderer: multi_checkbox`.
 |:---------------------------------------------------------|:-------|
 | `type`                                                   | Must be `array` for the tester to match. |
 | `uniqueItems`                                            | Must be `true` for the tester to match. |
-| `items.enum`                                             | One choice per element (label = the raw value). |
+| `items.enum`                                             | One choice per element (label = the raw value). Only string values match (`items.type: string`, or no `items.type` and all values are strings). |
 | `items.oneOf[i].const`                                   | One choice per element (label = `oneOf[i].title`). |
 | `minItems` / `maxItems`                                  | Wrong-size selections are reported inline as an error. |
 | `vays_options.initial`                                   | Initial selection (array of item values) shown before the user interacts; the first toggle commits the whole shown selection. |
+| `vays_options.initial_editable`                          | When `false` (default), the pre-ticked `initial` boxes are greyed out until the user toggles one. |
 
 ## [Specs](../../yac/specs/index.md) Example
 

@@ -30,13 +30,16 @@ sudo docker run --rm --name vays -p 127.0.0.1:8080:8080 \
 ```
 
 VAYS is then reachable at [http://localhost:8080/](http://localhost:8080/).
+Logging in does **not** work over plain HTTP, though: VAYS must be opened via
+`https://` (see the hints below).
 
 Hints:
 
   - The redirect URI configured at the OIDC provider must match the URL at
     which the user opens VAYS (typically `https://<your-host>/oauth2-redirect`).
-    The OIDC provider will likely require HTTPS, so a development setup
-    behind a reverse proxy or a self-signed cert is the easiest option.
+    VAYS always uses an `https://` redirect URI and only keeps the token on
+    an HTTPS page, so a development setup behind a reverse proxy or a
+    self-signed cert is the easiest option.
   - The VAYS image only serves static assets; CORS is configured on the
     YAC side via [`auth.cors.origins`](../yac/specs/file/auth.md) in
     the specs file.
@@ -45,7 +48,10 @@ Hints:
     `config.json` when the container starts (into `/tmp`, which must be
     writable — also with a read-only root filesystem). If the config cannot
     be used for that, the header only carries `frame-ancestors 'none'`; the
-    app applies the same policy itself in any case.
+    app applies the same policy itself in any case. As the header (and the
+    favicon) are only generated at start, restart the container after
+    changing a mounted `config.json` (the Helm chart does this
+    automatically).
   - TLS is expected to be terminated in front of the container; add
     `Strict-Transport-Security` there.
 
@@ -59,7 +65,7 @@ for possible variables, default values and details.
 
 ```sh
 helm show chart oci://registry.inf.ethz.ch/public-isg/yac-vays/vays/charts/vays
-helm install vays oci://registry.inf.ethz.ch/public-isg/yac-vays/vays/charts --version <VERSION> -f values.yaml
+helm install vays oci://registry.inf.ethz.ch/public-isg/yac-vays/vays/charts/vays --version <VERSION> -f values.yaml
 ```
 
 ## Versioning / Container Tags

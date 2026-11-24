@@ -185,5 +185,4 @@ The count/sum is measured when the request is validated and measured again
 and enforced under the repo writer lock right before the write, so two writes
 racing at exactly the cap cannot both pass within one YAC process. With
 several YAC pods, a write whose push is rejected because another pod pushed
-first is repeated on top of the new state without measuring again, so two
-such writes racing at exactly the cap can exceed it.
+first is repeated on top of the new state, measuring and enforcing again.

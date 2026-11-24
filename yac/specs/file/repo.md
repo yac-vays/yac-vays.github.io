@@ -126,8 +126,9 @@ remote outage never takes YAC down with it:
     the checkout is kept. A corrupt checkout is replaced by a fresh clone,
     which is built next to it and only then swapped in.
   - A push that is rejected because another YAC instance pushed in between
-    is repeated once on top of the new state. If the same entity was
-    changed, the request answers `409`.
+    is repeated once on top of the new state, including its limit checks
+    and name generation. If the same entity was changed or the push is
+    rejected again, the request answers `409`.
 
 See `GET /status` in the [installation guide](../../install.md#health-checks-and-monitoring)
 for how to observe this.

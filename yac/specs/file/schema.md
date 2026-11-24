@@ -49,7 +49,7 @@ Such data is never part of the form.
     cannot be changed, and only removed by `cln` holders if the schema does
     not define it (see [Permissions](../perms.md)).
   - **In the items of an array** (any subschema shared by several objects,
-    also `contains` and `patternProperties`), the objects have no identity —
+    also `patternProperties`), the objects have no identity —
     they can be added, removed and reordered — and may hold different values.
     The key becomes an optional `enum` of all stored values, and no value may
     be used more often than before. So the stored values can be kept,
@@ -107,7 +107,9 @@ j2-render into a boolean, for example `yac_if: user.name == "test"`.
 When the condition stops holding for stored data (e.g. a property gated on
 another property's value that just changed), that data has to be removed
 with the same edit. This is an ordinary data change: it needs `edt` only, not
-`cln` (VAYS does it automatically).
+`cln` (VAYS does it automatically). Data the user may not write
+([`yac_perms`](#keyword-yac_perms), [`yac_editable`](#keyword-yac_editable))
+stays fixed instead.
 
 ### Keyword `yac_optional`
 
@@ -152,8 +154,7 @@ other words: not inside of `if`/`then`/`else`, `oneOf`/`allOf`/`anyOf`).
 The single supported exception is the inside of an `array`'s `items`
 object (see [Keyword `vays_options`](#keyword-vays_options) below).
 Do not set it on both an object and the properties inside of it (the
-property would get two form elements), and note that it is ignored
-below an object property that is itself named `items`.
+property would get two form elements).
 
 {: .note}
 Subschemas reached only through composition keywords (`oneOf`/`allOf`/
@@ -346,6 +347,11 @@ value), are an `object` with `properties` (`{}`) or an `array` (`[]`).
 
 ### Keywords `if`, `else`, `then`
 
+The subschema of `if` only tests the data, so YAC uses it as written (as it
+does below `not` and `contains`): its objects are not closed with
+`additionalProperties: false`, their properties are not required unless
+listed in `required`, and no defaults or stored values are added.
+
 VAYS only supports the `if`-construct in some scenarios.
 
 The following things are known to work:
@@ -401,7 +407,7 @@ YAC ships with the following bundled custom formats:
 | `format` value       | Validates |
 |:---------------------|:----------|
 | `ssh_key`            | A single OpenSSH public key on one line (`ssh-rsa`, `ssh-ed25519`, `ecdsa-sha2-*`). |
-| `unix_password_hash` | Unix-`crypt` SHA-256 / SHA-512 or Bcrypt password hash. |
+| `unix_password_hash` | Unix-`crypt` SHA-256 / SHA-512 (also with `rounds=`) or Bcrypt password hash. |
 | `age_secret`         | ASCII-armored [AGE](https://age-encryption.org) ciphertext. Pairs with the VAYS [`age_secret` renderer](../../../vays/renderers/age_secret.md). |
 
 A custom format plugin may also be `async`, e.g. to look a value up in an

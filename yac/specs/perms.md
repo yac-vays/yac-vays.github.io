@@ -80,13 +80,17 @@ Permission flags can be defined freely. Flags without a reserved meaning
 | Run an action           | at least **one** of the action's `perms` (default `[act]`)[^3] |
 
 An edit that changes nothing (neither the content nor the name) is refused by
-the write endpoints (`400`). `POST /validate` accepts it from users holding
+the write endpoints (`400`); this includes a `PATCH` whose values all equal
+the stored ones. `POST /validate` accepts it from users holding
 `edt` or `rnm` — this is how a client asks for the schema of an entity it is
 about to edit.
 
 `POST /validate` never returns anything derived from a stored entity (its
 data, its YAML, a schema generated from it) to a user without `see` on that
 entity, whatever the operation.
+
+An entity that other entities link to can neither be renamed nor deleted
+(`400`, and `POST /validate` reports it): remove the links first.
 
 ### Rename, copy and link: two entities
 
@@ -103,7 +107,8 @@ So a role that is scoped on `name` (e.g. "all hosts in my subnets") lets its
 holder rename, copy or link only entities whose *current* name is in that
 scope — the new name being in scope is not enough. Rights that follow the
 stored data (`old.data`) apply to the source and, as the data moves along, to
-the new name as well.
+the new name as well. The source is evaluated in the same way when the name
+of the copy or link is [generated](file/types/index.md#generated-names).
 
 ## Admin override (`force`)
 
@@ -209,7 +214,8 @@ wherever `yac_perms` write gating must be airtight.
         [`yac_if`](file/schema.md#keyword-yac_if) no longer holds *must* be
         removed, and a key guarded by
         [`yac_perms`](file/schema.md#keyword-yac_perms) / `yac_editable`
-        stays immutable for the user — `cln` does not override that.
+        stays immutable for the user — `cln` does not override that, and
+        neither does a `yac_if` of that key that no longer holds.
         Inside arrays, such values can be moved between and removed with
         the items, see
         [Stored data without a schema](file/schema.md#stored-data-without-a-schema).

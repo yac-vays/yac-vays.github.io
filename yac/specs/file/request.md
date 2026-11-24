@@ -18,6 +18,9 @@ The whole header value must match the `pattern` (default: `^$`, so without a
 match is silently replaced by the `default` (default: an empty string); the
 request is not rejected.
 
+A header can be defined without a body (`my_header:`) to get these defaults.
+A `pattern` that is no valid regular expression is a specs error.
+
 ## Example
 
 ```yaml

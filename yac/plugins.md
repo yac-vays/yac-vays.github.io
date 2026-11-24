@@ -21,3 +21,17 @@ and the existing plugins source code as examples:
   - Type [schema_formats](https://github.com/yac-vays/yac/tree/main/app/plugin/schema_formats)
   - Type [ui_schema](https://github.com/yac-vays/yac/tree/main/app/plugin/ui_schema)
   - Type [validator](https://github.com/yac-vays/yac/tree/main/app/plugin/validator)
+
+The plugin files of a type are loaded in alphabetical order.
+
+For the function-style types (`j2_filters`, `j2_functions`, `j2_tests`,
+`schema_formats`), every public function **defined in the plugin file** becomes
+available under its name. Imported functions and those starting with `_` do
+not, so helpers can be used freely.
+
+The class-style types implement an abstract interface of `app.model.plg`; a
+plugin class that lacks one of its methods fails when it is loaded.
+`json_schema`, `ui_schema` and `validator` plugins run in the order their
+`order()` returns. For the builtin `json_schema` plugins this is: `omit`
+(so {% raw %}`{{ omit }}`{% endraw %} works for every keyword below), `yac_types`,
+`yac_perms`, `yac_editable`, `yac_if`, `format`.

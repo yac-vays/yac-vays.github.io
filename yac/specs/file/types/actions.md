@@ -135,14 +135,14 @@ to a script via `env`/`stdin` instead.
 ### Programs available in the image
 
 `command[0]` must be a program that exists **inside the YAC container**. The
-official image (`python:3.15-alpine` plus a few `apk` packages — see the
+official image (Python on Alpine plus a few `apk` packages — see the
 [`Dockerfile`](https://github.com/yac-vays/yac/blob/main/Dockerfile)) ships the
 programs below. Prefer an **absolute path** (the `exec` plugin passes on the
 `PATH` of the YAC process itself).
 
 | Program | Path | Notes |
 |:--------|:-----|:------|
-| Python  | `/usr/local/bin/python3` (also `python`, `python3.15`) | Python 3.15. YAC's own dependencies are importable (`httpx`, `jinja2`, `jsonschema`, `ruamel.yaml`, `ldap3`, `redis`, …), so a small `python3 -c '…'` is usually the most convenient action. |
+| Python  | `/usr/local/bin/python3` (also `python`) | YAC's own dependencies are importable (`httpx`, `jinja2`, `jsonschema`, `ruamel.yaml`, `ldap3`, `redis`, …), so a small `python3 -c '…'` is usually the most convenient action. |
 | `pip` / `pip3` | `/usr/local/bin/pip3` | Present, but the installation (`/usr/local`) is read-only for the runtime user — do **not** install packages at action time. |
 | POSIX shell | `/bin/sh` (also `/bin/ash`) | [BusyBox](https://busybox.net/) `ash`. BusyBox also provides `awk`, `sed`, `grep`, `wget`, `nc`, `base64`, `sha256sum`/`md5sum` and the usual coreutils (`cat`, `cut`, `tr`, `sort`, `head`/`tail`, `find`, `xargs`, `date`, `env`, …). There is **no** `bash`. |
 | `git`   | `/usr/bin/git` | Full git client. |

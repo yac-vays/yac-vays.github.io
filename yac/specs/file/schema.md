@@ -387,7 +387,7 @@ YAC ships with the following bundled custom formats:
 
 | `format` value       | Validates |
 |:---------------------|:----------|
-| `ssh_key`            | OpenSSH public key (`ssh-rsa`, `ssh-ed25519`, `ecdsa-sha2-*`). |
+| `ssh_key`            | A single OpenSSH public key on one line (`ssh-rsa`, `ssh-ed25519`, `ecdsa-sha2-*`). |
 | `unix_password_hash` | Unix-`crypt` SHA-256 / SHA-512 or Bcrypt password hash. |
 | `age_secret`         | ASCII-armored [AGE](https://age-encryption.org) ciphertext. Pairs with the VAYS [`age_secret` renderer](../../../vays/renderers/age_secret.md). |
 

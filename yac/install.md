@@ -30,7 +30,9 @@ sudo docker run --rm --name yac -p 127.0.0.1:8080:8080 \
 ```
 
 The API and Swagger UI documentation are then available at
-[http://localhost:8080/](http://localhost:8080/).
+[http://localhost:8080/](http://localhost:8080/). The image serves the
+Swagger UI itself (a pinned copy of `swagger-ui-dist`), so the page loads
+nothing from third parties and works without internet access.
 
 Hints:
 

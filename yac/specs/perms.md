@@ -79,6 +79,32 @@ Permission flags can be defined freely. Flags without a reserved meaning
 | Delete                  | `del` |
 | Run an action           | at least **one** of the action's `perms` (default `[act]`)[^3] |
 
+An edit that changes nothing (neither the content nor the name) is refused by
+the write endpoints (`400`). `POST /validate` accepts it from users holding
+`edt` or `rnm` — this is how a client asks for the schema of an entity it is
+about to edit.
+
+`POST /validate` never returns anything derived from a stored entity (its
+data, its YAML, a schema generated from it) to a user without `see` on that
+entity, whatever the operation.
+
+### Rename, copy and link: two entities
+
+A rename, copy or link involves the stored **source** entity and a **new
+name**. The roles are therefore evaluated twice, and each permission is taken
+from the evaluation it belongs to:
+
+| Permission | Evaluated for | Variables |
+|:-----------|:--------------|:----------|
+| `rnm`, `cpy`, `lnk` — and for a rename also `edt`, `cln`, `adm`, the property-level [`yac_perms`](#property-level-permissions-yac_perms) and the `perms` of actions | the **source** entity on its own | `name` and `old.name` are the name of the source, `old.data` its data, `new.name` is unset |
+| `add` (and, for a copy or link, the `perms` of actions) | the request as a whole, i.e. the **new name** | `name` and `new.name` are the new name, `old.data` is the data of the source |
+
+So a role that is scoped on `name` (e.g. "all hosts in my subnets") lets its
+holder rename, copy or link only entities whose *current* name is in that
+scope — the new name being in scope is not enough. Rights that follow the
+stored data (`old.data`) apply to the source and, as the data moves along, to
+the new name as well.
+
 ## Admin override (`force`)
 
 The write endpoints (`POST /entity/{type}`, `PUT /entity/{type}/{name}`)

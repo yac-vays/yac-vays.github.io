@@ -140,6 +140,17 @@ The path is interpreted relative to the repository root (no leading `/`).
 Path components that escape the repository (e.g. via `..`) are rejected
 at runtime.
 
+Symlinks in the repository are only followed inside of it: an entity file (or
+a directory on the way to it) that links out of the repository is not read.
+
+### Limits of the entity YAML
+
+YAML anchors and aliases (including merge keys, `<<: *defaults`) are
+supported, but a document must not expand to more than 100000 nodes once its
+aliases are resolved, and must not contain itself. Such a document is
+rejected as invalid YAML (`400`) — a few lines of nested aliases would
+otherwise expand to gigabytes of data.
+
 ## Example
 
 {% raw %}

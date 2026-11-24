@@ -27,6 +27,12 @@ any of the other variables). This allows YAC to optimize runtime by evaluating
 all roles that are not entity-dependent once per request instead of once per
 entity.
 
+{: .note}
+For a rename, copy or link, the roles are evaluated twice: for the source
+entity on its own and for the new name. `rnm`, `cpy` and `lnk` must be
+granted for the **source** — see
+[Permissions](../perms.md#rename-copy-and-link-two-entities).
+
 {: .warning}
 Never use entity-variables (`old`, `new` or `name`) via context in custom
 jinja2-functions, filters or tests directly. Always pass them explicitly!

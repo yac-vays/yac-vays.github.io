@@ -93,8 +93,9 @@ description: |
 ## Entity names
 
 `name_pattern` is a regular expression every entity name of this type must
-match. Keep it as strict as your storage allows — names usually become file
-names in the repository.
+match **as a whole** (also if the pattern is not anchored with `^...$`). Keep
+it as strict as your storage allows — names usually become file names in the
+repository.
 
 `name_example` is shown as a placeholder/example in the UI to hint at the
 expected format. It has no effect on validation.

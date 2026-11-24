@@ -155,7 +155,8 @@ YAC has two unauthenticated endpoints for this, with different purposes:
     | Remote down, reads served from the last known state | `200` | set | `false` | `true` |
     | Remote down and no data at all (never cloned) | `503` | `null` | `false` | `false` |
 
-    `repo.synced` is the time of the last successful sync with the remote,
+    `repo.synced` is the time of the last successful sync with the remote
+    (with `git_redis`, the one shared by all pods),
     `repo.error` the user-facing reason while the remote is unavailable
     (it distinguishes maintenance from an unreachable remote; the detailed
     git output is only in the pod log). Do **not** use `/status` as a

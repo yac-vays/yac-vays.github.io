@@ -38,14 +38,17 @@ The repository plugin to use. Built-in plugins:
   - `git_direct` (default): every worker clones the repo into
     `/repo/{pid}` and reads/writes files directly. Recommended for most
     deployments. Mount a tmpfs at `/repo` so the working copies live in
-    memory.
-  - `git_redis`: layered on top of `git_direct`. One pod pulls from the
+    memory. Every sync fetches the branch and resets the working copy to it,
+    so the working copy always equals the remote: local leftovers (e.g. of
+    a crashed write) are discarded and a rewritten (force-pushed) branch is
+    followed.
+  - `git_redis`: layered on top of `git_direct`. One pod syncs with the
     remote per TTL window and publishes a snapshot of the working tree
     into Redis; every other read across every pod is served from Redis
     with no git I/O. Reduces cold-path latency for `GET /entity/{type}` on
     large repos (10k+ entities) and shares state across pods. Writes
-    still flow through `git_direct` (pull → modify → push) and rebuild
-    the snapshot on scope exit, so the next read sees the new commit
+    still flow through `git_direct` (sync → modify → push) and publish
+    a new snapshot on scope exit, so the next read sees the new commit
     immediately. External commits (pushed to git outside YAC) are
     picked up after `max_age_seconds`. Requires a reachable Redis
     instance; on Redis failure, individual requests fall back to
@@ -59,7 +62,7 @@ The repository plugin to use. Built-in plugins:
 | `branch`                  | `string`  | `main`                           | The branch to work on. |
 | `ssh_key_file`            | `string`  | `/home/yac/.ssh/id_rsa`          | Path to the private key file (SSH URLs only). |
 | `ssh_known_hosts_file`    | `string`  | `/home/yac/.ssh/known_hosts`     | Path to the known hosts file (SSH URLs only). |
-| `dirty_max_age`           | `integer` | `0`                              | Acceptable age (in minutes) of the last git fetch where a dirty read will not update the data again. |
+| `dirty_max_age`           | `integer` | `0`                              | Acceptable age (in minutes) of the last git fetch where a dirty read will not update the data again. With `git_redis`, a dirty read accepts a snapshot of this age or of `max_age_seconds`, whichever is longer. |
 
 ## Key `connection` (plugin: `git_redis`)
 
@@ -69,10 +72,10 @@ keys below.
 
 | Key                | Type      | Default              | Description |
 |:-------------------|:----------|:---------------------|:------------|
-| `redis_url`        | `string`  | `""` (**required**)  | URL of the Redis instance, e.g. `redis://host:6379/0`. Must be a value accepted by `redis.asyncio.from_url`. |
-| `max_age_seconds`  | `integer` | `300`                | How long a snapshot may serve reads before a refresh pull is triggered. Stale-but-ready snapshots are served while the refresh runs. |
-| `grace_seconds`    | `integer` | `60`                 | How long old snapshot keys are kept after a swap so in-flight readers can finish. |
-| `pull_lock_ttl`    | `integer` | `120`                | TTL of the cross-pod stampede mutex. Must comfortably exceed the worst-case git pull time. |
+| `redis_url`        | `string`  | `""` (**required**)  | URL of the Redis instance, e.g. `redis://host:6379/0`. The scheme must be `redis://`, `rediss://` or `unix://` (checked at startup). |
+| `max_age_seconds`  | `integer` | `300`                | How long a snapshot may serve reads before a refresh is triggered. While one pod refreshes, the others keep serving the existing snapshot; requests only wait when there is no snapshot yet. |
+| `grace_seconds`    | `integer` | `60`                 | How long a replaced snapshot is kept so in-flight readers can finish; then it expires. |
+| `pull_lock_ttl`    | `integer` | `120`                | TTL of the cross-pod refresh mutex. Must comfortably exceed the worst-case time of a refresh (waiting for local writers, the git sync and the upload of the snapshot). |
 
 
 {: .note}
@@ -82,17 +85,22 @@ refresh the snapshot immediately on writer-scope exit.
 
 {: .warning}
 The Redis key namespace is global (`latest`, `synced`, `pull_lock`,
-`ready:{hash}`, `paths:{hash}`, `data:{hash}:{path}`). Use a
-dedicated Redis instance — or at minimum a dedicated logical
-database (`/0`, `/1`, ...) — per YAC deployment.
+`snap:{hash}`). Use a dedicated Redis instance — or at minimum a
+dedicated logical database (`/0`, `/1`, ...) — per YAC deployment.
+
+{: .note}
+Older YAC versions stored a snapshot as `ready:{hash}`, `paths:{hash}` and
+`data:{hash}:{path}` keys. These are no longer read and never expire: flush
+the Redis database once when upgrading from such a version.
 
 ## Remote outages
 
 Both plugins are built to survive the git server being down, so that a
 remote outage never takes YAC down with it:
 
-  - **Reads keep working.** When a pull fails because the remote is
-    unreachable (DNS/connection failures, HTTP 5xx), the local checkout
+  - **Reads keep working.** When a sync fails because the remote is
+    unreachable (DNS, connection and transport failures, HTTP 5xx or
+    429), the local checkout
     is kept and reads are answered from it. Such responses carry the
     headers `Warning: 110 yac "Data repository unreachable, serving last
     known state"` and `X-YAC-Repo-Synced: <unix time of the last
@@ -114,9 +122,12 @@ remote outage never takes YAC down with it:
   - **Backoff.** After a failed remote operation, reads do not retry the
     remote for 10 seconds but answer from the checkout right away; writes
     always retry.
-  - Failures that are *not* an outage (bad credentials, a rejected push, a
-    corrupt checkout) keep their previous behaviour (`500`, and a fresh
-    clone for a broken checkout).
+  - Failures that are *not* an outage (e.g. bad credentials) answer `500`;
+    the checkout is kept. A corrupt checkout is replaced by a fresh clone,
+    which is built next to it and only then swapped in.
+  - A push that is rejected because another YAC instance pushed in between
+    is repeated once on top of the new state. If the same entity was
+    changed, the request answers `409`.
 
 See `GET /status` in the [installation guide](../../install.md#health-checks-and-monitoring)
 for how to observe this.
@@ -134,6 +145,8 @@ Each template:
     available here;
   - **must not** contain a literal `*` (it is reserved as a glob marker
     when listing entities);
+  - never matches a `/` with `name`: for {% raw %}`animals/{{ name }}.yml`{% endraw %}, the
+    file `animals/old/rex.yml` is not an entity;
   - is rendered with the entity's name to obtain the file path on read,
     write, copy, link, rename and delete.
 
@@ -142,9 +155,14 @@ Path components that escape the repository (e.g. via `..`) are rejected
 at runtime.
 
 Symlinks in the repository are only followed inside of it: an entity file (or
-a directory on the way to it) that links out of the repository is not read.
+a directory on the way to it) that links out of the repository is not read,
+and YAC never writes through a symlink.
 
 ### Limits of the entity YAML
+
+An entity document must be a mapping (`key: value`) or empty. A list or a
+scalar at the top level is rejected as invalid YAML (`400`); a stored file
+of that kind reads as an entity without data.
 
 YAML anchors and aliases (including merge keys, `<<: *defaults`) are
 supported, but a document must not expand to more than 100000 nodes once its

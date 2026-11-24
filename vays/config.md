@@ -180,7 +180,9 @@ The overview route additionally accepts `?name={name}` to highlight the row of
 that entity. Filters and the page size are not part of the URL; they are kept
 in the browser.
 
-The `{backend-name}` segment matches `backends[].name` from the config.
+The `{backend-name}` segment matches `backends[].name` from the config. An
+entity name is percent-encoded in the path. While creating, the URL follows
+the typed name once it matches the type's `name_pattern`.
 
 ## Logout
 

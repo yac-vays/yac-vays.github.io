@@ -44,7 +44,7 @@ Hints:
     YAC side via [`auth.cors.origins`](../yac/specs/file/auth.md) in
     the specs file.
   - The page is served with a `Content-Security-Policy` header that only
-    allows the configured backends and OIDC provider. It is generated from
+    allows the origins of the configured backends and of the OIDC provider. It is generated from
     `config.json` when the container starts (into `/tmp`, which must be
     writable — also with a read-only root filesystem). If the config cannot
     be used for that, the header only carries `frame-ancestors 'none'`; the

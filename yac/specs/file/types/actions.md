@@ -57,7 +57,8 @@ A failing `before` action aborts the operation: nothing is written. A failing
 `after` action cannot undo the write, so the operation still answers with its
 regular success status and body; the failure is logged and reported in the
 response header `YAC-Warning` (`Action <name> failed`, followed by the
-action's message if it is one for the user, see `error` below).
+action's message if it is one for the user, see `error` below). VAYS shows
+it as a warning toast.
 
 ## Action plugin `http`
 

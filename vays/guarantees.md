@@ -61,7 +61,9 @@ field once the backend has validated the data, not instantly while typing.
 The YAML editor (expert mode) locks what the user cannot change anyway, so
 they learn it right away instead of from the next validation. Locked parts
 have a lock in the gutter, greyed text and an explanation on hover; typing
-there is refused with Monaco's read-only message:
+there is refused with Monaco's read-only message, and any other edit that
+would change them (paste, shortcuts, a further cursor, find and replace,
+joining lines) is taken back right away:
 
   - **Fixed values**: every value whose schema is a `const` — the only
     allowed value. YAC pins stored values the user may not write that way
@@ -76,15 +78,16 @@ there is refused with Monaco's read-only message:
     `adm` can unlock it next to the Commit button at any time).
   - **Comments**, for users without the `cln` permission: YAC refuses any
     change of comments without it, so their text cannot be edited, removed
-    or added (`#` that would start a comment). A key can still be deleted
-    together with its inline comment (whole lines), as YAC allows that.
+    or added (`#` that would start a comment, or the editor's comment
+    toggle). A key can still be deleted together with its inline comment
+    (whole lines), as YAC allows that.
 
 At the edges of a locked part the cursor is free — e.g. Enter after a fixed
 value or a comment adds a new line. Blank lines and indentation are never
 locked: YAC does not need `cln` for them.
 Changes of key order or quoting, which also need `cln`, are not locked in
 advance and are reported by the validation. While the YAML can't be parsed,
-nothing is locked. On a line with another indicator (an error, the
+fixed values are not locked; comments still are. On a line with another indicator (an error, the
 removed-lines bar, a limit dot), that indicator is shown instead of the lock.
 The form is not affected.
 
@@ -99,6 +102,13 @@ VAYS uses `authorization_code` with PKCE against the configured OIDC
 provider. The redirect URI is **always** `https://<vays-host>/oauth2-redirect`
 and must be registered with the provider for the configured `clientID`.
 There is no built-in support for username/password flows.
+
+The id-token is renewed in the background with the refresh token. If a
+renewal fails for a passing reason (network, provider unreachable), requests
+fail with a *Network Error* and the user stays signed in; only when the
+provider rejects the refresh token (or issued none) the user is signed out
+at the token's expiry and the stored tokens are removed. A login in progress
+belongs to its browser tab, so several tabs can sign in at the same time.
 
 ## Backend Outages
 

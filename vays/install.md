@@ -40,6 +40,14 @@ Hints:
   - The VAYS image only serves static assets; CORS is configured on the
     YAC side via [`auth.cors.origins`](../yac/specs/file/auth.md) in
     the specs file.
+  - The page is served with a `Content-Security-Policy` header that only
+    allows the configured backends and OIDC provider. It is generated from
+    `config.json` when the container starts (into `/tmp`, which must be
+    writable — also with a read-only root filesystem). If the config cannot
+    be used for that, the header only carries `frame-ancestors 'none'`; the
+    app applies the same policy itself in any case.
+  - TLS is expected to be terminated in front of the container; add
+    `Strict-Transport-Security` there.
 
 ## Helm
 

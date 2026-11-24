@@ -31,6 +31,7 @@ authenticate, and what to call itself.
 | `oidcConf.server`         | `string`  | yes      | The OIDC provider's discovery URL (`.../.well-known/openid-configuration`). Must match the YAC backend's [`auth.oidc.url`](../yac/specs/file/auth.md). |
 | `oidcConf.clientID`       | `string`  | yes      | The OIDC client / audience for the SPA. Must be present in [`auth.oidc.client_ids`](../yac/specs/file/auth.md) of every backend. |
 | `oidcConf.scope`          | `string`  | no       | Space-separated scopes requested at login. They must make the provider put every claim into the id-token that the backends' [`auth.oidc.jwt`](../yac/specs/file/auth.md) format-strings and roles use (e.g. `profile` for `preferred_username`/`name`, `groups` for `user.token.groups`). Defaults to `openid email`. |
+| `oidcConf.endSession`    | `boolean` | no       | Also end the session at the OIDC provider on logout (see [Logout](#logout)). Defaults to `false`. |
 | `backends`                | `array`   | yes      | List of YAC instances this VAYS connects to (see below). |
 
 Anything left unset falls back to the built-in defaults, which reproduce the
@@ -175,7 +176,27 @@ domain/{backend-name}/{type}/?{filter-key}={filter-value}#{Page}.{NumPerPage}
 
 The `{backend-name}` segment matches `backends[].name` from the config.
 
+## Logout
+
+*Log out* always ends the session in the browser (the stored tokens are
+removed and the app reloads). In addition:
+
+  - The refresh token is **revoked** at the provider if it advertises a
+    `revocation_endpoint`, so a copy of it cannot renew the session any more.
+    This is best effort and never delays the logout by more than 3 seconds.
+  - With `oidcConf.endSession: true` (and an `end_session_endpoint` at the
+    provider), the browser is then sent to the provider to end the session
+    **there** as well, and returns to `https://<host-of-vays>/`. Register that
+    exact URL as a post-logout redirect URI of the client first. Without this
+    option the provider session stays alive, so the next *Log in* in the same
+    browser signs the user in again without asking — consider enabling it for
+    shared computers.
+
 ## Common Pitfalls
+
+  - **Public OIDC client.** VAYS runs in the browser and cannot keep a
+    secret: it authenticates with its `clientID` and PKCE only. Register the
+    client as a *public* client (no client secret).
 
   - **OIDC redirect URI mismatch.** VAYS uses
     `https://<host-of-vays>/oauth2-redirect` as the redirect URI. Register

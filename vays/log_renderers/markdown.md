@@ -23,7 +23,9 @@ any plugin that provides one works.
     rendered as [GitHub-flavoured Markdown](https://github.github.com/gfm/):
     headings, lists, tables, links, code blocks, images. Inline HTML is
     allowed but sanitized (no scripts, event handlers or styles), like in all
-    Markdown VAYS shows. The header shows the entity and the newest entry's
+    Markdown VAYS shows. The text of a log is treated more strictly than the
+    Markdown of the specs: inline SVG is removed, and `id` / `name`
+    attributes get a `user-content-` prefix. The header shows the entity and the newest entry's
     message (with a warning sign on `problem`). If the text cannot be loaded,
     the window shows why, with *Retry*.
 

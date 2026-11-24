@@ -74,7 +74,7 @@ keys below.
 |:-------------------|:----------|:---------------------|:------------|
 | `redis_url`        | `string`  | `""` (**required**)  | URL of the Redis instance, e.g. `redis://host:6379/0`. The scheme must be `redis://`, `rediss://` or `unix://` (checked at startup). |
 | `max_age_seconds`  | `integer` | `300`                | How long a snapshot may serve reads before a refresh is triggered. While one pod refreshes, the others keep serving the existing snapshot; requests only wait when there is no snapshot yet. |
-| `grace_seconds`    | `integer` | `60`                 | How long a replaced snapshot is kept so in-flight readers can finish; then it expires. |
+| `grace_seconds`    | `integer` | `60`                 | How long a replaced snapshot is kept so in-flight readers can finish; then it expires. At least `10`: smaller values are raised to it (with a warning in the log), as a replaced snapshot must outlive the requests still reading from it. |
 | `pull_lock_ttl`    | `integer` | `120`                | TTL of the cross-pod refresh mutex. Must comfortably exceed the worst-case time of a refresh (waiting for local writers, the git sync and the upload of the snapshot). |
 
 
@@ -170,6 +170,16 @@ supported, but a document must not expand to more than 100000 nodes once its
 aliases are resolved, and must not contain itself. Such a document is
 rejected as invalid YAML (`400`) — a few lines of nested aliases would
 otherwise expand to gigabytes of data.
+
+Documents with a `%YAML` or `%TAG` directive are rejected as invalid YAML
+(`400`): entity documents are YAML 1.2 (`yes` and `1:30` are strings), and
+a `%YAML 1.1` header would make the validation read other values than
+everything that reads the stored file afterwards. A stored file with such a
+header can still be read, but only be changed by replacing its YAML (without
+the header).
+
+A document in a request may have at most 65536 characters
+([`YAC_MAX_YAML_SIZE`](../../env.md)).
 
 ## Example
 

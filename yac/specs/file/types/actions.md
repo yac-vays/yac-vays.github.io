@@ -74,7 +74,7 @@ user-facing errors.
 | `timeout` | `5` | Abort the request after this many seconds. |
 | `ssl_verify` | `true` | Verify the HTTPS certificate. |
 | `success` | the 2xx codes | Status codes considered successful. |
-| `error` | `[]` | Status codes whose response body is returned to the user as the error message (instead of a generic 500). |
+| `error` | `[]` | Status codes whose response body (at most 1 MiB of it is read) is returned to the user as the error message (instead of a generic 500). |
 
 {% raw %}
 ```yaml
@@ -112,7 +112,7 @@ of their argument.
 | `stdin` | `''` | Data piped to the process's stdin (j2-string; a template rendering to an object/list is JSON-encoded). Empty means stdin is closed. |
 | `success` | `[0]` | Return codes considered successful. |
 | `error` | `[]` | Return codes whose stdout/stderr is returned to the user as the error message. |
-| `timeout` | `0` (none) | Seconds after which the process is killed (server-side error). |
+| `timeout` | `60` | Seconds after which the process and everything it started (its process group) is killed (server-side error); `0` disables the timeout. The process is also killed when the request is aborted. At most 1 MiB of the output is kept. |
 
 Pick the data channel by sensitivity: **argv** is world-readable inside the
 pod (`/proc/<pid>/cmdline`) — fine for plain parameters like an entity name;

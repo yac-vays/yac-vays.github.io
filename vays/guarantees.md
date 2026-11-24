@@ -56,6 +56,11 @@ covers all keywords listed under
 `hostname`, `email`) are validated **only on the YAC backend**; such an error is shown at the
 field once the backend has validated the data, not instantly while typing.
 
+What is committed is the document as YAC validated it last. Commit therefore
+waits for running validations; if one is still running after 15 seconds,
+nothing is written and an error is shown — commit again once the validation
+has finished.
+
 ## Locked Regions in the YAML Editor
 
 The YAML editor (expert mode) locks what the user cannot change anyway, so

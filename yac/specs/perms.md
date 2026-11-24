@@ -87,7 +87,15 @@ about to edit.
 
 `POST /validate` never returns anything derived from a stored entity (its
 data, its YAML, a schema generated from it) to a user without `see` on that
-entity, whatever the operation.
+entity, whatever the operation. It answers a request for an entity that does
+not exist in the same way (unless one is to be created), so it does not tell
+which names exist either, and it reports the usage of
+[limits](file/types/limits.md) only if the operation is allowed. What every
+authenticated user does get is the schema for *creating* an entity of a
+type — like the type metadata, and including whatever the functions in the
+schema return for that user: the form is rendered from it before the name
+(and with it possibly the right to create) is settled. Do not put anything
+into a schema that only some users may know.
 
 An entity that other entities link to can neither be renamed nor deleted
 (`400`, and `POST /validate` reports it): remove the links first.
@@ -190,6 +198,13 @@ Explicitly setting `additionalProperties: true` on an object opts out of the
 write enforcement for guarded properties **without a stored value** (stored
 values remain pinned by their `const`). Keep objects closed — the default —
 wherever `yac_perms` write gating must be airtight.
+
+{: .warning}
+All of this is done for objects that are declared as such: `type: object`,
+also as one of several types (`type: [object, "null"]`). A restricted
+property (`yac_perms`, `yac_editable`) in the `properties` of a subschema
+without `type: object` could not be enforced and is therefore reported as an
+error in the specs (`500`) as soon as it takes effect.
 
 ---
 

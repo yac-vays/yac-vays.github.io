@@ -45,6 +45,11 @@ YAC accepts two kinds of bearer tokens, both validated statelessly:
     token whose `aud` matches one of those audiences is validated as an
     access token instead of an id-token.
 
+Tokens must be signed with an asymmetric algorithm (`RS*`, `PS*`, `ES*`,
+`EdDSA`). For id-tokens, YAC accepts those of them that the provider
+advertises in `id_token_signing_alg_values_supported` — an advertised `none`
+or `HS*` is ignored, a provider advertising nothing else is refused.
+
 ## Key `oidc`
 
 | Key                     | Type            | Default                                              | Description |

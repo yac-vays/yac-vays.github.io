@@ -52,8 +52,10 @@ Hints:
     favicon) are only generated at start, restart the container after
     changing a mounted `config.json` (the Helm chart does this
     automatically).
-  - TLS is expected to be terminated in front of the container; add
-    `Strict-Transport-Security` there.
+  - TLS is expected to be terminated in front of the container. The
+    container sends `Strict-Transport-Security: max-age=31536000` with
+    every response (browsers only honour it over HTTPS); redirecting HTTP
+    to HTTPS is up to the proxy.
 
 ## Helm
 

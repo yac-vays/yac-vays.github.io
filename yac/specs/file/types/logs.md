@@ -47,7 +47,9 @@ not defined: `problem` / `progress` stay `null` for that entry, texts empty.
 A field that renders to the wrong type (a `time` or `message` that is no
 string, a `progress` that is no number — `true` / `false` are none —, a
 `problem` that is no boolean) fails its log: YAC logs the error and leaves
-that log out, the other logs of the entity are still returned.
+that log out, the other logs of the entity are still returned. The same
+goes for a field whose template does not render for a record (e.g.
+{% raw %}`{{ log.time }}`{% endraw %} on a record without `time`).
 
 `problem` and `progress` are generic: whatever renderer shows the log may use
 them (the `problem` renderer is a health indicator from `problem`, the
@@ -163,7 +165,7 @@ How the response becomes the entries depends on `response`:
 | `array` | For `json`: dotted path to the record list inside the response body; empty (default) means the body itself is the list (e.g. `hits.events`). |
 | `empty_on` | HTTP status codes that mean "no entries" instead of an error, e.g. `[404]` for a document that doesn't exist (yet). |
 | `ssl_verify` | Verify the TLS certificate (default `true`). |
-| `timeout` | Abort the request after this many seconds (default `5`). |
+| `timeout` | Abort the request after this many seconds (default `5`). A response of more than 1 MiB (16 MiB for a content document) is an error of this log. |
 | `message` | j2-string with the `log` record; the displayed message. |
 | `time` | j2-string with the `log` record; the entry's timestamp (default `{% raw %}{{ log.time }}{% endraw %}`). |
 | `progress` | *optional*, j2-int with the `log` record; the entry's progress (0 to 100). |

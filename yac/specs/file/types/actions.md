@@ -24,6 +24,10 @@ It is a **list**; each action can be triggered explicitly by the user or
 
 The `details` are rendered with the templating variables listed for
 `types[].actions[].details` in the [variable matrix](../../j2.md#variables).
+For a copy or link, `old.name` is the source entity. While the name of a new
+entity is still to be [generated](index.md#generated-names), `name` and
+`new.name` are unset: `create:before` hooks do not know it, `create:after`
+hooks do.
 
 ## Hooks and `force`
 
@@ -49,6 +53,12 @@ hooks:
   - delete:before
 ```
 
+A failing `before` action aborts the operation: nothing is written. A failing
+`after` action cannot undo the write, so the operation still answers with its
+regular success status and body; the failure is logged and reported in the
+response header `YAC-Warning` (`Action <name> failed`, followed by the
+action's message if it is one for the user, see `error` below).
+
 ## Action plugin `http`
 
 Sends an HTTP request. Useful return codes can be marked as success or as
@@ -58,7 +68,7 @@ user-facing errors.
 |:----------------|:--------|:------------|
 | `method` | `GET` | The HTTP method. |
 | `url` | *mandatory* | j2-string; the request URL. |
-| `body` | `''` | j2-string; the request body. |
+| `body` | `''` | j2-string; the request body. A template rendering to an object or list is sent as JSON. |
 | `headers` | `{}` | j2-string values. |
 | `timeout` | `5` | Abort the request after this many seconds. |
 | `ssl_verify` | `true` | Verify the HTTPS certificate. |

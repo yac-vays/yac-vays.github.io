@@ -154,6 +154,9 @@ per-OU cap, for instance:
 - Limits run **after** permission and conflict checks, so a forbidden or
   conflicting operation reports its own, more specific error first.
 - A `value` that renders to something that is not a number counts as `0`.
+- A limit whose expressions cannot be rendered (e.g. `new.data.owner` while
+  the owner is not filled in yet) fails a write with `400`; `POST /validate`
+  reports it in its result (`request.valid: false`) like any other error.
 - A link pointing at the entity being edited is scored with the incoming
   data (as it will hold that data once the edit is committed).
 
@@ -181,5 +184,6 @@ by the entity-list endpoint.
 The count/sum is measured when the request is validated and measured again
 and enforced under the repo writer lock right before the write, so two writes
 racing at exactly the cap cannot both pass within one YAC process. With
-several YAC pods, a concurrent write of another pod is rejected when its push
-conflicts.
+several YAC pods, a write whose push is rejected because another pod pushed
+first is repeated on top of the new state without measuring again, so two
+such writes racing at exactly the cap can exceed it.

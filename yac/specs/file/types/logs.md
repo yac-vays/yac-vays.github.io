@@ -44,6 +44,11 @@ Each log has a list of entries, which VAYS polls while the entity list is shown
 A field that renders to `omit` (e.g. {% raw %}`{{ log.failed | default(omit) }}`{% endraw %}) counts as
 not defined: `problem` / `progress` stay `null` for that entry, texts empty.
 
+A field that renders to the wrong type (a `time` or `message` that is no
+string, a `progress` that is no number — `true` / `false` are none —, a
+`problem` that is no boolean) fails its log: YAC logs the error and leaves
+that log out, the other logs of the entity are still returned.
+
 `problem` and `progress` are generic: whatever renderer shows the log may use
 them (the `problem` renderer is a health indicator from `problem`, the
 `document` renderer shows a light warning symbol on `problem`, the list of
@@ -108,7 +113,7 @@ matching `line_format` are skipped.
 |:----------------|:------------|
 | `path` | *mandatory*, j2-string; the path of the log file. |
 | `required` | `true` to treat a missing file as an error (default `false`). |
-| `encoding` | The file encoding (default `utf-8`). |
+| `encoding` | The file encoding (default `utf-8`); bytes that are invalid in it are replaced. |
 | `line_format` | A regex (rendered as a j2-string first); its capture groups become the `log` tuple (default `^(.*)$`, i.e. the whole line as `log[0]`). |
 | `message` | j2-string with the `log` tuple; the displayed message (default {% raw %}`{{ log[0] }}`{% endraw %}). |
 | `time` | j2-string with the `log` tuple; the entry's timestamp (default `''`). |

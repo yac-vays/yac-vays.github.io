@@ -9,7 +9,8 @@ nav_order: 4
 Picked automatically for `type: string` properties with `format: date`
 (or `vays_options.format: date`).
 The user gets a calendar picker; the stored value is the ISO 8601
-date string (`YYYY-MM-DD`). The renderer is implicit.
+date string (`YYYY-MM-DD`). Clearing the field removes the value. The
+renderer is implicit.
 
 `enable_range` and `disable_range` can be combined — the picker first
 restricts the user to `enable_range`, then greys out any days that

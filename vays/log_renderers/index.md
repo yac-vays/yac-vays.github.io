@@ -29,8 +29,8 @@ the renderer uses (e.g. a `progress` for `progress`, a content document for
     reported.
   - **Polling.** The entries are refreshed in the background about every
     10 seconds while the list is shown and the browser tab is visible (and right after an operation on the
-    entity). Content documents are not polled: they are fetched each time they
-    are opened.
+    entity). If a refresh fails, the entries shown so far stay. Content
+    documents are not polled: they are fetched each time they are opened.
   - **Entry fields.** `problem` and `progress` of the entries are generic: the
     list of entries marks problems with a red `!` and shows a progress column
     if an entry reports a progress, whatever the renderer.

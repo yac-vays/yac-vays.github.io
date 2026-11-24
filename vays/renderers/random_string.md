@@ -67,11 +67,10 @@ The generator uses the browser's CSPRNG (`crypto.getRandomValues` /
 `crypto.randomUUID`) with rejection sampling, so all alphabet
 characters are equally likely.
 
-An unknown `format`, or `custom` without a `charset`, is a spec error:
-the field is disabled, marked invalid and reported in the
-troubleshooting dropdown; nothing is generated. A `charset` with more
-than 256 distinct characters is not detected this way: generating a
-value then fails.
+An unknown `format`, `custom` without a `charset`, or a `charset` with
+more than 256 distinct characters is a spec error: the field is disabled,
+marked invalid and reported in the troubleshooting dropdown; nothing is
+generated.
 
 ## [Specs](../../yac/specs/index.md) Example
 

@@ -25,14 +25,15 @@ selected while the field is unset: so following the default and
 explicitly picking the same value are distinguishable. Without `initial`
 it reads `Not set`. A required field has a disabled first entry `Choose one`
 instead; its `initial` entry is preselected (greyed out until the user picks,
-unless `vays_options.initial_editable` is `true`).
+unless `vays_options.initial_editable` is `true`). It is stored once the user
+picks an entry, or opens the list and leaves the preselected one.
 
 ## Configuration
 
 | Keyword                          | Effect |
 |:---------------------------------|:-------|
 | `oneOf`                          | Each entry becomes a dropdown option. Each entry must declare a `const`. |
-| `oneOf[i].const`                 | The value stored when this entry is selected. |
+| `oneOf[i].const`                 | The value stored when this entry is selected (a string, number, integer, boolean or `null`). |
 | `oneOf[i].title`                 | The label shown to the user (falls back to the `const` if missing). |
 | `oneOf[i].description`           | Shown (as Markdown) behind an info button in the dropdown box while this entry is selected. |
 | `oneOf[i].yac_if`                | YAC-side conditional that hides the entry when the expression is false. |

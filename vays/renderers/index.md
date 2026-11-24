@@ -67,7 +67,7 @@ Selected via `vays_options.renderer: <name>`:
 |:-----------------------------------------|:-------------------------------------------------------------------|------:|
 | [`info_box`](info_box.md)                | Read-only info box (renders `title` and `description` only).       |    v0 |
 | [`password`](password.md)                | Password input that hashes the value before sending.               |    v0 |
-| [`ssh_key`](ssh_key.md)                  | Multi-line SSH-key input with file-paste support.                  |    v0 |
+| [`ssh_key`](ssh_key.md)                  | Input for one OpenSSH public key, with file upload and compact display. |    v0 |
 | [`text_area`](text_area.md)              | Multi-line text area instead of a single-line input.               |    v0 |
 | [`mac_address`](mac_address.md)          | Auto-formats and validates MAC addresses.                          |    v0 |
 | [`list_as_string`](list_as_string.md)    | Edits a list but persists as a separator-joined string.            |    v0 |

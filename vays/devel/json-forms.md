@@ -58,23 +58,20 @@ export const TextControlTester: RankedTester = rankWith(
 
 ### Basic Renderer
 
-A simplified version of `TextControl` from the codebase (the real one uses
-`trackedDebounce` and registers the handler with `registerDebouncedCommit`,
-so that a commit flushes a still-pending edit, and adds label and error
-display):
+A simplified version of `TextControl` from the codebase (the real one adds
+label and error display). `useDebouncedInput` debounces the handler, lets a
+commit flush a still-pending input and commits it when the control unmounts
+(e.g. on a tab switch):
 
 ```jsx
 export const TextControl = (props: ControlProps) => {
   const eventToValue = (ev: any) =>
     ev.target.value === '' ? undefined : ev.target.value;
 
-  const onChange = useCallback(
-    debounce(
-      (e: React.ChangeEvent<HTMLInputElement>) =>
-        props.handleChange(props.path, eventToValue(e)),
-      1500,
-    ),
-    [props.path],
+  const onChange = useDebouncedInput(
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      props.handleChange(props.path, eventToValue(e)),
+    1500,
   );
 
   return <TextInput data={props.data} enabled={props.enabled} onChange={onChange} />;

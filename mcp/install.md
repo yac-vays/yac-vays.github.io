@@ -34,6 +34,7 @@ Environment variables (all with the prefix `YAC_MCP_`):
 | `YAC_MCP_OIDC_CLIENT_ID` / `_SECRET` | | The confidential client. |
 | `YAC_MCP_OIDC_SCOPE` | `openid email` | Scopes requested at the login. |
 | `YAC_MCP_KEYS` | | JSON list of envelope keys, e.g. `["kid:base64url"]`; generate one with `python -m app.lib.envelope` in the container. The first key encrypts, all decrypt (rotation). |
+| `YAC_MCP_CLIENT_METADATA_DOCUMENTS` | `true` | Accept [client ID metadata documents](https://modelcontextprotocol.io/specification/draft/basic/authorization) (the client ID is a URL, e.g. Claude Code's on `claude.ai`). The server fetches them, so it needs outbound HTTPS access to the clients' hosts; without it, set `false`: clients then use dynamic client registration. |
 | `YAC_MCP_READ_ONLY` | `true` | Disables the write tools. |
 | `YAC_MCP_REVEAL_GENERATED_SECRETS` | `false` | Return generated secrets to the agent. |
 | `YAC_MCP_PLUGIN_DIRS` | `[]` | Additional plugin roots (JSON list). |

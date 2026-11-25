@@ -36,3 +36,10 @@ A single VAYS instance can connect to multiple YAC backends at once
 
 Forms are rendered from the JSON-Schema and UI-Schema that YAC generates
 from the [specs file](yac/specs/index.md).
+
+## MCP
+
+The **MCP** server connects AI agents to YAC backends via the [Model Context
+Protocol](https://modelcontextprotocol.io). Agents act as the logged-in user
+(same permissions as in VAYS) and edit entities as YAML documents, with the
+same defaults and generated values as in VAYS.

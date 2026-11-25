@@ -16,6 +16,16 @@ container tags.
   - TOC
 {:toc}
 
+## v0.23rc1 (testing)
+
+2026-11-25 · [all changes since v0.22](https://github.com/yac-vays/yac/compare/v0.22...v0.23rc1)
+
+### Performance
+{: .no_toc }
+
+  - entity list reads a type in bulk and reuses permissions per user (YAC_LIST_PERMS_TTL, 5 min), /validate parses the document once, limits read the entities once, log and action plugins share their TLS context ([0db1585](https://github.com/yac-vays/yac/commit/0db1585))
+  - the image keeps libyaml, so entities are read with PyYAML's C loader again (about 10 times faster) ([1ff9950](https://github.com/yac-vays/yac/commit/1ff9950))
+
 ## v0.22
 
 2026-11-24 · [all changes since v0.21](https://github.com/yac-vays/yac/compare/v0.21...v0.22)

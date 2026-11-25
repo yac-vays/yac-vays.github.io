@@ -176,9 +176,16 @@ Counting and summing scans the entities of the type. To keep this cheap:
 Prefer a `scope` (and, when summing, a `value`) that references **`old.name`**,
 `user` or `context` rather than `old.data`. When no expression of a limit
 touches `old.data`, YAC counts straight from the name list **without loading
-or parsing any entity YAML**. Limits that do reference `old.data` load each
-entity's data with the same bounded concurrency and content-keyed cache used
-by the entity-list endpoint.
+or parsing any entity YAML**. If a limit does reference `old.data`, the
+entities of the type are loaded in one bulk read (once per request, for all
+its limits) and parsed through the content-keyed cache that the entity-list
+endpoint uses as well.
+
+{: .note}
+Give limits that cover the same entities the very same `scope` expression
+(e.g. with a YAML anchor): a `scope` is tested once per entity for all the
+limits that share it, and only the `value` of the entities in scope is
+rendered per limit.
 
 {: .warning}
 The count/sum is measured when the request is validated and measured again

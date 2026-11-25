@@ -57,7 +57,8 @@ The hot path is always the same:
   2. **Authorize** — `lib/perms.py` walks the rendered `roles` block,
      pre-filters the user-only role tests once per request, and
      resolves the remaining entity-dependent halves to a permission
-     set.
+     set. Only for the entity list, that result is reused per user and
+     unchanged entity for `YAC_LIST_PERMS_TTL` seconds.
   3. **Validate** — `lib/validator.py` runs the validator plugins in
      two passes (`test_always` on every operation, `test_nolist`
      additionally on everything but listing). For writes, `lib/schema.py` walks the

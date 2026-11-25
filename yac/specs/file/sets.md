@@ -26,7 +26,9 @@ To improve entity listing performance, split sets by entity-dependent
 (using variables `old`, `new` or `name`) and *not* entity-dependent (using
 any of the other variables). This allows YAC to optimize runtime by evaluating
 all sets that are not entity-dependent once per request instead of once per
-entity.
+entity. What the entity-dependent ones give for the entity list is reused for
+a few minutes, see
+[roles](roles.md#permissions-in-the-entity-list).
 
 {: .warning}
 Never use entity-variables (`old`, `new` or `name`) via context in custom

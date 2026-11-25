@@ -89,14 +89,13 @@ container tags.
 
 2026-11-19 · [all changes since v0.12](https://github.com/yac-vays/vays/compare/v0.12...v0.13)
 
-### Breaking changes
-{: .no_toc }
-
-  - log renderers, with document and markdown windows ([b64c62a](https://github.com/yac-vays/vays/commit/b64c62a))
+{: .warning }
+This release has **breaking changes**, marked with ⚠ below. Check them before upgrading.
 
 ### Features
 {: .no_toc }
 
+  - ⚠ **Breaking change:**{: .text-red-300 } log renderers, with document and markdown windows ([b64c62a](https://github.com/yac-vays/vays/commit/b64c62a))
   - admin unlock always offered, finer YAML locks, implicit renderer hint ([0eacc73](https://github.com/yac-vays/vays/commit/0eacc73))
   - lock fixed values and (without cln) comments in the YAML editor ([dca7034](https://github.com/yac-vays/vays/commit/dca7034))
   - keep the column filters of entity lists for the browser tab ([13f020f](https://github.com/yac-vays/vays/commit/13f020f))
@@ -210,17 +209,16 @@ container tags.
 
 2026-09-01 · [all changes since v0.4](https://github.com/yac-vays/vays/compare/v0.4...v0.5)
 
-### Breaking changes
-{: .no_toc }
-
-  - new placement of limit hint depending on optional path value ([ef045ad](https://github.com/yac-vays/vays/commit/ef045ad))
-  - new placement of limit hint depending on optional path value ([485e9d6](https://github.com/yac-vays/vays/commit/485e9d6))
-  - relocate error reporting and random ui form improovements ([0e21d06](https://github.com/yac-vays/vays/commit/0e21d06))
-  - **add/edit:** admin override implemented (requires adm perm to bypass schema validation) ([c85a486](https://github.com/yac-vays/vays/commit/c85a486))
+{: .warning }
+This release has **breaking changes**, marked with ⚠ below. Check them before upgrading.
 
 ### Features
 {: .no_toc }
 
+  - ⚠ **Breaking change:**{: .text-red-300 } new placement of limit hint depending on optional path value ([ef045ad](https://github.com/yac-vays/vays/commit/ef045ad))
+  - ⚠ **Breaking change:**{: .text-red-300 } new placement of limit hint depending on optional path value ([485e9d6](https://github.com/yac-vays/vays/commit/485e9d6))
+  - ⚠ **Breaking change:**{: .text-red-300 } relocate error reporting and random ui form improovements ([0e21d06](https://github.com/yac-vays/vays/commit/0e21d06))
+  - ⚠ **Breaking change:**{: .text-red-300 } **add/edit:** admin override implemented (requires adm perm to bypass schema validation) ([c85a486](https://github.com/yac-vays/vays/commit/c85a486))
   - ui cleanup ([31041b4](https://github.com/yac-vays/vays/commit/31041b4))
   - improove help in yaml-editor with data from schema ([f8984a6](https://github.com/yac-vays/vays/commit/f8984a6))
   - allow running actions on edit no-ops ([22891bf](https://github.com/yac-vays/vays/commit/22891bf))
@@ -253,19 +251,17 @@ container tags.
 
 2026-07-03 · [all changes since v0.3](https://github.com/yac-vays/vays/compare/v0.3...v0.4)
 
-### Breaking changes
-{: .no_toc }
-
-  - standardized action naming across whole stack ([87e9f21](https://github.com/yac-vays/vays/commit/87e9f21))
-  - change entity selection url schema to &#123;b}/&#123;t}/?name=&#123;e} to prevent collisions and forward to create url if non-existing ([b571264](https://github.com/yac-vays/vays/commit/b571264))
-  - yac api changed so we can now send yaml_base to integrate form-patches to the actual yaml in the editor ([593e7c2](https://github.com/yac-vays/vays/commit/593e7c2))
-  - completely revamped editor to allow side-by-side editing ([8adba2b](https://github.com/yac-vays/vays/commit/8adba2b))
-  - implemented the limits feature same as in yac (including displaying the current quota usage) ([f277c57](https://github.com/yac-vays/vays/commit/f277c57))
-  - streamline renderer options; everything renderer-specific is now under renderer_options as documented ([64efd14](https://github.com/yac-vays/vays/commit/64efd14))
+{: .warning }
+This release has **breaking changes**, marked with ⚠ below. Check them before upgrading.
 
 ### Features
 {: .no_toc }
 
+  - ⚠ **Breaking change:**{: .text-red-300 } standardized action naming across whole stack ([87e9f21](https://github.com/yac-vays/vays/commit/87e9f21))
+  - ⚠ **Breaking change:**{: .text-red-300 } change entity selection url schema to &#123;b}/&#123;t}/?name=&#123;e} to prevent collisions and forward to create url if non-existing ([b571264](https://github.com/yac-vays/vays/commit/b571264))
+  - ⚠ **Breaking change:**{: .text-red-300 } yac api changed so we can now send yaml_base to integrate form-patches to the actual yaml in the editor ([593e7c2](https://github.com/yac-vays/vays/commit/593e7c2))
+  - ⚠ **Breaking change:**{: .text-red-300 } completely revamped editor to allow side-by-side editing ([8adba2b](https://github.com/yac-vays/vays/commit/8adba2b))
+  - ⚠ **Breaking change:**{: .text-red-300 } implemented the limits feature same as in yac (including displaying the current quota usage) ([f277c57](https://github.com/yac-vays/vays/commit/f277c57))
   - many small UX improovements ([89b0412](https://github.com/yac-vays/vays/commit/89b0412))
   - global error reporting in a more logical place in the yaml-editor ([3b1e758](https://github.com/yac-vays/vays/commit/3b1e758))
   - customizable help page ([81141b1](https://github.com/yac-vays/vays/commit/81141b1))
@@ -307,6 +303,7 @@ container tags.
 ### Fixes
 {: .no_toc }
 
+  - ⚠ **Breaking change:**{: .text-red-300 } streamline renderer options; everything renderer-specific is now under renderer_options as documented ([64efd14](https://github.com/yac-vays/vays/commit/64efd14))
   - error reporting and yaml-patches in edit mode ([f39357b](https://github.com/yac-vays/vays/commit/f39357b))
   - yaml-editor wrongly flagged some constants (objects) as changed ([f11b3f2](https://github.com/yac-vays/vays/commit/f11b3f2))
   - many bugs ([1eb1333](https://github.com/yac-vays/vays/commit/1eb1333))

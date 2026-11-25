@@ -31,10 +31,8 @@ container tags.
 
 2026-11-24 · [all changes since v0.21](https://github.com/yac-vays/yac/compare/v0.21...v0.22)
 
-### Breaking changes
-{: .no_toc }
-
-  - access control gaps in /validate, edits without changes, rename/copy/link and PATCH ([4e434f1](https://github.com/yac-vays/yac/commit/4e434f1))
+{: .warning }
+This release has **breaking changes**, marked with ⚠ below. Check them before upgrading.
 
 ### Features
 {: .no_toc }
@@ -44,6 +42,7 @@ container tags.
 ### Fixes
 {: .no_toc }
 
+  - ⚠ **Breaking change:**{: .text-red-300 } access control gaps in /validate, edits without changes, rename/copy/link and PATCH ([4e434f1](https://github.com/yac-vays/yac/commit/4e434f1))
   - log and action plugins report TLS setup errors as their own, bound what they read, exec has a default timeout ([566271d](https://github.com/yac-vays/yac/commit/566271d))
   - git_redis keeps a replaced snapshot at least 10 s and notices when its own is gone, only takes a commit hash as `latest`, follows a rewound remote ([609061b](https://github.com/yac-vays/yac/commit/609061b))
   - git_direct shares a failed sync, heals stale git locks, restores the tree after a failed write, prefers writers; copy and link only of the validated source ([7bd0712](https://github.com/yac-vays/yac/commit/7bd0712))
@@ -99,10 +98,13 @@ container tags.
 
 2026-11-19 · [all changes since v0.20](https://github.com/yac-vays/yac/compare/v0.20...v0.21)
 
-### Breaking changes
+{: .warning }
+This release has **breaking changes**, marked with ⚠ below. Check them before upgrading.
+
+### Features
 {: .no_toc }
 
-  - generic log renderers, content documents and template log plugin ([4e25273](https://github.com/yac-vays/yac/commit/4e25273))
+  - ⚠ **Breaking change:**{: .text-red-300 } generic log renderers, content documents and template log plugin ([4e25273](https://github.com/yac-vays/yac/commit/4e25273))
 
 ### Fixes
 {: .no_toc }
@@ -178,25 +180,27 @@ container tags.
 
 2026-09-08 · [all changes since v0.14](https://github.com/yac-vays/yac/compare/v0.14...v0.15)
 
-### Breaking changes
+{: .warning }
+This release has **breaking changes**, marked with ⚠ below. Check them before upgrading.
+
+### Fixes
 {: .no_toc }
 
-  - cln handling was not exactly as specified; rewrote and specified more clearly ([3caf387](https://github.com/yac-vays/yac/commit/3caf387))
+  - ⚠ **Breaking change:**{: .text-red-300 } cln handling was not exactly as specified; rewrote and specified more clearly ([3caf387](https://github.com/yac-vays/yac/commit/3caf387))
 
 ## v0.14
 
 2026-09-01 · [all changes since v0.13](https://github.com/yac-vays/yac/compare/v0.13...v0.14)
 
-### Breaking changes
-{: .no_toc }
-
-  - optional path added to limits for hint placement in UI ([8cdb58f](https://github.com/yac-vays/yac/commit/8cdb58f))
-  - report missing properties loc_path of the property itself instead of the parent to help vays with nicer error-reporting ([ecf31c4](https://github.com/yac-vays/yac/commit/ecf31c4))
-  - **perms:** adm perm implemented (requires new force=1 query param to bypass schema validation) ([bd33383](https://github.com/yac-vays/yac/commit/bd33383))
+{: .warning }
+This release has **breaking changes**, marked with ⚠ below. Check them before upgrading.
 
 ### Features
 {: .no_toc }
 
+  - ⚠ **Breaking change:**{: .text-red-300 } optional path added to limits for hint placement in UI ([8cdb58f](https://github.com/yac-vays/yac/commit/8cdb58f))
+  - ⚠ **Breaking change:**{: .text-red-300 } report missing properties loc_path of the property itself instead of the parent to help vays with nicer error-reporting ([ecf31c4](https://github.com/yac-vays/yac/commit/ecf31c4))
+  - ⚠ **Breaking change:**{: .text-red-300 } **perms:** adm perm implemented (requires new force=1 query param to bypass schema validation) ([bd33383](https://github.com/yac-vays/yac/commit/bd33383))
   - only show successful GET /health logs in DEBUG ([98500b5](https://github.com/yac-vays/yac/commit/98500b5))
   - plugin to allow vays_options in nested objects with vays_category only defined in top-level object ([f35fe73](https://github.com/yac-vays/yac/commit/f35fe73))
   - refactored auth token handling a bit and improoved error messages ([bdeea24](https://github.com/yac-vays/yac/commit/bdeea24))
@@ -218,20 +222,18 @@ container tags.
 
 2026-07-03 · [all changes since v0.12](https://github.com/yac-vays/yac/compare/v0.12...v0.13)
 
-### Breaking changes
-{: .no_toc }
-
-  - replace shell by exec plugin to prevent shell-ijection risk by default ([e68a4d0](https://github.com/yac-vays/yac/commit/e68a4d0))
-  - standardized action naming across whole stack ([08ac596](https://github.com/yac-vays/yac/commit/08ac596))
-  - many minor fixes + one big logic flaw: removing see perm on a subschema had no effect due to validate endpoint ([5c7b025](https://github.com/yac-vays/yac/commit/5c7b025))
-  - UpdatEntity now accepts yaml_base as another data field to allow VAYS sending existing manual YAML edits and merge them with a data-patch - field has no effect on actual commits, only used for validation ([697df43](https://github.com/yac-vays/yac/commit/697df43))
-  - also return would-be YAML on /validate endpoint to allow VAYS side-by-side edit (updating the YAML on form-edits) ([166b7d2](https://github.com/yac-vays/yac/commit/166b7d2))
-  - added limits to type spec to allow specifying entity max counts or sums of custom fields ([7cc9b05](https://github.com/yac-vays/yac/commit/7cc9b05))
-  - overhauled security/auth and repo handling ([ba0b5d2](https://github.com/yac-vays/yac/commit/ba0b5d2))
+{: .warning }
+This release has **breaking changes**, marked with ⚠ below. Check them before upgrading.
 
 ### Features
 {: .no_toc }
 
+  - ⚠ **Breaking change:**{: .text-red-300 } replace shell by exec plugin to prevent shell-ijection risk by default ([e68a4d0](https://github.com/yac-vays/yac/commit/e68a4d0))
+  - ⚠ **Breaking change:**{: .text-red-300 } standardized action naming across whole stack ([08ac596](https://github.com/yac-vays/yac/commit/08ac596))
+  - ⚠ **Breaking change:**{: .text-red-300 } UpdatEntity now accepts yaml_base as another data field to allow VAYS sending existing manual YAML edits and merge them with a data-patch - field has no effect on actual commits, only used for validation ([697df43](https://github.com/yac-vays/yac/commit/697df43))
+  - ⚠ **Breaking change:**{: .text-red-300 } also return would-be YAML on /validate endpoint to allow VAYS side-by-side edit (updating the YAML on form-edits) ([166b7d2](https://github.com/yac-vays/yac/commit/166b7d2))
+  - ⚠ **Breaking change:**{: .text-red-300 } added limits to type spec to allow specifying entity max counts or sums of custom fields ([7cc9b05](https://github.com/yac-vays/yac/commit/7cc9b05))
+  - ⚠ **Breaking change:**{: .text-red-300 } overhauled security/auth and repo handling ([ba0b5d2](https://github.com/yac-vays/yac/commit/ba0b5d2))
   - log description added ([c294cca](https://github.com/yac-vays/yac/commit/c294cca))
   - new log plugin ([d60b563](https://github.com/yac-vays/yac/commit/d60b563))
   - add redis password to helm (optional) ([e7ef2fc](https://github.com/yac-vays/yac/commit/e7ef2fc))
@@ -249,6 +251,7 @@ container tags.
 ### Fixes
 {: .no_toc }
 
+  - ⚠ **Breaking change:**{: .text-red-300 } many minor fixes + one big logic flaw: removing see perm on a subschema had no effect due to validate endpoint ([5c7b025](https://github.com/yac-vays/yac/commit/5c7b025))
   - gate rename operations with the toplevel create/delete switches ([79ea48d](https://github.com/yac-vays/yac/commit/79ea48d))
   - crash on expired jwt token (and updated requirements) ([777bd5f](https://github.com/yac-vays/yac/commit/777bd5f))
   - regressions due to see restriction within schema; removed all of that and went back to see restriction on entity-level only ([d616684](https://github.com/yac-vays/yac/commit/d616684))

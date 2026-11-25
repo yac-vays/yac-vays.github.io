@@ -93,6 +93,14 @@ To **release** a release-candidate, merge your commit to the `main` branch
 and run `scripts/release.sh` from there (it will again tag your commit
 with a new minor-version and start the build-pipeline).
 
+Every release also regenerates the [Release Notes](../releases.md) from
+the git history and pushes them to the docs repository (`scripts/release.sh`
+runs `scripts/release-notes.sh --publish`, so you need push access there).
+Listed are the commits of type `feat`, `fix` and `perf` and everything
+marked as breaking (`type!:` or a `BREAKING CHANGE:` footer), so write
+these subjects for the users of VAYS. To rebuild the page without a
+release, run that command yourself.
+
 ## Upgrade Environment
 
 - Check on DockerHub for new versions of [Node](https://hub.docker.com/_/node) and

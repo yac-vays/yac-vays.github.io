@@ -187,6 +187,7 @@ each entity in full. Each option reads one value from the entity's data:
 | `title` | *mandatory*; column title in the UI. |
 | `default` | Value to show when the entity has not set this key. |
 | `aliases` | Map of raw value → Markdown label, to prettify displayed values. |
+| `alias_patterns` | List of aliases for all values matching a regular expression, see [below](#alias-patterns). |
 
 ```yaml
 options:
@@ -202,6 +203,60 @@ options:
 
 A plain `name` is never split, so `owner.team` reads a top-level key literally
 named `owner.team`. Values that are lists are shown comma-separated.
+
+### Alias patterns
+
+`alias_patterns` give many values one alias, e.g. one logo for every Ubuntu
+release, so a new release needs no change of the specs. The UI uses the exact
+entry in `aliases` if there is one, else the **first** pattern in the list whose
+`match` matches the value:
+
+| Field | Description |
+|:------|:------------|
+| `match` | *mandatory*; regular expression the **whole** value must match (it is anchored implicitly, `ubuntu-.*` does not match `xubuntu-24.04`). |
+| `alias` | *mandatory*; Markdown label shown instead of the value, like in `aliases`. |
+| `tooltip` | Plain text shown when hovering the alias (and read by screen readers): `{0}` is the value, `{1}`, `{2}`, ... the capture groups of `match` (empty if a group did not match). Default `{0}`; empty for no tooltip. |
+
+```yaml
+options:
+  - name: os
+    title: Operating System
+    default: unknown
+    aliases:
+      unknown: '<svg ...><title>Unknown</title>...</svg>'
+    alias_patterns:
+      - match: 'ubuntu-(\d+\.\d+)'
+        alias: '<svg ...>...</svg>'          # Ubuntu logo
+        tooltip: 'Ubuntu {1}'
+      - match: 'ubuntu-.*'                   # ubuntu-lts, ubuntu-latest, ...
+        alias: '<svg ...>...</svg>'          # tooltip: the value itself
+      - match: 'windows-srv(\d{4})'          # before the more general one below
+        alias: '<svg ...>...</svg>'
+        tooltip: 'Windows Server {1}'
+      - match: 'windows-(\d+)'
+        alias: '<svg ...>...</svg>'
+        tooltip: 'Windows {1}'
+```
+
+The tooltip is always plain text, so values (which come from the entity data)
+never end up in the Markdown. An SVG alias should therefore leave out its own
+`<title>` (it would cover the tooltip). The column search matches the value,
+the alias and the tooltip alike.
+
+The patterns are evaluated by the **browser**, so they must work in Python and
+JavaScript alike. YAC rejects (on parsing the specs) invalid patterns,
+references to capture groups `match` does not have, and constructs only Python
+knows: named groups (`(?P<name>...)`, use numbered ones), inline flags
+(`(?i)`), `\A` / `\Z` (anchored anyway), comments `(?#...)`, atomic groups,
+possessive quantifiers and a `]` right after `[`. Mind that the specs are
+rendered with Jinja2, so `{{`, `{%` and `{#` cannot be used literally in a
+pattern.
+
+{: .warning }
+A value is matched against the patterns once per distinct value and only up to
+256 characters. Still avoid nested quantifiers like `(a+)+`: the values come
+from the entity data, and such a pattern can take very long for a crafted
+value.
 
 ## links
 

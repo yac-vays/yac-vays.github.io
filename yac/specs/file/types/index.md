@@ -249,7 +249,7 @@ references to capture groups `match` does not have, and constructs only Python
 knows: named groups (`(?P<name>...)`, use numbered ones), inline flags
 (`(?i)`), `\A` / `\Z` (anchored anyway), comments `(?#...)`, atomic groups,
 possessive quantifiers and a `]` right after `[`. Mind that the specs are
-rendered with Jinja2, so `{{`, `{%` and `{#` cannot be used literally in a
+rendered with Jinja2, so {% raw %}`{{`, `{%` and `{#`{% endraw %} cannot be used literally in a
 pattern.
 
 {: .warning }

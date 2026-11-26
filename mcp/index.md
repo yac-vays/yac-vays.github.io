@@ -35,7 +35,8 @@ of the MCP server. No tokens or passwords need to be copied.
 | `read_logs` | The logs of an entity, or the content document of one log. |
 
 The write tools (`create`, `edit`, `delete`, `run_action`) are only offered if
-the server is not [read-only](install.md#configuration).
+the server [allows](install.md#allowed-changes) them (by default, it is
+read-only).
 
 As in VAYS, missing [defaults](../yac/specs/file/schema.md) are filled in, and
 fields with the [renderers](../vays/renderers/index.md) `age_secret`,
@@ -58,4 +59,6 @@ be added as plugins, see the
     agent unless enabled.
   - Entity data of other users ends up in the agent's context, which makes
     prompt injection possible. Let the MCP client ask before write and delete
-    tools (they are marked as such).
+    tools (they are marked as such). The server itself does not ask: to keep
+    agents from deleting or running actions at all, leave `delete` / `actions`
+    out of the [allowed changes](install.md#allowed-changes).

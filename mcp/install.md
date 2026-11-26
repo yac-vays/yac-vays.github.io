@@ -35,13 +35,33 @@ Environment variables (all with the prefix `YAC_MCP_`):
 | `YAC_MCP_OIDC_SCOPE` | `openid email` | Scopes requested at the login. |
 | `YAC_MCP_KEYS` | | JSON list of envelope keys, e.g. `["kid:base64url"]`; generate one with `python -m app.lib.envelope` in the container. The first key encrypts, all decrypt (rotation). |
 | `YAC_MCP_CLIENT_METADATA_DOCUMENTS` | `true` | Accept [client ID metadata documents](https://modelcontextprotocol.io/specification/draft/basic/authorization) (the client ID is a URL, e.g. Claude Code's on `claude.ai`). The server fetches them, so it needs outbound HTTPS access to the clients' hosts; without it, set `false`: clients then use dynamic client registration. |
-| `YAC_MCP_READ_ONLY` | `true` | Disables the write tools. |
+| `YAC_MCP_ALLOW` | `[]` | The changes agents may make (JSON list), see [allowed changes](#allowed-changes). Empty = read-only. |
 | `YAC_MCP_REVEAL_GENERATED_SECRETS` | `false` | Return generated secrets to the agent. |
 | `YAC_MCP_PLUGIN_DIRS` | `[]` | Additional plugin roots (JSON list). |
 | `YAC_MCP_LOG_LEVEL` | `info` | Log level. |
 
 See [config.py](https://github.com/yac-vays/mcp/blob/main/app/config.py) for
 all options.
+
+### Allowed changes
+
+Reading (`list_types`, `list_entities`, `read_entity`, `new_entity`,
+`validate`, `read_logs`) is always offered. `YAC_MCP_ALLOW` (Helm value
+`allow`) adds the changes agents may make; a tool that is not allowed is not
+offered at all, and the server refuses it anyway:
+
+| Entry | Allows |
+|:------|:-------|
+| `create` | the `create` tool |
+| `edit` | the `edit` tool (incl. renames) |
+| `delete` | the `delete` tool |
+| `actions` | the `run_action` tool and actions requested with a write (`run`) |
+
+For example `[]` (read-only, the default), `["create", "edit"]` (read-write
+without delete and actions) or `["create", "edit", "delete", "actions"]`
+(everything). Actions the specs [force](../yac/specs/file/types/actions.md)
+on a write still run, YAC decides that. The admin override (`force` on
+writes) is never offered. The users' permissions in the specs apply on top.
 
 ## Plain Docker
 
